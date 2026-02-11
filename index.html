@@ -1,0 +1,2879 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aplikasi Kartu Peserta Ujian + Denah Tempat Duduk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Pustaka eksternal -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <style>
+    :root {
+      --primary-color: #4361ee;
+      --secondary-color: #3f37c9;
+      --accent-color: #f72585;
+      --success-color: #06ffa5;
+      --danger-color: #ff006e;
+      --warning-color: #ffbe0b;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --text-color: #333;
+      --border-color: #dee2e6;
+      --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light-color);
+      display: flex;
+      min-height: 100vh;
+      color: var(--text-color);
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      padding: 25px 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 100;
+      transition: width 0.3s ease;
+    }
+
+    .sidebar .brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 15px 0;
+      margin-bottom: 25px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 30px;
+      height: 30px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-grow: 1;
+    }
+
+    .menu button {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border: none;
+      padding: 12px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .menu button:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+    }
+
+    .menu button.active {
+      background: rgba(255, 255, 255, 0.25);
+      box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.2);
+      font-weight: 600;
+    }
+
+    .menu-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Content Styles */
+    .content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      background-color: #f0f2f5;
+    }
+
+    .content-container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 25px;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2, h3 {
+      color: var(--dark-color);
+      margin-bottom: 20px;
+    }
+
+    /* Form styles */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-col {
+      flex: 1;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark-color);
+    }
+
+    input[type="text"],
+    input[type="file"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: 'Poppins', sans-serif;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+      outline: none;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary { background-color: var(--primary-color); color: #fff; }
+    .btn-info { background-color: #0dcaf0; color: #fff; }
+    .btn-secondary { background-color: #6c757d; color: #fff; }
+    .btn-danger { background-color: var(--danger-color); color: #fff; }
+    .btn-success { background-color: #28a745; color: #fff; }
+    .btn-warning { background-color: var(--warning-color); color: #000; }
+    .btn-sm { padding: 8px 12px; font-size: 0.8rem; }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+      margin-top: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      background-color: var(--light-color);
+      font-weight: 600;
+      color: var(--dark-color);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    tr:hover {
+      background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    /* Card preview */
+    .card-preview-container {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card { 
+      width: 9cm !important; 
+      height: 6cm !important; 
+      position: relative; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      box-shadow: var(--shadow-hover); 
+      border: 1px solid #e0e0e0; 
+      background-size: cover; 
+      background-position: center; 
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .card-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: rgba(255, 255, 255, 0.95);
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding-bottom: 6px;
+      margin-bottom: 4px;
+    }
+
+    .card-logo {
+      width: 35px;
+      height: 35px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .card-school-info {
+      flex: 1;
+      text-align: center;
+    }
+
+    .card-school-info h3 {
+      font-size: 0.65rem;
+      margin: 1px 0;
+      line-height: 1.2;
+      color: var(--dark-color);
+      text-align: center;
+    }
+
+    .card-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+      margin: 4px 0;
+      text-decoration: underline;
+      color: var(--primary-color);
+    }
+
+    .card-student-info {
+      display: flex;
+      gap: 8px;
+      flex-grow: 1;
+      margin-bottom: 2px;
+    }
+
+    .card-photo {
+      width: 55px;
+      height: 70px;
+      background: #eee;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid #ddd;
+      flex-shrink: 0;
+    }
+
+    .card-details {
+      flex: 1;
+      font-size: 0.65rem;
+      line-height: 1.3;
+    }
+
+    .detail-row {
+      display: flex;
+      margin-bottom: 1px;
+      line-height: 1.2;
+    }
+    
+    .detail-label {
+      width: 32px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    
+    .detail-value {
+      flex: 1;
+    }
+
+    .card-signature {
+      text-align: right;
+      font-size: 0.55rem;
+      margin-top: 2px;
+      padding-top: 4px;
+      border-top: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .card-signature .signature-line {
+      height: 20px;
+      margin-bottom: 2px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .card-signature .signature-name {
+      font-weight: 700;
+      font-size: 0.6rem;
+    }
+
+    /* Daftar Hadir - PERBAIKAN: Tanda tangan mengikuti panjang tabel */
+    .daftar-hadir-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    
+    .daftar-hadir-preview {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      background: white;
+      font-size: 12px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .daftar-hadir-preview table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: auto;
+    }
+
+    .daftar-hadir-preview th,
+    .daftar-hadir-preview td {
+      padding: 8px 10px;
+      border: 1px solid #444;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .daftar-hadir-preview td:nth-child(3) {
+      text-align: left;
+    }
+
+    .info-daftar-hadir {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: var(--light-color);
+      border-radius: 6px;
+    }
+
+    .info-daftar-hadir div {
+      flex: 1;
+      text-align: center;
+    }
+
+    .tanda-tangan-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+    }
+
+    .tanda-tangan-box {
+      width: 45%;
+      text-align: center;
+    }
+
+    .tanda-tangan-box .jabatan {
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    
+    .tanda-tangan-box .nama {
+      margin-top: 5px;
+      font-weight: bold;
+    }
+    
+    .tanda-tangan-box .ttd-placeholder {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ===== DENAH TEMPAT DUDUK ===== */
+    .denah-container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .data-panel-denah {
+      flex: 1;
+      min-width: 400px;
+    }
+    
+    .control-panel-denah {
+      width: 450px;
+      min-width: 300px;
+    }
+    
+    .filter-panel {
+      background: var(--light-color);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-end;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-item {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(6, 1fr); 
+      gap: 6px; 
+      width: 100%; 
+      max-width: 900px; 
+      margin: 20px auto; 
+    }
+    
+    .denah-card { 
+      border: 1px solid #ccc; 
+      visibility: hidden;
+      background: white; 
+      height: 150px; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+      border-radius: 6px;
+    }
+    
+    .denah-card.visible { 
+      visibility: visible;
+      border: 3px solid var(--primary-color); 
+    }
+    
+    .denah-box-top { 
+      border-bottom: 1px solid #000; 
+      height: 60%; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      padding: 5px;
+      overflow: hidden;
+      background-color: #f0f7ff;
+    }
+    
+    .denah-box-mid { 
+      border-bottom: 1px solid #000; 
+      height: 20%; 
+      display: flex; 
+      align-items: center; 
+      padding-left: 6px; 
+      font-size: 11px; 
+      background: #f9f9f9; 
+      font-weight: 600;
+    }
+    
+    .denah-box-bottom { 
+      height: 20%; 
+      display: flex; 
+      align-items: center; 
+      padding-left: 6px; 
+      font-size: 11px; 
+      font-weight: bold; 
+    }
+
+    .controls { 
+      display: grid; 
+      grid-template-columns: repeat(6, 1fr); 
+      gap: 5px; 
+      max-width: 500px; 
+      margin-top: 10px; 
+    }
+    
+    .btn-nomor { 
+      padding: 8px; 
+      background: #eee; 
+      border: 1px solid #555; 
+      cursor: pointer; 
+      text-align: center; 
+      font-size: 14px; 
+      border-radius: 4px; 
+    }
+    
+    .btn-nomor:hover { 
+      background: #ddd; 
+    }
+    
+    .btn-nomor.active { 
+      background: var(--primary-color); 
+      color: white; 
+      font-weight: bold; 
+    }
+
+    .data-table-denah { 
+      border-collapse: collapse; 
+      margin-bottom: 20px; 
+      width: 100%; 
+    }
+    
+    .data-table-denah td, 
+    .data-table-denah th { 
+      border: 1px solid #000; 
+      padding: 8px; 
+      text-align: left; 
+    }
+    
+    .data-table-denah th { 
+      background-color: #f2f2f2; 
+      font-weight: bold; 
+    }
+    
+    .data-table-denah td[contenteditable="true"] { 
+      background: #fafafa; 
+    }
+    
+    .data-table-denah td[contenteditable="true"]:focus { 
+      outline: 2px solid var(--primary-color); 
+      background: #fff; 
+    }
+    
+    .data-table-denah td:first-child {
+      background-color: #e9ecef;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    /* Info ruangan */
+    .info-ruangan {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #e3f2fd;
+      border-left: 5px solid var(--primary-color);
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    /* ===== CETAK DENAH ===== */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      
+      body {
+        padding: 5px;
+        background: #fff;
+      }
+
+      .grid {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 3px;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+      }
+
+      .denah-card {
+        height: 90px;
+        box-shadow: none;
+        page-break-inside: avoid;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        border: 1px solid #000;
+      }
+
+      .denah-card:not(.visible) {
+        display: none !important;
+      }
+      
+      .denah-card.visible {
+        visibility: visible;
+      }
+
+      .denah-box-mid {
+        font-size: 8px;
+      }
+      .denah-box-bottom {
+        font-size: 9px;
+      }
+      .denah-box-top {
+        font-size: 9px;
+      }
+      
+      @page {
+        size: landscape;
+        margin: 0.5cm;
+      }
+      
+      .info-ruangan {
+        border: 1px solid #000;
+        background: none;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+
+    /* Modal Styles */
+    .modal {
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: auto;
+      padding: 25px;
+      border: none;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 12px;
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-20px);
+      transition: transform 0.3s ease;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal.show .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 15px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: var(--primary-color);
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+    }
+
+    .checkbox-item:hover {
+      background-color: rgba(67, 97, 238, 0.1);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .checkbox-item label {
+      cursor: pointer;
+      margin: 0;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      z-index: 1001;
+      transform: translateX(150%);
+      transition: transform 0.3s ease-out;
+      box-shadow: var(--shadow-hover);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification.success { background-color: #28a745; }
+    .notification.error { background-color: var(--danger-color); }
+    .notification.info { background-color: #17a2b8; }
+
+    .input-siswa-form {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      margin-bottom: 30px;
+    }
+
+    .input-siswa-form h3 {
+      margin-bottom: 20px;
+      color: var(--dark-color);
+      font-size: 1.1rem;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .student-search-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .student-search-container input {
+      padding-left: 45px;
+    }
+
+    .student-search-container::before {
+      content: "🔍";
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #aaa;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .photo-preview {
+      width: 150px;
+      height: 180px;
+      border: 2px dashed var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background-color: #f8f9fa;
+      margin: 15px auto;
+    }
+
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .identitas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+      margin-bottom: 20px;
+    }
+
+    .identitas-section {
+      background-color: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: var(--shadow);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .identitas-section h3 {
+      margin-bottom: 20px;
+      color: var(--dark-color);
+      font-size: 1.1rem;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .identitas-logo-container,
+    .identitas-signature-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .identitas-logo-preview,
+    .identitas-signature-preview {
+      width: 180px;
+      height: 180px;
+      border: 2px dashed var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background-color: #f8f9fa;
+      transition: border-color 0.3s ease;
+    }
+
+    .identitas-logo-preview:hover,
+    .identitas-signature-preview:hover {
+      border-color: var(--primary-color);
+    }
+
+    .identitas-signature-preview {
+      width: 250px;
+      height: 120px;
+    }
+
+    @media (max-width: 992px) {
+      .identitas-grid {
+        grid-template-columns: 1fr;
+      }
+      .denah-container {
+        flex-direction: column;
+      }
+      .control-panel-denah {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 70px;
+        padding: 15px 10px;
+      }
+
+      .sidebar .brand {
+        font-size: 0;
+        padding: 0;
+        margin-bottom: 20px;
+      }
+
+      .menu button span {
+        display: none;
+      }
+
+      .content {
+        padding: 15px;
+      }
+
+      .card-preview-container {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .input-siswa-form {
+        padding: 15px;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+      
+      .tanda-tangan-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      
+      .tanda-tangan-box {
+        width: 100%;
+      }
+      
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .controls {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="brand">
+      <svg class="brand-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path></svg>
+      <span>KARTU UJIAN</span>
+    </div>
+    <div class="menu">
+      <button class="menu-btn active" data-page="beranda">
+        <svg class="menu-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path></svg>
+        <span>Beranda</span>
+      </button>
+      <button class="menu-btn" data-page="identitas">
+        <svg class="menu-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"></path></svg>
+        <span>Identitas</span>
+      </button>
+      <button class="menu-btn" data-page="input-siswa">
+        <svg class="menu-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>
+        <span>Data Siswa</span>
+      </button>
+      <button class="menu-btn" data-page="kartu-ujian">
+        <svg class="menu-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm2 10a1 1 0 10-2 0v3a1 1 0 102 0v-3zm2-3a1 1 0 011 1v5a1 1 0 11-2 0v-5a1 1 0 011-1zm4-1a1 1 0 10-2 0v7a1 1 0 102 0V8z" clip-rule="evenodd"></path></svg>
+        <span>Kartu Ujian</span>
+      </button>
+      <button class="menu-btn" data-page="daftar-hadir">
+        <svg class="menu-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.293a1 1 0 00-1.414 0L10 10.586 8.707 9.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 11.414l1.293 1.293a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clip-rule="evenodd"></path></svg>
+        <span>Daftar Hadir</span>
+      </button>
+      <button class="menu-btn" data-page="denah">
+        <svg class="menu-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+        <span>Denah Duduk</span>
+      </button>
+      <button class="menu-btn" data-page="pengaturan">
+        <svg class="menu-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+        <span>Pengaturan</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content" id="content"></div>
+
+  <!-- Notification -->
+  <div id="notification" class="notification"></div>
+
+  <!-- Edit Student Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Data Siswa</h2>
+        <span class="close" style="cursor:pointer;">&times;</span>
+      </div>
+      <div class="form-group">
+        <label for="editNoPeserta">No Peserta</label>
+        <input type="text" id="editNoPeserta" readonly>
+      </div>
+      <div class="form-group">
+        <label for="editNama">Nama Siswa</label>
+        <input type="text" id="editNama">
+      </div>
+      <div class="form-group">
+        <label for="editKelas">Kelas</label>
+        <input type="text" id="editKelas">
+      </div>
+      <div class="form-group">
+        <label for="editTtl">Tempat Tanggal Lahir</label>
+        <input type="text" id="editTtl">
+      </div>
+      <button class="btn btn-primary" id="saveEditBtn">Simpan Perubahan</button>
+    </div>
+  </div>
+
+  <!-- Upload Foto Modal -->
+  <div id="uploadFotoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Upload Foto Siswa</h2>
+        <span class="close" style="cursor:pointer;">&times;</span>
+      </div>
+      <div style="text-align: center; margin-bottom: 15px;">
+        <strong id="uploadFotoNamaSiswa"></strong><br>
+        <span id="uploadFotoNoPeserta" style="font-size: 0.9rem; color: #666;"></span>
+      </div>
+      <div class="photo-preview" id="uploadFotoPreview">
+        <span style="color:#999;">Belum ada foto</span>
+      </div>
+      <div class="form-group">
+        <label for="fotoUpload">Pilih File Foto</label>
+        <input type="file" id="fotoUpload" accept="image/*">
+        <p style="margin-top:5px; font-size:0.8rem; color:#666;">
+          Format: JPG, PNG (Maksimal 2MB)
+        </p>
+      </div>
+      <div class="form-actions" style="justify-content: flex-end;">
+        <button class="btn btn-secondary" id="closeUploadFotoModalBtn">Tutup</button>
+        <button class="btn btn-primary" id="saveFotoBtn">Simpan Foto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print Individual Card Modal -->
+  <div id="printCardModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Cetak Kartu Perorangan</h2>
+        <span class="close" style="cursor:pointer;">&times;</span>
+      </div>
+      <div class="form-group">
+        <label for="studentSearch">Cari Nama Siswa</label>
+        <input type="text" id="studentSearch" placeholder="Masukkan nama siswa...">
+      </div>
+      <div id="searchResults" class="search-results" style="max-height: 200px; overflow-y: auto; margin-top: 10px;"></div>
+      <div class="input-actions">
+        <button class="btn btn-primary" id="printSelectedCardBtn" disabled>🖨️ Cetak Kartu</button>
+        <button class="btn btn-secondary" id="closePrintModalBtn">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cetak Beberapa Kartu Modal -->
+  <div id="printMultipleModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Pilih Siswa untuk Dicetak</h2>
+        <span class="close" style="cursor:pointer;">&times;</span>
+      </div>
+      <div class="table-container" style="max-height: 50vh; overflow-y: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAllCheckbox"></th>
+              <th>No Peserta</th>
+              <th>Nama</th>
+              <th>Kelas</th>
+            </tr>
+          </thead>
+          <tbody id="multipleSelectTableBody"></tbody>
+        </table>
+      </div>
+      <div class="input-actions" style="margin-top: 20px; justify-content: flex-end;">
+        <button class="btn btn-secondary" id="closePrintMultipleModalBtn">Tutup</button>
+        <button class="btn btn-primary" id="printMultipleCardsBtn" disabled>🖨️ Cetak Kartu Terpilih</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /*
+      APLIKASI KARTU PESERTA UJIAN + DENAH TEMPAT DUDUK
+      - Fitur Denah terintegrasi dengan data siswa
+      - Pilih nomor urut untuk menampilkan kartu di denah
+      - Cetak denah dengan orientasi landscape
+      - Reset tampilan kartu
+      
+      PERBAIKAN:
+      1. Daftar Hadir - Diperbaiki agar preview dan cetak berfungsi normal
+      2. Denah Duduk - Ditambahkan pilihan kelas/ruang, bisa memfilter siswa per kelas
+    */
+
+    /* ======= BACKGROUND DEFAULT ======= */
+    const DEFAULT_CARD_BACKGROUND = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iI2UzZjJmZCIvPjxwYXRoIGQ9Ik0wIDYwMEw4MDAgME0wIDBMODAwIDYwMCIgc3Ryb2tlPSIjYjhkZmZmIiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9IjAuMiIvPjxjaXJjbGUgY3g9IjQwMCIgY3k9IjMwMCIgcj0iMjAwIiBmaWxsPSJub25lIiBzdHJva2U9IiM5MmM1ZmYiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iMC4xIi8+PGNpcmNsZSBjeD0iNDAwIiBjeT0iMzAwIiByPSIxNTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2IzZGVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBvcGFjaXR5PSIwLjEiLz48cG9seWdvbiBwb2ludHM9IjAsMCA4MDAsNjAwIDgwMCwwIDAsNjAwIiBmaWxsPSIjYzBlNWZmIiBmaWxsLW9wYWNpdHk9IjAuMDgiLz48L3N2Zz4=';
+
+    /* ======= APLIKASI UTAMA ======= */
+    const SMKApps = {
+      data: {
+        students: [],
+        school: {
+          yayasan: 'YAYASAN ASH SHIDIQI MATARAM BARU',
+          sekolah: 'MA. ASH SHIDIQI RAJABASA BARU',
+          alamat: 'SRI REJO AGUNG',
+          kepalaSekolah: 'RINI ARDOLA,M.Pd.',
+          logo: null,
+          ttdKepalaSekolah: null,
+          jenisUjian: { 
+            uh: true, 
+            pts: false, 
+            pas: false, 
+            luam: false,
+            uam: false
+          }
+        },
+        cardBackground: DEFAULT_CARD_BACKGROUND,
+        currentEditIndex: -1,
+        currentFotoIndex: -1,
+        selectedStudentIndex: -1,
+        selectedStudentsForPrinting: [],
+        
+        // Data denah per kelas
+        denahData: {},
+        denahKelasTerpilih: ''
+      },
+
+      init: function () {
+        this.loadFromStorage();
+        if (!this.data.cardBackground) {
+          this.data.cardBackground = DEFAULT_CARD_BACKGROUND;
+        }
+        this.setupEventListeners();
+        this.loadPage('beranda');
+      },
+
+      setupEventListeners: function () {
+        document.querySelectorAll('.menu-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const page = btn.getAttribute('data-page');
+            this.loadPage(page);
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+          });
+        });
+
+        document.addEventListener('click', (e) => {
+          if (e.target.classList.contains('close')) {
+            this.closeModal('editModal');
+            this.closeModal('uploadFotoModal');
+            this.closeModal('printCardModal');
+            this.closeModal('printMultipleModal');
+          }
+        });
+
+        window.addEventListener('click', (e) => {
+          if (e.target.id === 'editModal') {
+            this.closeModal('editModal');
+          }
+          if (e.target.id === 'uploadFotoModal') {
+            this.closeModal('uploadFotoModal');
+          }
+          if (e.target.id === 'printCardModal') {
+            this.closeModal('printCardModal');
+          }
+          if (e.target.id === 'printMultipleModal') {
+            this.closeModal('printMultipleModal');
+          }
+        });
+      },
+
+      loadPage: function (page) {
+        const content = document.getElementById('content');
+        switch (page) {
+          case 'beranda':
+            content.innerHTML = this.getBerandaPage();
+            break;
+          case 'identitas':
+            content.innerHTML = this.getIdentitasPage();
+            setTimeout(() => this.setupIdentitasPage(), 100);
+            break;
+          case 'input-siswa':
+            content.innerHTML = this.getInputSiswaPage();
+            setTimeout(() => this.setupInputSiswaPage(), 100);
+            break;
+          case 'kartu-ujian':
+            content.innerHTML = this.getKartuUjianPage();
+            setTimeout(() => this.setupKartuUjianPage(), 100);
+            break;
+          case 'daftar-hadir':
+            content.innerHTML = this.getDaftarHadirPage();
+            setTimeout(() => this.setupDaftarHadirPage(), 100);
+            break;
+          case 'denah':
+            content.innerHTML = this.getDenahPage();
+            setTimeout(() => this.setupDenahPage(), 100);
+            break;
+          case 'pengaturan':
+            content.innerHTML = this.getPengaturanPage();
+            setTimeout(() => this.setupPengaturanPage(), 100);
+            break;
+          default:
+            content.innerHTML = '<h1>Halaman Tidak Ditemukan</h1>';
+        }
+      },
+
+      /* ---------- PAGE TEMPLATES ---------- */
+      getBerandaPage: function () {
+        return `
+          <div class="content-container">
+            <h1>Selamat Datang di Aplikasi Kartu Peserta Ujian</h1>
+            <p>Silakan pilih menu dari panel sebelah kiri untuk memulai.</p>
+            <div style="margin-top: 30px;">
+              <h2>Fitur Utama Aplikasi</h2>
+              <ul style="line-height:1.8; padding-left:20px;">
+                <li>Manajemen Identitas Sekolah</li>
+                <li>Input Data Siswa Manual</li>
+                <li>Upload Foto Siswa per Individu</li>
+                <li>Pembuatan Kartu Ujian dengan background default</li>
+                <li>Titik dua (:) pada identitas kartu lurus rapi</li>
+                <li>Nama Kepala Sekolah tampil di semua kartu</li>
+                <li>Pembuatan Daftar Hadir Ujian</li>
+                <li>Tanda tangan kepala sekolah mengikuti panjang tabel</li>
+                <li>Cetak Kartu Perorangan</li>
+                <li>Cetak Kartu untuk Beberapa Siswa</li>
+                <li>Jenis Ujian: UH, PTS, PAS, LUAM, UAM</li>
+                <li><strong>Denah Tempat Duduk 36 Peserta per Kelas</strong> - Filter berdasarkan kelas/ruang</li>
+              </ul>
+            </div>
+          </div>
+        `;
+      },
+
+      getIdentitasPage: function () {
+        const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="max-width:150px; max-height:150px; border:1px solid #ddd; border-radius:4px;">` : '';
+        const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="max-width:200px; max-height:100px; border:1px solid #ddd; border-radius:4px;">` : '';
+
+        return `
+          <div class="content-container">
+            <h1>Identitas Lembaga</h1>
+            
+            <div class="identitas-grid">
+              <div class="identitas-section">
+                <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"></path></svg>Identitas Sekolah</h3>
+                <div class="form-group"><label for="yayasan">Nama Yayasan</label><input type="text" id="yayasan" value="${this.data.school.yayasan}"></div>
+                <div class="form-group"><label for="sekolah">Nama Lembaga</label><input type="text" id="sekolah" value="${this.data.school.sekolah}"></div>
+                <div class="form-group"><label for="kepalaSekolah">Nama Kepala Sekolah</label><input type="text" id="kepalaSekolah" value="${this.data.school.kepalaSekolah}"></div>
+                <div class="form-group"><label for="alamat">Alamat Lengkap</label><textarea id="alamat" rows="3">${this.data.school.alamat}</textarea></div>
+              </div>
+              
+              <div class="identitas-section">
+                <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg>Logo Sekolah</h3>
+                <div class="identitas-logo-container">
+                  <div class="identitas-logo-preview">${logoHtml || '<span style="color:#999;">Logo belum diunggah</span>'}</div>
+                  <input type="file" id="logoInput" accept="image/*" style="width:200px;">
+                </div>
+              </div>
+              
+              <div class="identitas-section">
+                <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Tanda Tangan Kepala Sekolah</h3>
+                <div class="identitas-signature-container">
+                  <div class="identitas-signature-preview">${ttdHtml || '<span style="color:#999;">Tanda tangan belum diunggah</span>'}</div>
+                  <input type="file" id="ttdInput" accept="image/*" style="width:200px;">
+                </div>
+              </div>
+              
+              <div class="identitas-section">
+                <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2a1 1 0 100-2 2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"></path></svg>Jenis Ujian</h3>
+                <div class="checkbox-group">
+                  <div class="checkbox-item"><input type="checkbox" id="jenisUH" ${this.data.school.jenisUjian.uh ? 'checked' : ''}><label for="jenisUH">Ulangan Harian (UH)</label></div>
+                  <div class="checkbox-item"><input type="checkbox" id="jenisPTS" ${this.data.school.jenisUjian.pts ? 'checked' : ''}><label for="jenisPTS">Penilaian Tengah Semester (PTS)</label></div>
+                  <div class="checkbox-item"><input type="checkbox" id="jenisPAS" ${this.data.school.jenisUjian.pas ? 'checked' : ''}><label for="jenisPAS">Penilaian Akhir Sekolah (PAS)</label></div>
+                  <div class="checkbox-item"><input type="checkbox" id="jenisLUAM" ${this.data.school.jenisUjian.luam ? 'checked' : ''}><label for="jenisLUAM">Latihan Ujian Akhir Madrasah (LUAM)</label></div>
+                  <div class="checkbox-item"><input type="checkbox" id="jenisUAM" ${this.data.school.jenisUjian.uam ? 'checked' : ''}><label for="jenisUAM">Ujian Akhir Madrasah (UAM)</label></div>
+                </div>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="saveIdentitasBtn">💾 Simpan Identitas</button>
+          </div>
+        `;
+      },
+
+      getInputSiswaPage: function () {
+        return `
+          <div class="content-container">
+            <h1>Data Siswa</h1>
+            
+            <div class="input-siswa-form">
+              <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>Tambah Siswa Baru</h3>
+              <div class="form-row">
+                <div class="form-col"><label for="noPeserta">No Peserta</label><input type="text" id="noPeserta" placeholder="Contoh: 12.08.07.1001.0001-8"></div>
+                <div class="form-col"><label for="nama">Nama Siswa</label><input type="text" id="nama" placeholder="Masukkan nama lengkap"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-col"><label for="kelas">Kelas</label><input type="text" id="kelas" placeholder="Contoh: X (SEPULUH)"></div>
+                <div class="form-col"><label for="ttl">Tempat Tanggal Lahir</label><input type="text" id="ttl" placeholder="Contoh: Jakarta, 1 Januari 2008"></div>
+              </div>
+              <div class="form-actions">
+                <button class="btn btn-success" id="tambahSiswaBtn">➕ Tambah Siswa</button>
+                <button class="btn btn-info" id="resetFormBtn">🔄 Reset Form</button>
+              </div>
+            </div>
+
+            <div class="input-siswa-form" style="margin-top: 20px;">
+              <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>Daftar Siswa (${this.data.students.length} siswa)</h3>
+              <div class="student-search-container"><input type="text" id="searchInput" placeholder="Cari siswa berdasarkan nama, kelas, atau no peserta..."></div>
+              <div class="table-container">
+                <table>
+                  <thead><tr><th>No</th><th>No Peserta</th><th>Nama</th><th>Kelas</th><th>Tempat Lahir</th><th>Foto</th><th>Aksi</th></tr></thead>
+                  <tbody id="studentTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      getKartuUjianPage: function () {
+        const bgHtml = this.data.cardBackground ? 
+          `<img src="${this.data.cardBackground}" style="max-width:200px; border:1px solid #ddd; border-radius:4px;">` : 
+          '<p style="color:#666;">Background default terpasang</p>';
+        
+        return `
+          <div class="content-container">
+            <h1>Kartu Ujian</h1>
+            <div style="display:flex; flex-wrap:wrap; gap:20px;">
+              <div style="flex:1; min-width:300px;">
+                <h2>Pengaturan Kartu</h2>
+                <div class="form-group">
+                  <label for="bgUpload">Upload Background Kartu (Opsional)</label>
+                  <input type="file" id="bgUpload" accept="image/*">
+                  <p style="margin-top:5px; font-size:0.8rem; color:#666;"><strong>Background default sudah terpasang.</strong> Upload di sini jika ingin mengganti.</p>
+                  <div id="bgPreview" style="margin-top:10px;"><strong>Background saat ini:</strong><br>${bgHtml}</div>
+                </div>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+                  <button class="btn btn-info" id="previewCardsBtn">👁️ Preview Kartu</button>
+                  <button class="btn btn-primary" id="printCardsBtn">🖨️ Cetak Semua</button>
+                  <button class="btn btn-warning" id="generatePDFBtn">💾 Generate PDF</button>
+                  <button class="btn btn-secondary btn-sm" id="openPrintCardModalBtn">🖨️ Cetak Perorangan</button>
+                  <button class="btn btn-info btn-sm" id="openPrintMultipleModalBtn">📋 Cetak Beberapa</button>
+                  <button class="btn btn-danger btn-sm" id="resetBackgroundBtn">🔄 Reset Background</button>
+                </div>
+              </div>
+
+              <div style="flex:2; min-width:300px;">
+                <h2>Preview Kartu</h2>
+                <div id="cardPreviewContainer" class="card-preview-container"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      /* ===== HALAMAN DAFTAR HADIR - PERBAIKAN ===== */
+      getDaftarHadirPage: function () {
+        const kelasOptions = [...new Set(this.data.students.map(s => s.kelas))].filter(k => k && k.trim() !== '').map(k => `<option value="${k}">${k}</option>`).join('');
+        return `
+          <div class="content-container">
+            <h1>Daftar Hadir Ujian</h1>
+            <div style="display:flex; flex-wrap:wrap; gap:20px;">
+              <div style="flex:1; min-width:300px;">
+                <h2>Pengaturan Daftar Hadir</h2>
+                <div class="form-group">
+                  <label for="kelasSelect">Pilih Kelas</label>
+                  <select id="kelasSelect">
+                    <option value="">-- Pilih Kelas --</option>
+                    ${kelasOptions}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="mapelInput">Mata Pelajaran</label>
+                  <input type="text" id="mapelInput" placeholder="Contoh: Matematika, Bahasa Indonesia, dll">
+                </div>
+                <div class="form-group">
+                  <label for="hariInput">Hari</label>
+                  <input type="text" id="hariInput" placeholder="Contoh: Senin, 12 Mei 2025">
+                </div>
+                <div class="form-actions">
+                  <button class="btn btn-info" id="previewDaftarHadirBtn">👁️ Preview</button>
+                  <button class="btn btn-primary" id="printDaftarHadirBtn">🖨️ Cetak Daftar Hadir</button>
+                </div>
+                <p style="margin-top:15px; color:#666; font-size:0.9rem;">
+                  <strong>Catatan:</strong> Preview dan cetak akan menampilkan daftar hadir berdasarkan kelas yang dipilih.
+                </p>
+              </div>
+              <div style="flex:2; min-width:300px;">
+                <h2>Preview Daftar Hadir</h2>
+                <div id="daftarHadirPreview" class="daftar-hadir-preview">
+                  <p style="text-align:center; padding:20px;">Silakan pilih kelas dan klik tombol Preview untuk melihat daftar hadir.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      /* ===== HALAMAN DENAH DUDUK - PERBAIKAN: DENGAN PILIHAN KELAS ===== */
+      getDenahPage: function () {
+        // Ambil daftar kelas unik dari data siswa
+        const kelasOptions = [...new Set(this.data.students.map(s => s.kelas))].filter(k => k && k.trim() !== '').map(k => `<option value="${k}">${k}</option>`).join('');
+        
+        return `
+          <div class="content-container">
+            <h1>Denah Tempat Duduk Peserta</h1>
+            
+            <div class="denah-container no-print">
+              <div class="data-panel-denah">
+                <div class="filter-panel">
+                  <div class="filter-item">
+                    <label for="denahKelasSelect">Pilih Kelas / Ruang</label>
+                    <select id="denahKelasSelect" class="form-control">
+                      <option value="">-- Pilih Kelas --</option>
+                      ${kelasOptions}
+                      <option value="_custom">+ Buat Ruang Baru (Kustom)</option>
+                    </select>
+                  </div>
+                  <div class="filter-item" id="customRuangContainer" style="display:none;">
+                    <label for="customRuangInput">Nama Ruang</label>
+                    <input type="text" id="customRuangInput" placeholder="Contoh: Ruang 1, Lab Komputer, dll">
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" id="loadDenahKelasBtn">📋 Tampilkan Denah</button>
+                  </div>
+                </div>
+                
+                <div style="max-height:450px; overflow-y:auto; border:1px solid #999; padding:10px; margin-bottom:20px;">
+                  <h2>Data Peserta untuk Denah</h2>
+                  <p><small>
+                    <span id="denahInfoKelas"></span>
+                    Data dapat diedit manual. Maksimal 36 peserta per denah.
+                  </small></p>
+                  <table class="data-table-denah" id="denahDataTable">
+                    <thead><tr><th>No. Urut</th><th>Nomor Test</th><th>Nama Peserta</th></tr></thead>
+                    <tbody id="denahTableBody"></tbody>
+                  </table>
+                </div>
+                <div class="action-buttons">
+                  <button class="btn btn-info" id="refreshDenahBtn">🔄 Refresh dari Data Siswa</button>
+                  <button class="btn btn-warning" id="resetDenahTableBtn">🗑️ Reset Tabel Denah</button>
+                  <button class="btn btn-secondary" id="clearAllDenahBtn">✖️ Sembunyikan Semua Kartu</button>
+                </div>
+              </div>
+
+              <div class="control-panel-denah">
+                <h2>Kontrol Tampilan Kartu</h2>
+                <div id="denahInfoRuangan" class="info-ruangan">
+                  <span><strong>Kelas/Ruang:</strong> <span id="ruanganTerpilih">Belum dipilih</span></span>
+                  <span><strong>Total Peserta:</strong> <span id="totalPesertaDenah">0</span></span>
+                </div>
+                <p><small>Klik nomor untuk menampilkan/menyembunyikan kartu di denah.</small></p>
+                <div class="controls" id="denahControls"></div>
+                <div class="action-buttons" style="margin-top: 20px;">
+                  <button class="btn btn-danger" id="resetDenahBtn">🔄 Reset Semua Kartu</button>
+                  <button class="btn btn-success" id="printDenahBtn"><strong>🖨️ Cetak Denah (Landscape)</strong></button>
+                </div>
+              </div>
+            </div>
+
+            <hr class="no-print" style="margin: 20px 0;">
+
+            <h2 class="no-print">Denah Tempat Duduk</h2>
+            <div class="grid" id="denahGrid"></div>
+          </div>
+        `;
+      },
+
+      getPengaturanPage: function () {
+        return `
+          <div class="content-container">
+            <h1>Pengaturan</h1>
+            <p>Atur preferensi aplikasi di sini.</p>
+            <div style="margin-top:20px;">
+              <h2>Pengaturan Aplikasi</h2>
+              <div class="form-group">
+                <button class="btn btn-danger" id="clearDataBtn">Hapus Semua Data</button>
+                <p style="color:var(--danger-color); font-size:0.9rem; margin-top:5px;">Peringatan: Tindakan ini akan menghapus semua data siswa dan identitas sekolah yang tersimpan.</p>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      /* ---------- SETUP FUNCTIONS ---------- */
+      setupIdentitasPage: function () {
+        const logoInput = document.getElementById('logoInput');
+        if (logoInput) {
+          logoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                document.querySelector('.identitas-logo-preview').innerHTML = `<img src="${event.target.result}" style="max-width:150px; max-height:150px; border:1px solid #ddd; border-radius:4px;">`;
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        }
+
+        const ttdInput = document.getElementById('ttdInput');
+        if (ttdInput) {
+          ttdInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                document.querySelector('.identitas-signature-preview').innerHTML = `<img src="${event.target.result}" style="max-width:200px; max-height:100px; border:1px solid #ddd; border-radius:4px;">`;
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        }
+
+        const saveBtn = document.getElementById('saveIdentitasBtn');
+        if (saveBtn) saveBtn.addEventListener('click', () => this.saveIdentitas());
+      },
+
+      setupInputSiswaPage: function () {
+        this.populateStudentTable(this.data.students);
+
+        const tambahBtn = document.getElementById('tambahSiswaBtn');
+        if (tambahBtn) tambahBtn.addEventListener('click', () => this.tambahSiswaManual());
+
+        const resetBtn = document.getElementById('resetFormBtn');
+        if (resetBtn) resetBtn.addEventListener('click', () => this.resetFormSiswa());
+
+        const formInputs = ['noPeserta', 'nama', 'kelas', 'ttl'];
+        formInputs.forEach(id => {
+          const input = document.getElementById(id);
+          if (input) {
+            input.addEventListener('keypress', (e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                this.tambahSiswaManual();
+              }
+            });
+          }
+        });
+
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+          searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = this.data.students.filter(s => 
+              s.nama.toLowerCase().includes(term) || 
+              (s.kelas || '').toLowerCase().includes(term) ||
+              (s.noPeserta || '').toLowerCase().includes(term)
+            );
+            this.populateStudentTable(filtered);
+          });
+        }
+
+        this.setupUploadFotoModal();
+      },
+
+      setupKartuUjianPage: function () {
+        const bgUpload = document.getElementById('bgUpload');
+        if (bgUpload) {
+          bgUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                this.data.cardBackground = event.target.result;
+                document.getElementById('bgPreview').innerHTML = `<strong>Background saat ini:</strong><br><img src="${event.target.result}" style="max-width:200px; border:1px solid #ddd; border-radius:4px;">`;
+                this.saveToStorage();
+                this.renderCardPreview();
+                this.showNotification('Background berhasil diganti!', 'success');
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        }
+
+        const resetBgBtn = document.getElementById('resetBackgroundBtn');
+        if (resetBgBtn) {
+          resetBgBtn.addEventListener('click', () => {
+            this.data.cardBackground = DEFAULT_CARD_BACKGROUND;
+            document.getElementById('bgPreview').innerHTML = `<strong>Background saat ini:</strong><br><img src="${DEFAULT_CARD_BACKGROUND}" style="max-width:200px; border:1px solid #ddd; border-radius:4px;">`;
+            this.saveToStorage();
+            this.renderCardPreview();
+            this.showNotification('Background dikembalikan ke default!', 'success');
+          });
+        }
+
+        const previewBtn = document.getElementById('previewCardsBtn');
+        if (previewBtn) previewBtn.addEventListener('click', () => this.renderCardPreview());
+
+        const printBtn = document.getElementById('printCardsBtn');
+        if (printBtn) printBtn.addEventListener('click', () => this.printCards());
+
+        const pdfBtn = document.getElementById('generatePDFBtn');
+        if (pdfBtn) pdfBtn.addEventListener('click', () => this.generatePDF());
+
+        const openPrintCardModalBtn = document.getElementById('openPrintCardModalBtn');
+        if (openPrintCardModalBtn) {
+          openPrintCardModalBtn.addEventListener('click', () => {
+            this.openModal('printCardModal');
+            document.getElementById('studentSearch').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+            document.getElementById('printSelectedCardBtn').disabled = true;
+          });
+        }
+
+        const openPrintMultipleModalBtn = document.getElementById('openPrintMultipleModalBtn');
+        if (openPrintMultipleModalBtn) {
+          openPrintMultipleModalBtn.addEventListener('click', () => this.openPrintMultipleModal());
+        }
+
+        this.setupPrintCardModal();
+        this.setupPrintMultipleModal();
+        this.renderCardPreview();
+      },
+
+      /* ===== DAFTAR HADIR - PERBAIKAN ===== */
+      setupDaftarHadirPage: function () {
+        const previewBtn = document.getElementById('previewDaftarHadirBtn');
+        if (previewBtn) previewBtn.addEventListener('click', () => this.previewDaftarHadir());
+
+        const printBtn = document.getElementById('printDaftarHadirBtn');
+        if (printBtn) printBtn.addEventListener('click', () => this.printDaftarHadir());
+      },
+
+      /* ===== DENAH DUDUK - PERBAIKAN ===== */
+      setupDenahPage: function () {
+        const grid = document.getElementById('denahGrid');
+        const controls = document.getElementById('denahControls');
+        const tableBody = document.getElementById('denahTableBody');
+        
+        // Hapus konten sebelumnya
+        grid.innerHTML = '';
+        controls.innerHTML = '';
+        
+        // Inisialisasi event listener untuk filter kelas
+        const kelasSelect = document.getElementById('denahKelasSelect');
+        const customRuangContainer = document.getElementById('customRuangContainer');
+        const customRuangInput = document.getElementById('customRuangInput');
+        const loadBtn = document.getElementById('loadDenahKelasBtn');
+        
+        if (kelasSelect) {
+          kelasSelect.addEventListener('change', () => {
+            if (kelasSelect.value === '_custom') {
+              customRuangContainer.style.display = 'block';
+            } else {
+              customRuangContainer.style.display = 'none';
+            }
+          });
+        }
+        
+        if (loadBtn) {
+          loadBtn.addEventListener('click', () => {
+            let kelasTerpilih = kelasSelect.value;
+            
+            if (kelasTerpilih === '_custom') {
+              kelasTerpilih = customRuangInput.value.trim();
+              if (!kelasTerpilih) {
+                this.showNotification('Silakan masukkan nama ruang!', 'error');
+                return;
+              }
+            }
+            
+            if (!kelasTerpilih) {
+              this.showNotification('Silakan pilih kelas atau buat ruang baru!', 'error');
+              return;
+            }
+            
+            this.data.denahKelasTerpilih = kelasTerpilih;
+            this.loadDenahForKelas(kelasTerpilih);
+          });
+        }
+        
+        // Buat grid default (36 kartu)
+        for (let i = 1; i <= 36; i++) {
+          const card = document.createElement("div");
+          card.className = "denah-card";
+          card.id = "denah-card-" + i;
+          card.innerHTML = `
+            <div class="denah-box-top" id="denah-top-${i}">${i}</div>
+            <div class="denah-box-mid" id="denah-noTes-${i}">Nomor Test</div>
+            <div class="denah-box-bottom" id="denah-nama-${i}">Nama Peserta</div>
+          `;
+          grid.appendChild(card);
+          
+          const btn = document.createElement("div");
+          btn.className = "btn-nomor";
+          btn.id = "denah-btn-" + i;
+          btn.textContent = i;
+          btn.onclick = () => {
+            this.toggleDenahCard(i);
+          };
+          controls.appendChild(btn);
+        }
+        
+        // Event listeners lainnya
+        const refreshBtn = document.getElementById('refreshDenahBtn');
+        if (refreshBtn) refreshBtn.addEventListener('click', () => this.refreshDenahFromSiswa());
+        
+        const resetTableBtn = document.getElementById('resetDenahTableBtn');
+        if (resetTableBtn) resetTableBtn.addEventListener('click', () => this.resetDenahTable());
+        
+        const clearAllBtn = document.getElementById('clearAllDenahBtn');
+        if (clearAllBtn) clearAllBtn.addEventListener('click', () => this.resetAllDenahCards());
+        
+        const resetDenahBtn = document.getElementById('resetDenahBtn');
+        if (resetDenahBtn) resetDenahBtn.addEventListener('click', () => this.resetAllDenahCards());
+        
+        const printDenahBtn = document.getElementById('printDenahBtn');
+        if (printDenahBtn) printDenahBtn.addEventListener('click', () => window.print());
+        
+        // Paste event
+        const denahTable = document.getElementById('denahDataTable');
+        if (denahTable) {
+          denahTable.addEventListener("paste", (e) => {
+            this.handleDenahPaste(e);
+          });
+        }
+      },
+
+      loadDenahForKelas: function (kelas) {
+        // Update info ruangan
+        document.getElementById('ruanganTerpilih').textContent = kelas;
+        
+        // Filter siswa berdasarkan kelas
+        const siswaKelas = this.data.students.filter(s => s.kelas === kelas);
+        document.getElementById('totalPesertaDenah').textContent = siswaKelas.length;
+        
+        // Inisialisasi data denah untuk kelas ini
+        if (!this.data.denahData[kelas]) {
+          this.data.denahData[kelas] = {};
+        }
+        
+        const denahKelas = this.data.denahData[kelas];
+        
+        // Isi data dari siswa (max 36)
+        for (let i = 1; i <= 36; i++) {
+          if (i <= siswaKelas.length) {
+            denahKelas[i] = {
+              noTes: siswaKelas[i-1].noPeserta || '',
+              nama: siswaKelas[i-1].nama || ''
+            };
+          } else if (!denahKelas[i]) {
+            denahKelas[i] = { noTes: '', nama: '' };
+          }
+        }
+        
+        // Update tabel
+        this.createDenahTableRows(kelas);
+        this.showNotification(`Denah untuk kelas "${kelas}" dimuat!`, 'success');
+      },
+
+      createDenahTableRows: function (kelas) {
+        const tableBody = document.getElementById('denahTableBody');
+        if (!tableBody) return;
+        
+        tableBody.innerHTML = "";
+        const denahKelas = this.data.denahData[kelas] || {};
+        
+        for (let i = 1; i <= 36; i++) {
+          let data = denahKelas[i] || { noTes: '', nama: '' };
+          let row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${i}</td>
+            <td contenteditable="true" onblur="SMKApps.updateDenahData('${kelas}', ${i}, 'noTes', this.textContent)">${data.noTes || ''}</td>
+            <td contenteditable="true" onblur="SMKApps.updateDenahData('${kelas}', ${i}, 'nama', this.textContent)">${data.nama || ''}</td>
+          `;
+          tableBody.appendChild(row);
+        }
+      },
+
+      updateDenahData: function (kelas, no, field, value) {
+        if (!this.data.denahData[kelas]) {
+          this.data.denahData[kelas] = {};
+        }
+        if (!this.data.denahData[kelas][no]) {
+          this.data.denahData[kelas][no] = { noTes: '', nama: '' };
+        }
+        this.data.denahData[kelas][no][field] = value.trim();
+        
+        // Update tampilan kartu jika kelas sedang aktif
+        if (this.data.denahKelasTerpilih === kelas) {
+          const card = document.getElementById(`denah-card-${no}`);
+          if (card && card.classList.contains('visible')) {
+            if (field === 'noTes') {
+              document.getElementById(`denah-noTes-${no}`).textContent = value.trim() || 'Nomor Test';
+            } else {
+              document.getElementById(`denah-nama-${no}`).textContent = value.trim() || 'Nama Peserta';
+            }
+          }
+        }
+      },
+
+      toggleDenahCard: function (no) {
+        const card = document.getElementById(`denah-card-${no}`);
+        const btn = document.getElementById(`denah-btn-${no}`);
+        const isActive = card.classList.contains("visible");
+        
+        if (isActive) {
+          card.classList.remove("visible");
+          btn.classList.remove("active");
+        } else {
+          card.classList.add("visible");
+          btn.classList.add("active");
+          
+          // Update konten kartu dari data denah kelas terpilih
+          const kelas = this.data.denahKelasTerpilih;
+          if (kelas && this.data.denahData[kelas] && this.data.denahData[kelas][no]) {
+            document.getElementById(`denah-noTes-${no}`).textContent = this.data.denahData[kelas][no].noTes || "Nomor Test";
+            document.getElementById(`denah-nama-${no}`).textContent = this.data.denahData[kelas][no].nama || "Nama Peserta";
+          }
+        }
+      },
+
+      refreshDenahFromSiswa: function () {
+        const kelas = this.data.denahKelasTerpilih;
+        if (!kelas) {
+          this.showNotification('Silakan pilih kelas terlebih dahulu!', 'error');
+          return;
+        }
+        
+        this.loadDenahForKelas(kelas);
+      },
+
+      resetDenahTable: function () {
+        const kelas = this.data.denahKelasTerpilih;
+        if (!kelas) {
+          this.showNotification('Silakan pilih kelas terlebih dahulu!', 'error');
+          return;
+        }
+        
+        if (confirm(`Apakah Anda yakin ingin mengosongkan semua data denah untuk kelas "${kelas}"?`)) {
+          this.data.denahData[kelas] = {};
+          this.createDenahTableRows(kelas);
+          this.showNotification(`Tabel denah untuk kelas "${kelas}" dikosongkan!`, 'info');
+        }
+      },
+
+      resetAllDenahCards: function () {
+        for (let j = 1; j <= 36; j++) {
+          const card = document.getElementById(`denah-card-${j}`);
+          if (card) {
+            card.classList.remove("visible");
+            const btn = document.getElementById(`denah-btn-${j}`);
+            if (btn) btn.classList.remove("active");
+          }
+        }
+      },
+
+      handleDenahPaste: function (e) {
+        e.preventDefault();
+        const kelas = this.data.denahKelasTerpilih;
+        if (!kelas) {
+          this.showNotification('Silakan pilih kelas terlebih dahulu!', 'error');
+          return;
+        }
+        
+        let text = (e.clipboardData || window.clipboardData).getData("text");
+        let rows = text.trim().split(/\r?\n/);
+        const tableBody = document.getElementById('denahTableBody');
+        tableBody.innerHTML = "";
+        
+        if (!this.data.denahData[kelas]) {
+          this.data.denahData[kelas] = {};
+        }
+        
+        rows.forEach((rowText, index) => {
+          if (index >= 36) return;
+          let cols = rowText.split(/\t/);
+          let newRow = document.createElement("tr");
+          
+          let cellNo = document.createElement("td");
+          cellNo.textContent = index + 1;
+          newRow.appendChild(cellNo);
+
+          let cellTes = document.createElement("td");
+          cellTes.contentEditable = "true";
+          cellTes.textContent = cols[0] || "";
+          cellTes.onblur = (e) => this.updateDenahData(kelas, index+1, 'noTes', e.target.textContent);
+          newRow.appendChild(cellTes);
+          
+          let cellNama = document.createElement("td");
+          cellNama.contentEditable = "true";
+          cellNama.textContent = cols[1] || "";
+          cellNama.onblur = (e) => this.updateDenahData(kelas, index+1, 'nama', e.target.textContent);
+          newRow.appendChild(cellNama);
+          
+          tableBody.appendChild(newRow);
+          
+          if (!this.data.denahData[kelas][index+1]) {
+            this.data.denahData[kelas][index+1] = {};
+          }
+          this.data.denahData[kelas][index+1].noTes = cols[0] || "";
+          this.data.denahData[kelas][index+1].nama = cols[1] || "";
+        });
+      },
+
+      setupPengaturanPage: function () {
+        const clearBtn = document.getElementById('clearDataBtn');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', () => {
+            if (confirm('Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.')) {
+              localStorage.clear();
+              this.data.students = [];
+              this.data.school = {
+                yayasan: 'YAYASAN ASH SHIDIQI MATARAM BARU',
+                sekolah: 'MA. ASH SHIDIQI RAJABASA BARU',
+                alamat: 'SRI REJO AGUNG',
+                kepalaSekolah: 'RINI ARDOLA,M.Pd.',
+                logo: null,
+                ttdKepalaSekolah: null,
+                jenisUjian: { uh: true, pts: false, pas: false, luam: false, uam: false }
+              };
+              this.data.cardBackground = DEFAULT_CARD_BACKGROUND;
+              this.data.denahData = {};
+              this.showNotification('Semua data telah dihapus', 'success');
+              this.loadPage('beranda');
+            }
+          });
+        }
+      },
+
+      setupUploadFotoModal: function () {
+        const modal = document.getElementById('uploadFotoModal');
+        if (!modal) return;
+
+        const closeBtn = document.getElementById('closeUploadFotoModalBtn');
+        if (closeBtn) closeBtn.addEventListener('click', () => this.closeModal('uploadFotoModal'));
+
+        const fotoInput = document.getElementById('fotoUpload');
+        if (fotoInput) {
+          fotoInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              if (file.size > 2 * 1024 * 1024) {
+                this.showNotification('Ukuran file maksimal 2MB!', 'error');
+                fotoInput.value = '';
+                return;
+              }
+              const reader = new FileReader();
+              reader.onload = (event) => {
+                const preview = document.getElementById('uploadFotoPreview');
+                preview.innerHTML = `<img src="${event.target.result}" style="width:100%; height:100%; object-fit:contain;">`;
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        }
+
+        const saveBtn = document.getElementById('saveFotoBtn');
+        if (saveBtn) saveBtn.addEventListener('click', () => this.saveFotoSiswa());
+      },
+
+      /* ---------- DATA STORAGE ---------- */
+      loadFromStorage: function () {
+        const savedStudents = localStorage.getItem('studentData');
+        if (savedStudents) {
+          try { this.data.students = JSON.parse(savedStudents); }
+          catch (e) { console.error('Error load students', e); this.data.students = []; }
+        } else {
+          this.data.students = [
+{ noPeserta: '12.08.07.1001.0001-8', nama: 'Adi Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 19 Agustus 2009', photo: null },
+{ noPeserta: '12.08.07.1001.0002-7', nama: 'Aulia Nur Laela', kelas: 'X (SEPULUH)', ttl: 'Sido Mukti, 19 Oktober 2009', photo: null },
+{ noPeserta: '12.08.07.1001.0003-6', nama: 'Cipa Nadia Salma', kelas: 'X (SEPULUH)', ttl: 'Way Kanan, 11 Juli 2010', photo: null },
+{ noPeserta: '12.08.07.1001.0004-5', nama: 'Dedi Irawan', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 08 Desember 2008', photo: null },
+{ noPeserta: '12.08.07.1001.0005-4', nama: 'Farel Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 17 November 2009', photo: null },
+{ noPeserta: '12.08.07.1001.0006-3', nama: 'Ismawati Dwi Anggraini', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 03 April 2010', photo: null },
+{ noPeserta: '12.08.07.1001.0007-2', nama: 'Irfan', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 13 Juni 2008', photo: null },
+{ noPeserta: '12.08.07.1001.0008-9', nama: 'Luthfi Hakim', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 11 Desember 2009', photo: null },
+{ noPeserta: '12.08.07.1001.0009-8', nama: 'M. Aditya Prayoga', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 10 April 2010', photo: null },
+{ noPeserta: '12.08.07.1001.0010-7', nama: 'M. Al Imron', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 24 Februari 2009', photo: null },
+{ noPeserta: '12.08.07.1001.0011-6', nama: 'M. Haris Setiawan', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 08 Agustus 2009', photo: null },
+{ noPeserta: '12.08.07.1001.0012-5', nama: 'M. Riki Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 11 Mei 2007', photo: null },
+{ noPeserta: '12.08.07.1001.0013-4', nama: 'Raditia Danu Pratama', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 26 Mei 2010', photo: null },
+{ noPeserta: '12.08.07.1001.0014-3', nama: 'Ridho Firmansyah', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 19 Maret 2010', photo: null },
+{ noPeserta: '12.08.07.1001.0015-2', nama: 'Rizki Cahyo Sugeng Wibowo', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 24 September 2009', photo: null },
+{ noPeserta: '12.08.07.1001.0016-9', nama: 'Rizal Abdul Haq', kelas: 'X (SEPULUH)', ttl: 'Braja Mas, 28 April 2010', photo: null },
+{ noPeserta: '12.08.07.1001.0017-8', nama: 'Safa Aulia Putri', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 03 Mei 2010', photo: null },
+{ noPeserta: '12.08.07.1001.0018-7', nama: 'Shinta Sastya Wati', kelas: 'X (SEPULUH)', ttl: 'Way Jepara, 03 Januari 2010', photo: null },
+{ noPeserta: '12.08.07.1001.0019-6', nama: 'Tiyas Farida Sari', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 23 September 2009', photo: null },
+{ noPeserta: '12.08.07.1001.0020-5', nama: 'Nayla Himmatul Ulya', kelas: 'X (SEPULUH)', ttl: 'Brawijaya, 04 Juli 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0001-8', nama: 'Ahmad Iqbal', kelas: 'XI (SEBELAS)', ttl: 'Jepara, 05 September 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0002-7', nama: 'Ahmad Ramadhani', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 15 September 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0003-6', nama: 'Argi Setiyawan', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 02 Mei 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0004-5', nama: "Aisyah Lu'lu'ul Husna", kelas: 'XI (SEBELAS)', ttl: 'Metro, 21 November 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0005-4', nama: 'Anggun Puspita Anggraini', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 24 April 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0006-3', nama: 'Dafa', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 31 Oktober 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0007-2', nama: 'Devita Anjani', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 22 Mei 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0008-9', nama: 'Ferdi Kurniawan', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 29 Juli 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0009-8', nama: 'Fitra Afriza', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 09 September 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0010-7', nama: 'Indah Kasturi Kusuma Putri', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 28 Februari 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0011-6', nama: 'Lefiyana Juwita', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 20 Juli 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0012-5', nama: 'Marchfel Firdyansah', kelas: 'XI (SEBELAS)', ttl: 'Sriwangi, 07 Maret 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0013-4', nama: 'Melinda Kusuma Dewi', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 28 Mei 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0014-3', nama: 'Muhamad Yudha Rizky Iftori', kelas: 'XI (SEBELAS)', ttl: 'Karawang, 27 April 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0015-2', nama: 'Mohamad Ibnu Rosid', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 07 April 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0016-9', nama: 'Muhammad Bisma Mega Nanda', kelas: 'XI (SEBELAS)', ttl: 'Way Areng, 19 Juli 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0017-8', nama: 'Muhammad Rizki Ramadhani', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 14 September 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0018-7', nama: 'Muhammad Fiki Darmawan', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 29 Agustus 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0019-6', nama: 'M. Badru Muwafaq', kelas: 'XI (SEBELAS)', ttl: 'Labuhan Ratu IV, 01 Oktober 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0020-5', nama: 'Rima', kelas: 'XI (SEBELAS)', ttl: 'Gunung Pasir Jaya, 06 April 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0021-4', nama: 'Rima Ulvania', kelas: 'XI (SEBELAS)', ttl: 'Kebon Damar, 27 Juni 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0022-3', nama: 'Riski Munandar', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 11 Juli 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0023-2', nama: 'Siti Miftakhul Makmuroh', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 04 Juni 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0024-9', nama: 'Tomi Jatmiko', kelas: 'XI (SEBELAS)', ttl: 'Banyuwangi, 29 September 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0025-8', nama: 'Tia Dwi Saputri', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 01 September 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0026-7', nama: 'Wafiq Khariri', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 04 Juli 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0027-6', nama: 'Yeni Winarni', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 26 Januari 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0028-5', nama: 'Ainun Nadhiroh', kelas: 'XI (SEBELAS)', ttl: 'Metro, 26 April 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0029-4', nama: 'Dwi Fatimah', kelas: 'XI (SEBELAS)', ttl: 'Sidorejo, 04 Juli 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0030-3', nama: 'M. Akbar Panjalu', kelas: 'XI (SEBELAS)', ttl: 'Brawijaya, 24 Juli 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0031-2', nama: 'Habibatus Zakia', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 01 Maret 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0032-9', nama: 'Angga Dwi Saputra', kelas: 'XI (SEBELAS)', ttl: 'Lampung Timur, 19 November 2009', photo: null },
+{ noPeserta: '12-08-07-1001-0001-8', nama: 'Ahmad Maulana', kelas: 'XII (DUA BELAS)', ttl: 'Metro, 29 Desember 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0002-7', nama: 'Aliya Ayu Marlina', kelas: 'XII (DUA BELAS)', ttl: 'Metro, 31 Maret 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0003-6', nama: 'Aprilia Winanti', kelas: 'XII (DUA BELAS)', ttl: 'Labuhan Ratu II, 13 April 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0004-5', nama: 'Bagas Setiawan', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 10 Januari 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0005-4', nama: 'Bagus Akbar Rani', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 09 Juni 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0006-3', nama: 'Binti Lutfiyah Zakiyah', kelas: 'XII (DUA BELAS)', ttl: 'Sribhawono, 30 Januari 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0007-2', nama: 'Cantika Dwi Jayanti', kelas: 'XII (DUA BELAS)', ttl: 'Mataram Baru, 14 April 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0008-9', nama: 'Denis Prasetyo', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 08 Maret 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0009-8', nama: 'Disky Ramadani', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 08 Oktober 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0010-7', nama: 'Ega Saputra', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 21 Oktober 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0011-6', nama: 'Eka Putri Febriani', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 20 Februari 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0012-5', nama: 'Endra Saputra', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 25 Juli 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0013-4', nama: 'Farid Ahmad Faisal', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 29 Oktober 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0014-3', nama: 'Maulana Dava', kelas: 'XII (DUA BELAS)', ttl: 'Braja Fajar, 01 Januari 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0015-2', nama: 'Maya Safitri', kelas: 'XII (DUA BELAS)', ttl: 'Braja Fajar, 22 Maret 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0016-9', nama: 'Miranti', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 11 Juni 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0017-8', nama: 'Muhammad Aldino Ama Rasya', kelas: 'XII (DUA BELAS)', ttl: 'Way Jepara, 18 September 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0018-7', nama: 'Muhammad Ahya', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 21 Januari 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0019-6', nama: 'Muhammad Dendi Firmanto', kelas: 'XII (DUA BELAS)', ttl: 'Braja Fajar, 16 Agustus 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0020-5', nama: 'Muhammad Misbahul Munir', kelas: 'XII (DUA BELAS)', ttl: 'Kebon Damar, 19 Februari 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0021-4', nama: 'Muhamad Rejaki', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 09 November 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0022-3', nama: 'Mohammad Sulton Al Azhar', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 08 November 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0023-2', nama: 'Nanda Ayu Ningsih', kelas: 'XII (DUA BELAS)', ttl: 'Mandala Sari, 16 Mei 2006', photo: null },
+{ noPeserta: '12-08-07-1001-0024-9', nama: 'Nayla Amin', kelas: 'XII (DUA BELAS)', ttl: 'Braja Fajar, 28 November 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0025-8', nama: 'Rahma Wulandari', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 08 Oktober 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0026-7', nama: 'Rendi Hidayat', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 24 Februari 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0027-6', nama: 'Sahal Wahyudin', kelas: 'XII (DUA BELAS)', ttl: 'Sriwangi, 26 April 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0028-5', nama: 'Shera Aurelia Sariana', kelas: 'XII (DUA BELAS)', ttl: 'Mataram Baru, 07 Agustus 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0029-4', nama: 'Sulaiman Nul Jamal', kelas: 'XII (DUA BELAS)', ttl: 'Kebumen, 06 Oktober 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0030-3', nama: 'Tiara Saputri', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 19 Desember 2007', photo: null },
+{ noPeserta: '12-08-07-1001-0031-2', nama: 'Wahyuni Naila Ngilma', kelas: 'XII (DUA BELAS)', ttl: 'Kebon Damar, 16 Juli 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0032-9', nama: 'Laura Meliyana Dewi', kelas: 'XII (DUA BELAS)', ttl: 'Braja Indah, 01 Mei 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0033-8', nama: 'Eko Nuzulul Misbah', kelas: 'XII (DUA BELAS)', ttl: 'Sidorejo, 12 Mei 2008', photo: null },
+{ noPeserta: '12-08-07-1001-0034-7', nama: 'Muhammad Khoirur Rozikin', kelas: 'XII (DUA BELAS)', ttl: 'Sumber Agung, 24 Januari 2007', photo: null },
+          ];
+          this.saveToStorage();
+        }
+
+        const savedSchool = localStorage.getItem('schoolData');
+        if (savedSchool) {
+          try {
+            this.data.school = JSON.parse(savedSchool);
+            if (this.data.school.jenisUjian && this.data.school.jenisUjian.us !== undefined) {
+              this.data.school.jenisUjian.luam = this.data.school.jenisUjian.us;
+              delete this.data.school.jenisUjian.us;
+            }
+            if (!this.data.school.jenisUjian) this.data.school.jenisUjian = { uh: true, pts: false, pas: false, luam: false, uam: false };
+            if (!this.data.school.jenisUjian.luam) this.data.school.jenisUjian.luam = false;
+            if (!this.data.school.jenisUjian.uam) this.data.school.jenisUjian.uam = false;
+            if (!this.data.school.ttdKepalaSekolah) this.data.school.ttdKepalaSekolah = null;
+          } catch (e) { console.error('Error load school', e); }
+        }
+
+        const savedBg = localStorage.getItem('cardBackground');
+        if (savedBg) {
+          this.data.cardBackground = savedBg;
+        } else {
+          this.data.cardBackground = DEFAULT_CARD_BACKGROUND;
+        }
+        
+        const savedDenah = localStorage.getItem('denahData');
+        if (savedDenah) {
+          try { this.data.denahData = JSON.parse(savedDenah); }
+          catch (e) { console.error('Error load denah', e); this.data.denahData = {}; }
+        } else {
+          this.data.denahData = {};
+        }
+      },
+
+      saveToStorage: function () {
+        try {
+          localStorage.setItem('studentData', JSON.stringify(this.data.students));
+          localStorage.setItem('schoolData', JSON.stringify(this.data.school));
+          if (this.data.cardBackground) localStorage.setItem('cardBackground', this.data.cardBackground);
+          localStorage.setItem('denahData', JSON.stringify(this.data.denahData));
+        } catch (e) {
+          console.error('Error saving', e);
+          this.showNotification('Gagal menyimpan data ke penyimpanan lokal', 'error');
+        }
+      },
+
+      /* ---------- UI HELPERS ---------- */
+      showNotification: function (message, type = 'info') {
+        const n = document.getElementById('notification');
+        n.innerHTML = `<span>${message}</span>`;
+        n.className = `notification ${type} show`;
+        setTimeout(() => { n.classList.remove('show'); }, 3000);
+      },
+
+      openModal: function(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.style.display = 'flex';
+          setTimeout(() => modal.classList.add('show'), 10);
+        }
+      },
+
+      closeModal: function(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+          modal.classList.remove('show');
+          setTimeout(() => modal.style.display = 'none', 300);
+        }
+      },
+
+      /* ---------- FUNGSI SISWA ---------- */
+      tambahSiswaManual: function () {
+        const noPeserta = document.getElementById('noPeserta').value.trim();
+        const nama = document.getElementById('nama').value.trim();
+        const kelas = document.getElementById('kelas').value.trim();
+        const ttl = document.getElementById('ttl').value.trim();
+
+        if (!noPeserta || !nama || !kelas) {
+          this.showNotification('No Peserta, Nama, dan Kelas harus diisi!', 'error');
+          return;
+        }
+
+        const isDuplicate = this.data.students.some(s => s.noPeserta === noPeserta);
+        if (isDuplicate) {
+          this.showNotification(`No Peserta ${noPeserta} sudah terdaftar!`, 'error');
+          return;
+        }
+
+        const siswaBaru = { noPeserta, nama, kelas, ttl, photo: null };
+        this.data.students.push(siswaBaru);
+        this.saveToStorage();
+        
+        this.resetFormSiswa();
+        this.populateStudentTable(this.data.students);
+        document.getElementById('noPeserta').focus();
+        this.showNotification(`Siswa ${nama} berhasil ditambahkan!`, 'success');
+      },
+
+      resetFormSiswa: function () {
+        document.getElementById('noPeserta').value = '';
+        document.getElementById('nama').value = '';
+        document.getElementById('kelas').value = '';
+        document.getElementById('ttl').value = '';
+        document.getElementById('noPeserta').focus();
+      },
+
+      populateStudentTable: function (data) {
+        const tbody = document.getElementById('studentTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        
+        if (data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#666;">Belum ada data siswa. Silakan tambahkan siswa baru.</td></tr>';
+          return;
+        }
+        
+        data.forEach((siswa, index) => {
+          const originalIndex = this.data.students.findIndex(s => s.noPeserta === siswa.noPeserta);
+          const photoStatus = siswa.photo ? '<span style="color:var(--success-color); font-weight:bold;">✓</span>' : '<span style="color:var(--danger-color);">✗</span>';
+          const row = `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${siswa.noPeserta}</td>
+              <td>${siswa.nama}</td>
+              <td>${siswa.kelas}</td>
+              <td>${siswa.ttl || '-'}</td>
+              <td style="text-align:center;">${photoStatus}</td>
+              <td><div class="action-buttons"><button class="btn btn-info btn-sm" onclick="SMKApps.editStudent(${originalIndex})">Edit</button><button class="btn btn-primary btn-sm" onclick="SMKApps.openUploadFotoModal(${originalIndex})">📷 Foto</button><button class="btn btn-danger btn-sm" onclick="SMKApps.deleteStudent(${originalIndex})">Hapus</button></div></td>
+            </tr>
+          `;
+          tbody.innerHTML += row;
+        });
+      },
+
+      editStudent: function (index) {
+        this.data.currentEditIndex = index;
+        const s = this.data.students[index];
+        document.getElementById('editNoPeserta').value = s.noPeserta;
+        document.getElementById('editNama').value = s.nama;
+        document.getElementById('editKelas').value = s.kelas;
+        document.getElementById('editTtl').value = s.ttl || '';
+        this.openModal('editModal');
+
+        const saveBtn = document.getElementById('saveEditBtn');
+        if (saveBtn) {
+          const newSaveBtn = saveBtn.cloneNode(true);
+          saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+          newSaveBtn.addEventListener('click', () => this.saveEditStudent());
+        }
+      },
+
+      saveEditStudent: function () {
+        const nama = document.getElementById('editNama').value.trim();
+        const kelas = document.getElementById('editKelas').value.trim();
+        const ttl = document.getElementById('editTtl').value.trim();
+        if (!nama || !kelas) { this.showNotification('Nama dan kelas harus diisi!', 'error'); return; }
+        this.data.students[this.data.currentEditIndex].nama = nama;
+        this.data.students[this.data.currentEditIndex].kelas = kelas;
+        this.data.students[this.data.currentEditIndex].ttl = ttl;
+        this.saveToStorage();
+        this.populateStudentTable(this.data.students);
+        this.closeModal('editModal');
+        this.showNotification('Data siswa berhasil diperbarui!', 'success');
+      },
+
+      deleteStudent: function (index) {
+        const siswa = this.data.students[index];
+        if (confirm(`Apakah Anda yakin ingin menghapus data siswa "${siswa.nama}"?`)) {
+          this.data.students.splice(index, 1);
+          this.saveToStorage();
+          this.populateStudentTable(this.data.students);
+          this.showNotification(`Data siswa ${siswa.nama} berhasil dihapus!`, 'success');
+        }
+      },
+
+      /* ---------- FUNGSI FOTO SISWA ---------- */
+      openUploadFotoModal: function (index) {
+        this.data.currentFotoIndex = index;
+        const siswa = this.data.students[index];
+        document.getElementById('uploadFotoNamaSiswa').textContent = siswa.nama;
+        document.getElementById('uploadFotoNoPeserta').textContent = siswa.noPeserta;
+        const preview = document.getElementById('uploadFotoPreview');
+        const fotoInput = document.getElementById('fotoUpload');
+        fotoInput.value = '';
+        preview.innerHTML = siswa.photo ? `<img src="${siswa.photo}" style="width:100%; height:100%; object-fit:contain;">` : '<span style="color:#999;">Belum ada foto</span>';
+        this.openModal('uploadFotoModal');
+      },
+
+      saveFotoSiswa: function () {
+        const fotoInput = document.getElementById('fotoUpload');
+        if (!fotoInput || !fotoInput.files.length) { this.showNotification('Silakan pilih file foto terlebih dahulu.', 'error'); return; }
+        const file = fotoInput.files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          this.data.students[this.data.currentFotoIndex].photo = event.target.result;
+          this.saveToStorage();
+          this.populateStudentTable(this.data.students);
+          this.closeModal('uploadFotoModal');
+          this.showNotification('Foto berhasil diupload!', 'success');
+        };
+        reader.readAsDataURL(file);
+      },
+
+      searchStudentsForCard: function (searchTerm) {
+        const resultsContainer = document.getElementById('searchResults');
+        const printButton = document.getElementById('printSelectedCardBtn');
+        if (!searchTerm || searchTerm.length < 2) {
+          resultsContainer.innerHTML = '<p style="padding:10px; color:#666;">Masukkan minimal 2 karakter untuk pencarian</p>';
+          printButton.disabled = true;
+          return;
+        }
+        const filtered = this.data.students.filter(s => s.nama.toLowerCase().includes(searchTerm.toLowerCase()) || s.noPeserta.includes(searchTerm));
+        if (filtered.length === 0) {
+          resultsContainer.innerHTML = '<p style="padding:10px; color:#666;">Tidak ada siswa yang ditemukan</p>';
+          printButton.disabled = true;
+          return;
+        }
+        let resultsHtml = '<div style="margin-top: 10px;">';
+        filtered.forEach((student) => {
+          const actualIndex = this.data.students.findIndex(s => s.noPeserta === student.noPeserta);
+          resultsHtml += `<div class="student-result" style="padding: 8px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="SMKApps.selectStudentForCard(${actualIndex})"><strong>${student.nama}</strong> - ${student.kelas} (${student.noPeserta})</div>`;
+        });
+        resultsHtml += '</div>';
+        resultsContainer.innerHTML = resultsHtml;
+        printButton.disabled = true;
+      },
+
+      selectStudentForCard: function (index) {
+        this.data.selectedStudentIndex = index;
+        const student = this.data.students[index];
+        const resultsContainer = document.getElementById('searchResults');
+        const allResults = resultsContainer.querySelectorAll('.student-result');
+        allResults.forEach((result) => {
+          const studentName = result.querySelector('strong').textContent;
+          if (studentName === student.nama) {
+            result.style.backgroundColor = '#e9f7ef';
+            result.style.borderLeft = '3px solid var(--success-color)';
+          } else {
+            result.style.backgroundColor = '';
+            result.style.borderLeft = '';
+          }
+        });
+        document.getElementById('printSelectedCardBtn').disabled = false;
+        this.showNotification(`Siswa dipilih: ${student.nama}`, 'info');
+      },
+
+      openPrintMultipleModal: function() {
+        this.data.selectedStudentsForPrinting = [];
+        const tbody = document.getElementById('multipleSelectTableBody');
+        tbody.innerHTML = '';
+        this.data.students.forEach((student, index) => {
+          const row = `<tr><td><input type="checkbox" class="student-checkbox" data-index="${index}"></td><td>${student.noPeserta}</td><td>${student.nama}</td><td>${student.kelas}</td></tr>`;
+          tbody.innerHTML += row;
+        });
+        this.openModal('printMultipleModal');
+        this.updatePrintMultipleButtonState();
+      },
+
+      updatePrintMultipleButtonState: function() {
+        const checkboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox:checked');
+        const printButton = document.getElementById('printMultipleCardsBtn');
+        printButton.disabled = checkboxes.length === 0;
+      },
+
+      /* ---------- CARD FUNCTIONS ---------- */
+      createCardElement: function (student, cardId) {
+        const bgStyle = this.data.cardBackground ? 
+          `background-image: url('${this.data.cardBackground}'); background-size: cover; background-position: center;` : 
+          'background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);';
+        const photoHtml = student.photo ? 
+          `<img src="${student.photo}" style="width:100%; height:100%; object-fit:cover;">` : 
+          '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.5rem; border-radius:4px;">FOTO</div>';
+        const logoHtml = this.data.school.logo ? 
+          `<img src="${this.data.school.logo}" class="card-logo" style="width:100%; height:100%; object-fit:contain;">` : 
+          '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.4rem; border-radius:4px;">LOGO</div>';
+        const ttdHtml = this.data.school.ttdKepalaSekolah ? 
+          `<img src="${this.data.school.ttdKepalaSekolah}" style="width:50px; height:25px; object-fit:contain;">` : '';
+        
+        let jenisUjianText = '';
+        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
+        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
+        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
+        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
+        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
+        
+        return `
+          <div class="card" id="${cardId}" style="${bgStyle}">
+            <div class="card-content">
+              <div class="card-header" style="display:flex; align-items:center; gap:8px;">
+                <div class="card-logo" style="width:35px; height:35px;">${logoHtml}</div>
+                <div class="card-school-info" style="flex:1; text-align:center;">
+                  <h3 style="margin:0; font-size:0.65rem; line-height:1.2;">${this.data.school.yayasan}</h3>
+                  <h3 style="margin:0; font-size:0.65rem; line-height:1.2;">${this.data.school.sekolah}</h3>
+                  <h3 style="margin:0; font-size:0.55rem; line-height:1.2;">${this.data.school.alamat}</h3>
+                </div>
+              </div>
+              <div class="card-title" style="margin:4px 0; font-size:0.75rem;">KARTU PESERTA ${jenisUjianText}</div>
+              <div class="card-student-info" style="display:flex; gap:8px;">
+                <div class="card-photo" style="width:55px; height:70px; border-radius:6px; overflow:hidden; border:1px solid #ddd;">${photoHtml}</div>
+                <div class="card-details" style="flex:1; font-size:0.65rem; line-height:1.3;">
+                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">No</span><span class="detail-value">: ${student.noPeserta || ''}</span></div>
+                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">Nama</span><span class="detail-value">: ${student.nama || ''}</span></div>
+                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">Kelas</span><span class="detail-value">: ${student.kelas || ''}</span></div>
+                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">TTL</span><span class="detail-value">: ${student.ttl || ''}</span></div>
+                </div>
+              </div>
+              <div class="card-signature" style="text-align:right; font-size:0.55rem; margin-top:2px; padding-top:4px; border-top:1px solid rgba(0,0,0,0.05);">
+                Dibuat tgl: ${new Date().toLocaleDateString('id-ID')}<br>
+                <span style="display:block;margin-bottom:2px;">Kepala Sekolah</span>
+                <div class="signature-line" style="height:20px; margin-bottom:2px; display:flex; justify-content:flex-end;">${ttdHtml}</div>
+                <div class="signature-name" style="font-weight:700; font-size:0.6rem;">${this.data.school.kepalaSekolah}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      printIndividualCard: function () {
+        if (this.data.selectedStudentIndex === -1) { this.showNotification('Silakan pilih siswa terlebih dahulu', 'error'); return; }
+        const student = this.data.students[this.data.selectedStudentIndex];
+        const printWindow = window.open('', '_blank');
+        const bgStyle = this.data.cardBackground ? `background-image: url('${this.data.cardBackground}'); background-size: cover; background-position: center;` : 'background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);';
+        const photoHtml = student.photo ? `<img src="${student.photo}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.5rem; border-radius:4px;">FOTO</div>';
+        const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="width:35px; height:35px; object-fit:contain;">` : '<div style="width:35px; height:35px; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.4rem; border-radius:4px;">LOGO</div>';
+        const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="width:50px; height:25px; object-fit:contain;">` : '';
+        let jenisUjianText = '';
+        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
+        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
+        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
+        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
+        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
+        
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Kartu Peserta Ujian - ${student.nama}</title>
+            <style>
+              @page { size: A4 portrait; margin: 0; }
+              body { font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; background: #f5f5f5; display: flex; justify-content: flex-start; align-items: flex-start; min-height: 100vh; }
+              .card { width: 9cm !important; height: 6cm !important; position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; background-size: cover; background-position: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+              .card-content { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; background: rgba(255,255,255,0.95); -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+              .card-header { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 6px; }
+              .card-logo { width: 35px; height: 35px; flex-shrink: 0; }
+              .card-school-info { flex: 1; text-align: center; }
+              .card-school-info h3 { font-size: 0.65rem; margin: 1px 0; line-height: 1.2; color: #212529; text-align: center; }
+              .card-title { text-align: center; font-weight: 700; font-size: 0.75rem; margin: 4px 0; text-decoration: underline; color: #4361ee; }
+              .card-student-info { display: flex; gap: 8px; flex-grow: 1; }
+              .card-photo { width: 55px; height: 70px; background: #eee; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; }
+              .card-details { flex: 1; font-size: 0.65rem; line-height: 1.3; }
+              .detail-row { display: flex; margin-bottom: 1px; }
+              .detail-label { width: 32px; font-weight: 600; flex-shrink: 0; }
+              .detail-value { flex: 1; }
+              .card-signature { text-align: right; font-size: 0.55rem; margin-top: 2px; padding-top: 4px; border-top: 1px solid rgba(0,0,0,0.05); }
+              .card-signature .signature-line { height: 20px; margin-bottom: 2px; display: flex; justify-content: flex-end; }
+              .card-signature .signature-name { font-weight: 700; font-size: 0.6rem; }
+            </style>
+          </head>
+          <body>
+            <div class="card" style="${bgStyle}">
+              <div class="card-content">
+                <div class="card-header">
+                  <div class="card-logo">${logoHtml}</div>
+                  <div class="card-school-info">
+                    <h3>${this.data.school.yayasan}</h3>
+                    <h3>${this.data.school.sekolah}</h3>
+                    <h3 style="font-size:0.55rem;">${this.data.school.alamat}</h3>
+                  </div>
+                </div>
+                <div class="card-title">KARTU PESERTA ${jenisUjianText}</div>
+                <div class="card-student-info">
+                  <div class="card-photo">${photoHtml}</div>
+                  <div class="card-details">
+                    <div class="detail-row"><span class="detail-label">No</span><span class="detail-value">: ${student.noPeserta || ''}</span></div>
+                    <div class="detail-row"><span class="detail-label">Nama</span><span class="detail-value">: ${student.nama || ''}</span></div>
+                    <div class="detail-row"><span class="detail-label">Kelas</span><span class="detail-value">: ${student.kelas || ''}</span></div>
+                    <div class="detail-row"><span class="detail-label">TTL</span><span class="detail-value">: ${student.ttl || ''}</span></div>
+                  </div>
+                </div>
+                <div class="card-signature">
+                  Dibuat tgl: ${new Date().toLocaleDateString('id-ID')}<br>
+                  <span style="display:block;margin-bottom:2px;">Kepala Sekolah</span>
+                  <div class="signature-line">${ttdHtml}</div>
+                  <div class="signature-name">${this.data.school.kepalaSekolah}</div>
+                </div>
+              </div>
+            </div>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.onload = function () { setTimeout(() => { printWindow.print(); }, 500); };
+        this.closeModal('printCardModal');
+      },
+
+      renderCardPreview: function () {
+        const container = document.getElementById('cardPreviewContainer');
+        if (!container) return;
+        if (this.data.students.length === 0) {
+          container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;"><p>Tidak ada data siswa untuk ditampilkan.</p><p>Silakan tambahkan data siswa terlebih dahulu di menu <strong>Data Siswa</strong>.</p></div>';
+          return;
+        }
+        const html = this.data.students.slice(0, 4).map(s => this.createCardElement(s, 'preview-' + s.noPeserta)).join('');
+        container.innerHTML = html;
+      },
+
+      printCards: function () {
+        if (this.data.students.length === 0) { this.showNotification("Tidak ada data siswa!", "error"); return; }
+        this.printCardsWithData(this.data.students);
+      },
+      
+      printCardsWithData: function (studentsToPrint) {
+        const printWindow = window.open('', '_blank');
+        let jenisUjianText = '';
+        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
+        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
+        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
+        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
+        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
+        
+        let html = `<html><head><title>Cetak Kartu Ujian</title><style>
+          @page { size: A4 portrait; margin: 10mm; }
+          body { margin:0; padding:0; font-family:'Poppins', sans-serif; background: #f5f5f5; }
+          .print-sheet { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, auto); gap: 10px; page-break-after: always; padding: 10px; }
+          .print-card { break-inside: avoid; page-break-inside: avoid; }
+          .card { width: 9cm !important; height: 6cm !important; position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; background-size: cover; background-position: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          .card-content { position:absolute; inset:0; background:rgba(255,255,255,0.95); padding:10px 12px; display:flex; flex-direction:column; justify-content:space-between; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          .card-header { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 6px; }
+          .card-logo { width: 35px; height: 35px; flex-shrink: 0; }
+          .card-school-info { flex: 1; text-align: center; }
+          .card-school-info h3 { font-size: 0.65rem; margin: 1px 0; line-height: 1.2; text-align: center; }
+          .card-title { text-align: center; font-weight: 700; font-size: 0.75rem; margin: 4px 0; text-decoration: underline; color: #4361ee; }
+          .card-student-info { display: flex; gap: 8px; flex-grow: 1; }
+          .card-photo { width: 55px; height: 70px; background: #eee; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; }
+          .card-details { flex: 1; font-size: 0.65rem; line-height: 1.3; }
+          .detail-row { display: flex; margin-bottom: 1px; }
+          .detail-label { width: 32px; font-weight: 600; flex-shrink: 0; }
+          .detail-value { flex: 1; }
+          .card-signature { text-align: right; font-size: 0.55rem; margin-top: 2px; padding-top: 4px; border-top: 1px solid rgba(0,0,0,0.05); }
+          .card-signature .signature-line { height: 20px; margin-bottom: 2px; display: flex; justify-content: flex-end; }
+          .card-signature .signature-name { font-weight: 700; font-size: 0.6rem; }
+        </style></head><body>`;
+        
+        let counter = 0;
+        for (let i = 0; i < studentsToPrint.length; i++) {
+          if (counter % 8 === 0) html += `<div class="print-sheet">`;
+          const student = studentsToPrint[i];
+          const bg = this.data.cardBackground ? `background-image:url('${this.data.cardBackground}'); background-size:cover; background-position:center;` : "background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%)";
+          const photoHtml = student.photo ? `<img src="${student.photo}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666;">FOTO</div>';
+          const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="width:100%; height:100%; object-fit:contain;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666;">LOGO</div>';
+          const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="width:50px; height:25px; object-fit:contain;">` : '';
+          html += `<div class="print-card"><div class="card" style="${bg}"><div class="card-content"><div class="card-header"><div class="card-logo">${logoHtml}</div><div class="card-school-info"><h3>${this.data.school.yayasan}</h3><h3>${this.data.school.sekolah}</h3><h3 style="font-size:0.55rem;">${this.data.school.alamat}</h3></div></div><div class="card-title">KARTU PESERTA ${jenisUjianText}</div><div class="card-student-info"><div class="card-photo">${photoHtml}</div><div class="card-details"><div class="detail-row"><span class="detail-label">No</span><span class="detail-value">: ${student.noPeserta}</span></div><div class="detail-row"><span class="detail-label">Nama</span><span class="detail-value">: ${student.nama}</span></div><div class="detail-row"><span class="detail-label">Kelas</span><span class="detail-value">: ${student.kelas}</span></div><div class="detail-row"><span class="detail-label">TTL</span><span class="detail-value">: ${student.ttl || ''}</span></div></div></div><div class="card-signature">Dibuat tgl: ${new Date().toLocaleDateString('id-ID')}<br><span style="display:block;margin-bottom:2px;">Kepala Sekolah</span><div class="signature-line">${ttdHtml}</div><div class="signature-name">${this.data.school.kepalaSekolah}</div></div></div></div></div>`;
+          counter++;
+          if (counter % 8 === 0) html += `</div>`;
+        }
+        if (counter % 8 !== 0) html += `</div>`;
+        html += `</body></html>`;
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.onload = () => { setTimeout(() => { printWindow.print(); }, 500); };
+      },
+
+      /* ---------- DAFTAR HADIR - PERBAIKAN ===== */
+      previewDaftarHadir: function () {
+        const kelas = document.getElementById('kelasSelect').value;
+        const mapel = document.getElementById('mapelInput').value.trim() || '....................';
+        const hari = document.getElementById('hariInput').value.trim() || '....................';
+        
+        if (!kelas) { 
+          this.showNotification('Silakan pilih kelas terlebih dahulu.', 'error'); 
+          return; 
+        }
+        
+        const previewContainer = document.getElementById('daftarHadirPreview');
+        const studentsByClass = this.data.students.filter(s => s.kelas === kelas);
+        
+        if (studentsByClass.length === 0) { 
+          previewContainer.innerHTML = '<p style="text-align:center; padding:20px;">Tidak ada siswa di kelas yang dipilih.</p>'; 
+          return; 
+        }
+
+        let tableHeaders = `
+          <th style="text-align:center;">No</th>
+          <th style="text-align:center;">No Tes</th>
+          <th style="text-align:center;">Nama Siswa</th>
+        `;
+        
+        if (this.data.school.jenisUjian.uh) tableHeaders += '<th style="text-align:center;">UH</th>';
+        if (this.data.school.jenisUjian.pts) tableHeaders += '<th style="text-align:center;">PTS</th>';
+        if (this.data.school.jenisUjian.pas) tableHeaders += '<th style="text-align:center;">PAS</th>';
+        if (this.data.school.jenisUjian.luam) tableHeaders += '<th style="text-align:center;">LUAM</th>';
+        if (this.data.school.jenisUjian.uam) tableHeaders += '<th style="text-align:center;">UAM</th>';
+        
+        tableHeaders += `<th style="text-align:center;">Nilai Asli</th><th style="text-align:center;">Nilai Jadi</th><th style="text-align:center;">Tanda Tangan</th>`;
+
+        const tableRows = studentsByClass.map((siswa, index) => {
+          let row = `<td style="text-align:center;">${index + 1}</td><td style="text-align:center;">${siswa.noPeserta}</td><td style="text-align:left;">${siswa.nama}</td>`;
+          if (this.data.school.jenisUjian.uh) row += '<td></td>';
+          if (this.data.school.jenisUjian.pts) row += '<td></td>';
+          if (this.data.school.jenisUjian.pas) row += '<td></td>';
+          if (this.data.school.jenisUjian.luam) row += '<td></td>';
+          if (this.data.school.jenisUjian.uam) row += '<td></td>';
+          row += '<td></td><td></td><td></td>';
+          return `<tr>${row}</tr>`;
+        }).join('');
+
+        const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="max-height:60px; max-width:60px;">` : '';
+        const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="max-height:40px; max-width:120px;">` : '';
+
+        let jenisUjianText = '';
+        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
+        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
+        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
+        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
+        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
+
+        previewContainer.innerHTML = `
+          <div class="daftar-hadir-wrapper">
+            <div class="kop-surat" style="display:flex; margin-bottom:15px; align-items:center;">
+              <div class="kop-logo" style="width:60px; height:60px; margin-right:20px; display:flex; align-items:center; justify-content:center;">
+                ${logoHtml}
+              </div>
+              <div class="kop-identitas" style="flex:1; text-align:center;">
+                <h2 style="font-size:1.1rem; margin:0;">${this.data.school.yayasan}</h2>
+                <h3 style="font-size:0.9rem; margin:0;">${this.data.school.sekolah}</h3>
+                <p style="margin:0; font-size:0.8rem;">${this.data.school.alamat}</p>
+              </div>
+            </div>
+
+            <div class="judul-daftar-hadir" style="text-align:center; font-weight:bold; font-size:1rem; margin-bottom:10px; text-decoration:underline;">
+              DAFTAR HADIR ${jenisUjianText}
+            </div>
+
+            <div class="info-daftar-hadir" style="display:flex; justify-content:space-between; margin-bottom:15px; padding:8px; background:#f8f9fa; border-radius:4px;">
+              <div><strong>Kelas:</strong> ${kelas}</div>
+              <div><strong>Mata Pelajaran:</strong> ${mapel}</div>
+              <div><strong>Hari/Tanggal:</strong> ${hari}</div>
+            </div>
+
+            <div class="table-container" style="margin-top:0; overflow-x:auto;">
+              <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                  <tr style="background:#f2f2f2;">${tableHeaders}</tr>
+                </thead>
+                <tbody>
+                  ${tableRows}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="tanda-tangan-container" style="margin-top:30px; display:flex; justify-content:space-between; width:100%; border-top:1px solid #333; padding-top:20px;">
+              <div class="tanda-tangan-box" style="width:45%; text-align:center;">
+                <div>Mengetahui,</div>
+                <div style="margin-top:5px; font-weight:600;">Kepala Sekolah</div>
+                <div class="ttd-placeholder" style="height:50px; margin:5px 0; display:flex; align-items:center; justify-content:center;">
+                  ${ttdHtml}
+                </div>
+                <div style="font-weight:bold;">${this.data.school.kepalaSekolah}</div>
+              </div>
+              <div class="tanda-tangan-box" style="width:45%; text-align:center;">
+                <div>...................., ${new Date().toLocaleDateString('id-ID')}</div>
+                <div style="margin-top:5px; font-weight:600;">Pengawas Ujian</div>
+                <div class="ttd-placeholder" style="height:50px; margin:5px 0;"></div>
+                <div style="font-weight:bold;">....................</div>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      printDaftarHadir: function () {
+        const kelas = document.getElementById('kelasSelect').value;
+        const mapel = document.getElementById('mapelInput').value.trim() || '....................';
+        const hari = document.getElementById('hariInput').value.trim() || '....................';
+        
+        if (!kelas) { 
+          this.showNotification('Silakan pilih kelas terlebih dahulu.', 'error'); 
+          return; 
+        }
+        
+        const studentsByClass = this.data.students.filter(s => s.kelas === kelas);
+        if (studentsByClass.length === 0) { 
+          this.showNotification('Tidak ada siswa di kelas yang dipilih.', 'error'); 
+          return; 
+        }
+
+        let tableHeaders = `
+          <th style="text-align:center; width:5%;">No</th>
+          <th style="text-align:center; width:20%;">No Tes</th>
+          <th style="text-align:center; width:30%;">Nama Siswa</th>
+        `;
+        
+        if (this.data.school.jenisUjian.uh) tableHeaders += '<th style="text-align:center; width:5%;">UH</th>';
+        if (this.data.school.jenisUjian.pts) tableHeaders += '<th style="text-align:center; width:5%;">PTS</th>';
+        if (this.data.school.jenisUjian.pas) tableHeaders += '<th style="text-align:center; width:5%;">PAS</th>';
+        if (this.data.school.jenisUjian.luam) tableHeaders += '<th style="text-align:center; width:5%;">LUAM</th>';
+        if (this.data.school.jenisUjian.uam) tableHeaders += '<th style="text-align:center; width:5%;">UAM</th>';
+        
+        tableHeaders += `<th style="text-align:center; width:8%;">Nilai Asli</th><th style="text-align:center; width:8%;">Nilai Jadi</th><th style="text-align:center; width:12%;">Tanda Tangan</th>`;
+
+        const tableRows = studentsByClass.map((s, i) => {
+          let row = `<td style="text-align:center;">${i + 1}</td><td style="text-align:center;">${s.noPeserta}</td><td style="text-align:left;">${s.nama}</td>`;
+          if (this.data.school.jenisUjian.uh) row += '<td></td>';
+          if (this.data.school.jenisUjian.pts) row += '<td></td>';
+          if (this.data.school.jenisUjian.pas) row += '<td></td>';
+          if (this.data.school.jenisUjian.luam) row += '<td></td>';
+          if (this.data.school.jenisUjian.uam) row += '<td></td>';
+          row += '<td></td><td></td><td></td>';
+          return `<tr>${row}</tr>`;
+        }).join('');
+
+        const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="max-height:50px; max-width:50px;">` : '';
+        const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="max-height:40px; max-width:100px;">` : '';
+        
+        let jenisUjianText = '';
+        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
+        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
+        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
+        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
+        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Daftar Hadir Ujian - ${kelas}</title>
+            <style>
+              @page { size: A4 portrait; margin: 1.5cm; }
+              body { font-family: Arial, sans-serif; margin: 0; padding: 0; font-size: 12px; }
+              .kop-surat { display:flex; margin-bottom: 15px; align-items: center; }
+              .kop-logo { width: 60px; height: 60px; margin-right: 20px; display:flex; align-items:center; justify-content:center; }
+              .kop-identitas { flex:1; text-align:center; }
+              .kop-identitas h2 { font-size:1.2rem; margin:2px 0; }
+              .kop-identitas h3 { font-size:1rem; margin:2px 0; }
+              .judul-daftar-hadir { text-align:center; font-size:1.1rem; font-weight:bold; margin:15px 0; text-decoration:underline; }
+              .info-daftar-hadir { display: flex; justify-content: space-between; margin-bottom: 15px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
+              table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+              th, td { border: 1px solid #000; padding: 6px 4px; font-size: 10px; }
+              th { background: #f0f0f0; font-weight: bold; }
+              .tanda-tangan-container { margin-top: 30px; display: flex; justify-content: space-between; width: 100%; border-top: 1px solid #000; padding-top: 20px; }
+              .tanda-tangan-box { width: 45%; text-align: center; }
+              .tanda-tangan-box .jabatan { margin-bottom: 5px; font-weight: 600; }
+              .ttd-placeholder { height: 50px; margin: 5px 0; display: flex; align-items: center; justify-content: center; }
+              @media print {
+                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                th { background: #f0f0f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              }
+            </style>
+          </head>
+          <body>
+            <div class="kop-surat">
+              <div class="kop-logo">${logoHtml}</div>
+              <div class="kop-identitas">
+                <h2>${this.data.school.yayasan}</h2>
+                <h3>${this.data.school.sekolah}</h3>
+                <p style="margin:0; font-size:11px;">${this.data.school.alamat}</p>
+              </div>
+            </div>
+            
+            <div class="judul-daftar-hadir">DAFTAR HADIR ${jenisUjianText}</div>
+            
+            <div class="info-daftar-hadir">
+              <div><strong>Kelas:</strong> ${kelas}</div>
+              <div><strong>Mata Pelajaran:</strong> ${mapel}</div>
+              <div><strong>Hari/Tanggal:</strong> ${hari}</div>
+            </div>
+            
+            <table>
+              <thead>
+                <tr>${tableHeaders}</tr>
+              </thead>
+              <tbody>
+                ${tableRows}
+              </tbody>
+            </table>
+            
+            <div class="tanda-tangan-container">
+              <div class="tanda-tangan-box">
+                <div>Mengetahui,</div>
+                <div class="jabatan">Kepala Sekolah</div>
+                <div class="ttd-placeholder">${ttdHtml}</div>
+                <div style="font-weight:bold;">${this.data.school.kepalaSekolah}</div>
+              </div>
+              <div class="tanda-tangan-box">
+                <div>...................., ${new Date().toLocaleDateString('id-ID')}</div>
+                <div class="jabatan">Pengawas Ujian</div>
+                <div class="ttd-placeholder"></div>
+                <div style="font-weight:bold;">....................</div>
+              </div>
+            </div>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.onload = function () { setTimeout(() => { printWindow.print(); }, 500); };
+      },
+
+      /* ---------- PDF GENERATION ---------- */
+      generatePDF: async function () {
+        if (this.data.students.length === 0) { this.showNotification('Tidak ada data siswa untuk dibuat PDF-nya.', 'error'); return; }
+        const btn = document.getElementById('generatePDFBtn');
+        if (btn) { btn.innerHTML = 'Membuat PDF<span class="loading"></span>'; btn.disabled = true; }
+        this.showNotification('Sedang membuat PDF, mohon tunggu...', 'info');
+        try {
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+          const cardWidth = 80; const cardHeight = 50; const cardsPerRow = 2; const cardsPerCol = 4;
+          const pageWidth = pdf.internal.pageSize.getWidth(); const pageHeight = pdf.internal.pageSize.getHeight();
+          const margin = 15;
+          const cardXSpacing = (pageWidth - 2 * margin - cardsPerRow * cardWidth) / (cardsPerRow - 1);
+          const cardYSpacing = (pageHeight - 2 * margin - cardsPerCol * cardHeight) / (cardsPerCol - 1);
+          const templateContainer = document.createElement('div');
+          templateContainer.style.position = 'absolute'; templateContainer.style.left = '-9999px';
+          templateContainer.style.width = '160px'; templateContainer.style.height = '100px';
+          document.body.appendChild(templateContainer);
+          const batchSize = 4;
+          for (let i = 0; i < this.data.students.length; i += batchSize) {
+            const batch = this.data.students.slice(i, i + batchSize);
+            for (let j = 0; j < batch.length; j++) {
+              const studentIndex = i + j;
+              if (studentIndex > 0 && studentIndex % (cardsPerRow * cardsPerCol) === 0) pdf.addPage();
+              const indexOnPage = studentIndex % (cardsPerRow * cardsPerCol);
+              const row = Math.floor(indexOnPage / cardsPerRow); const col = indexOnPage % cardsPerRow;
+              const x = margin + col * (cardWidth + cardXSpacing); const y = margin + row * (cardHeight + cardYSpacing);
+              const siswa = batch[j];
+              templateContainer.innerHTML = this.createCardElement(siswa, 'temp-card');
+              const canvas = await html2canvas(templateContainer.firstElementChild, { scale: 1.5, useCORS: true, allowTaint: true, backgroundColor: null, logging: false });
+              const imgData = canvas.toDataURL('image/jpeg', 0.8);
+              pdf.addImage(imgData, 'JPEG', x, y, cardWidth, cardHeight);
+            }
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+          document.body.removeChild(templateContainer);
+          pdf.save('kartu_peserta_ujian.pdf');
+          this.showNotification(`PDF dengan ${this.data.students.length} kartu berhasil dibuat dan diunduh!`, 'success');
+        } catch (err) {
+          console.error('Error save pdf', err);
+          this.showNotification('Gagal menyimpan PDF.', 'error');
+        } finally {
+          if (btn) { btn.innerHTML = '💾 Generate PDF'; btn.disabled = false; }
+        }
+      }
+    };
+
+    window.addEventListener('load', () => { SMKApps.init(); });
+    window.SMKApps = SMKApps;
+  </script>
+</body>
+</html>
