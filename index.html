@@ -627,26 +627,64 @@
         display: none !important;
       }
       
+      /* Sembunyikan sidebar saat print */
+      .sidebar {
+        display: none !important;
+      }
+      
       body {
         padding: 5px;
         background: #fff;
+        margin: 0;
+        display: block;
+      }
+
+      .content {
+        padding: 0 !important;
+        background: #fff !important;
+      }
+
+      .content-container {
+        padding: 10px !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+      }
+
+      /* Sembunyikan semua elemen kontrol */
+      .denah-container,
+      .filter-panel,
+      .data-panel-denah,
+      .control-panel-denah,
+      .action-buttons,
+      .btn,
+      .no-print {
+        display: none !important;
+      }
+
+      /* Tampilkan hanya grid dan judul */
+      h2 {
+        display: block !important;
+        text-align: center !important;
+        margin: 10px 0 !important;
+        font-size: 16px !important;
       }
 
       .grid {
-        grid-template-columns: repeat(6, 1fr);
-        gap: 3px;
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
+        display: grid !important;
+        grid-template-columns: repeat(6, 1fr) !important;
+        gap: 3px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
       }
 
       .denah-card {
-        height: 90px;
-        box-shadow: none;
-        page-break-inside: avoid;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        border: 1px solid #000;
+        height: 90px !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        border: 1px solid #000 !important;
       }
 
       .denah-card:not(.visible) {
@@ -654,17 +692,18 @@
       }
       
       .denah-card.visible {
-        visibility: visible;
+        visibility: visible !important;
+        border: 2px solid #000 !important;
       }
 
       .denah-box-mid {
-        font-size: 8px;
+        font-size: 8px !important;
       }
       .denah-box-bottom {
-        font-size: 9px;
+        font-size: 9px !important;
       }
       .denah-box-top {
-        font-size: 9px;
+        font-size: 9px !important;
       }
       
       @page {
@@ -673,10 +712,12 @@
       }
       
       .info-ruangan {
-        border: 1px solid #000;
-        background: none;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        border: 1px solid #000 !important;
+        background: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        display: flex !important;
+        margin-bottom: 15px !important;
       }
     }
 
@@ -1017,8 +1058,8 @@
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
-  <div class="sidebar">
+  <!-- Sidebar - PERBAIKAN: Ditambahkan class no-print agar tidak ikut tercetak -->
+  <div class="sidebar no-print">
     <div class="brand">
       <svg class="brand-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path></svg>
       <span>KARTU UJIAN</span>
@@ -1174,6 +1215,7 @@
       1. Daftar Hadir - Diperbaiki agar preview dan cetak berfungsi normal
       2. Denah Duduk - Ditambahkan pilihan kelas/ruang, bisa memfilter siswa per kelas
       3. Identitas - Diperbaiki fungsi simpan identitas
+      4. Cetak Denah - Sidebar tidak ikut tercetak (ditambahkan class no-print)
     */
 
     /* ======= BACKGROUND DEFAULT ======= */
