@@ -1173,6 +1173,7 @@
       PERBAIKAN:
       1. Daftar Hadir - Diperbaiki agar preview dan cetak berfungsi normal
       2. Denah Duduk - Ditambahkan pilihan kelas/ruang, bisa memfilter siswa per kelas
+      3. Identitas - Diperbaiki fungsi simpan identitas
     */
 
     /* ======= BACKGROUND DEFAULT ======= */
@@ -1595,7 +1596,11 @@
         }
 
         const saveBtn = document.getElementById('saveIdentitasBtn');
-        if (saveBtn) saveBtn.addEventListener('click', () => this.saveIdentitas());
+        if (saveBtn) {
+          saveBtn.addEventListener('click', () => {
+            this.saveIdentitas();
+          });
+        }
       },
 
       setupInputSiswaPage: function () {
@@ -2342,67 +2347,6 @@
         reader.readAsDataURL(file);
       },
 
-      searchStudentsForCard: function (searchTerm) {
-        const resultsContainer = document.getElementById('searchResults');
-        const printButton = document.getElementById('printSelectedCardBtn');
-        if (!searchTerm || searchTerm.length < 2) {
-          resultsContainer.innerHTML = '<p style="padding:10px; color:#666;">Masukkan minimal 2 karakter untuk pencarian</p>';
-          printButton.disabled = true;
-          return;
-        }
-        const filtered = this.data.students.filter(s => s.nama.toLowerCase().includes(searchTerm.toLowerCase()) || s.noPeserta.includes(searchTerm));
-        if (filtered.length === 0) {
-          resultsContainer.innerHTML = '<p style="padding:10px; color:#666;">Tidak ada siswa yang ditemukan</p>';
-          printButton.disabled = true;
-          return;
-        }
-        let resultsHtml = '<div style="margin-top: 10px;">';
-        filtered.forEach((student) => {
-          const actualIndex = this.data.students.findIndex(s => s.noPeserta === student.noPeserta);
-          resultsHtml += `<div class="student-result" style="padding: 8px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="SMKApps.selectStudentForCard(${actualIndex})"><strong>${student.nama}</strong> - ${student.kelas} (${student.noPeserta})</div>`;
-        });
-        resultsHtml += '</div>';
-        resultsContainer.innerHTML = resultsHtml;
-        printButton.disabled = true;
-      },
-
-      selectStudentForCard: function (index) {
-        this.data.selectedStudentIndex = index;
-        const student = this.data.students[index];
-        const resultsContainer = document.getElementById('searchResults');
-        const allResults = resultsContainer.querySelectorAll('.student-result');
-        allResults.forEach((result) => {
-          const studentName = result.querySelector('strong').textContent;
-          if (studentName === student.nama) {
-            result.style.backgroundColor = '#e9f7ef';
-            result.style.borderLeft = '3px solid var(--success-color)';
-          } else {
-            result.style.backgroundColor = '';
-            result.style.borderLeft = '';
-          }
-        });
-        document.getElementById('printSelectedCardBtn').disabled = false;
-        this.showNotification(`Siswa dipilih: ${student.nama}`, 'info');
-      },
-
-      openPrintMultipleModal: function() {
-        this.data.selectedStudentsForPrinting = [];
-        const tbody = document.getElementById('multipleSelectTableBody');
-        tbody.innerHTML = '';
-        this.data.students.forEach((student, index) => {
-          const row = `<tr><td><input type="checkbox" class="student-checkbox" data-index="${index}"></td><td>${student.noPeserta}</td><td>${student.nama}</td><td>${student.kelas}</td></tr>`;
-          tbody.innerHTML += row;
-        });
-        this.openModal('printMultipleModal');
-        this.updatePrintMultipleButtonState();
-      },
-
-      updatePrintMultipleButtonState: function() {
-        const checkboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox:checked');
-        const printButton = document.getElementById('printMultipleCardsBtn');
-        printButton.disabled = checkboxes.length === 0;
-      },
-
       /* ---------- CARD FUNCTIONS ---------- */
       createCardElement: function (student, cardId) {
         const bgStyle = this.data.cardBackground ? 
@@ -2454,84 +2398,6 @@
             </div>
           </div>
         `;
-      },
-
-      printIndividualCard: function () {
-        if (this.data.selectedStudentIndex === -1) { this.showNotification('Silakan pilih siswa terlebih dahulu', 'error'); return; }
-        const student = this.data.students[this.data.selectedStudentIndex];
-        const printWindow = window.open('', '_blank');
-        const bgStyle = this.data.cardBackground ? `background-image: url('${this.data.cardBackground}'); background-size: cover; background-position: center;` : 'background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);';
-        const photoHtml = student.photo ? `<img src="${student.photo}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.5rem; border-radius:4px;">FOTO</div>';
-        const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="width:35px; height:35px; object-fit:contain;">` : '<div style="width:35px; height:35px; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.4rem; border-radius:4px;">LOGO</div>';
-        const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="width:50px; height:25px; object-fit:contain;">` : '';
-        let jenisUjianText = '';
-        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
-        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
-        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
-        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
-        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
-        
-        printWindow.document.write(`
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <title>Kartu Peserta Ujian - ${student.nama}</title>
-            <style>
-              @page { size: A4 portrait; margin: 0; }
-              body { font-family: 'Poppins', sans-serif; margin: 0; padding: 20px; background: #f5f5f5; display: flex; justify-content: flex-start; align-items: flex-start; min-height: 100vh; }
-              .card { width: 9cm !important; height: 6cm !important; position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; background-size: cover; background-position: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-              .card-content { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 10px 12px; display: flex; flex-direction: column; justify-content: space-between; background: rgba(255,255,255,0.95); -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-              .card-header { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 6px; }
-              .card-logo { width: 35px; height: 35px; flex-shrink: 0; }
-              .card-school-info { flex: 1; text-align: center; }
-              .card-school-info h3 { font-size: 0.65rem; margin: 1px 0; line-height: 1.2; color: #212529; text-align: center; }
-              .card-title { text-align: center; font-weight: 700; font-size: 0.75rem; margin: 4px 0; text-decoration: underline; color: #4361ee; }
-              .card-student-info { display: flex; gap: 8px; flex-grow: 1; }
-              .card-photo { width: 55px; height: 70px; background: #eee; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; }
-              .card-details { flex: 1; font-size: 0.65rem; line-height: 1.3; }
-              .detail-row { display: flex; margin-bottom: 1px; }
-              .detail-label { width: 32px; font-weight: 600; flex-shrink: 0; }
-              .detail-value { flex: 1; }
-              .card-signature { text-align: right; font-size: 0.55rem; margin-top: 2px; padding-top: 4px; border-top: 1px solid rgba(0,0,0,0.05); }
-              .card-signature .signature-line { height: 20px; margin-bottom: 2px; display: flex; justify-content: flex-end; }
-              .card-signature .signature-name { font-weight: 700; font-size: 0.6rem; }
-            </style>
-          </head>
-          <body>
-            <div class="card" style="${bgStyle}">
-              <div class="card-content">
-                <div class="card-header">
-                  <div class="card-logo">${logoHtml}</div>
-                  <div class="card-school-info">
-                    <h3>${this.data.school.yayasan}</h3>
-                    <h3>${this.data.school.sekolah}</h3>
-                    <h3 style="font-size:0.55rem;">${this.data.school.alamat}</h3>
-                  </div>
-                </div>
-                <div class="card-title">KARTU PESERTA ${jenisUjianText}</div>
-                <div class="card-student-info">
-                  <div class="card-photo">${photoHtml}</div>
-                  <div class="card-details">
-                    <div class="detail-row"><span class="detail-label">No</span><span class="detail-value">: ${student.noPeserta || ''}</span></div>
-                    <div class="detail-row"><span class="detail-label">Nama</span><span class="detail-value">: ${student.nama || ''}</span></div>
-                    <div class="detail-row"><span class="detail-label">Kelas</span><span class="detail-value">: ${student.kelas || ''}</span></div>
-                    <div class="detail-row"><span class="detail-label">TTL</span><span class="detail-value">: ${student.ttl || ''}</span></div>
-                  </div>
-                </div>
-                <div class="card-signature">
-                  Dibuat tgl: ${new Date().toLocaleDateString('id-ID')}<br>
-                  <span style="display:block;margin-bottom:2px;">Kepala Sekolah</span>
-                  <div class="signature-line">${ttdHtml}</div>
-                  <div class="signature-name">${this.data.school.kepalaSekolah}</div>
-                </div>
-              </div>
-            </div>
-          </body>
-          </html>
-        `);
-        printWindow.document.close();
-        printWindow.onload = function () { setTimeout(() => { printWindow.print(); }, 500); };
-        this.closeModal('printCardModal');
       },
 
       renderCardPreview: function () {
@@ -2881,6 +2747,234 @@
         } finally {
           if (btn) { btn.innerHTML = '💾 Generate PDF'; btn.disabled = false; }
         }
+      },
+
+      // ========== FUNGSI-FUNGSI YANG DITAMBAHKAN ==========
+      saveIdentitas: function () {
+        // Ambil nilai dari input di halaman
+        const yayasan = document.getElementById('yayasan')?.value.trim() || this.data.school.yayasan;
+        const sekolah = document.getElementById('sekolah')?.value.trim() || this.data.school.sekolah;
+        const alamat = document.getElementById('alamat')?.value.trim() || this.data.school.alamat;
+        const kepalaSekolah = document.getElementById('kepalaSekolah')?.value.trim() || this.data.school.kepalaSekolah;
+
+        // Ambil status checkbox jenis ujian
+        const uh = document.getElementById('jenisUH')?.checked || false;
+        const pts = document.getElementById('jenisPTS')?.checked || false;
+        const pas = document.getElementById('jenisPAS')?.checked || false;
+        const luam = document.getElementById('jenisLUAM')?.checked || false;
+        const uam = document.getElementById('jenisUAM')?.checked || false;
+
+        // Update objek data
+        this.data.school.yayasan = yayasan;
+        this.data.school.sekolah = sekolah;
+        this.data.school.alamat = alamat;
+        this.data.school.kepalaSekolah = kepalaSekolah;
+        this.data.school.jenisUjian = { uh, pts, pas, luam, uam };
+
+        // Ambil data gambar dari preview (jika ada)
+        const logoPreviewImg = document.querySelector('.identitas-logo-preview img');
+        if (logoPreviewImg) {
+          this.data.school.logo = logoPreviewImg.src;
+        }
+
+        const ttdPreviewImg = document.querySelector('.identitas-signature-preview img');
+        if (ttdPreviewImg) {
+          this.data.school.ttdKepalaSekolah = ttdPreviewImg.src;
+        }
+
+        // Simpan ke localStorage
+        this.saveToStorage();
+        
+        // Tampilkan notifikasi sukses
+        this.showNotification('Identitas sekolah berhasil disimpan!', 'success');
+
+        // Opsional: Refresh preview di halaman lain jika sedang aktif
+        if (document.getElementById('cardPreviewContainer')) {
+            this.renderCardPreview();
+        }
+      },
+
+      setupPrintCardModal: function () {
+        const searchInput = document.getElementById('studentSearch');
+        const resultsContainer = document.getElementById('searchResults');
+        const printBtn = document.getElementById('printSelectedCardBtn');
+        const closeBtn = document.getElementById('closePrintModalBtn');
+
+        if (searchInput) {
+          searchInput.addEventListener('input', (e) => {
+            this.searchStudentsForCard(e.target.value);
+          });
+        }
+
+        if (printBtn) {
+          printBtn.addEventListener('click', () => {
+            this.printIndividualCard();
+          });
+        }
+
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => {
+            this.closeModal('printCardModal');
+          });
+        }
+      },
+
+      setupPrintMultipleModal: function () {
+        const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        const printBtn = document.getElementById('printMultipleCardsBtn');
+        const closeBtn = document.getElementById('closePrintMultipleModalBtn');
+
+        if (selectAllCheckbox) {
+          selectAllCheckbox.addEventListener('change', (e) => {
+            const checkboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox');
+            checkboxes.forEach(cb => {
+              cb.checked = e.target.checked;
+            });
+            this.updatePrintMultipleButtonState();
+          });
+        }
+
+        // Event delegation untuk checkbox di tabel
+        const tableBody = document.getElementById('multipleSelectTableBody');
+        if (tableBody) {
+          tableBody.addEventListener('change', (e) => {
+            if (e.target.classList.contains('student-checkbox')) {
+              this.updatePrintMultipleButtonState();
+              
+              // Update "select all" checkbox
+              const allCheckboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox');
+              const checkedCheckboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox:checked');
+              if (selectAllCheckbox) {
+                selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length;
+              }
+            }
+          });
+        }
+
+        if (printBtn) {
+          printBtn.addEventListener('click', () => {
+            this.printMultipleCards();
+          });
+        }
+
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => {
+            this.closeModal('printMultipleModal');
+          });
+        }
+      },
+
+      updatePrintMultipleButtonState: function () {
+        const checkboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox:checked');
+        const printButton = document.getElementById('printMultipleCardsBtn');
+        if (printButton) {
+          printButton.disabled = checkboxes.length === 0;
+        }
+      },
+
+      printMultipleCards: function () {
+        const checkboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox:checked');
+        if (checkboxes.length === 0) {
+          this.showNotification('Pilih minimal satu siswa', 'error');
+          return;
+        }
+
+        const selectedIndices = [];
+        checkboxes.forEach(cb => {
+          selectedIndices.push(parseInt(cb.getAttribute('data-index')));
+        });
+
+        const studentsToPrint = selectedIndices.map(index => this.data.students[index]);
+        
+        // Gunakan fungsi printCardsWithData yang sudah ada
+        this.printCardsWithData(studentsToPrint);
+        
+        this.closeModal('printMultipleModal');
+      },
+
+      searchStudentsForCard: function (searchTerm) {
+        const resultsContainer = document.getElementById('searchResults');
+        const printButton = document.getElementById('printSelectedCardBtn');
+        
+        if (!searchTerm || searchTerm.length < 2) {
+          resultsContainer.innerHTML = '<p style="padding:10px; color:#666;">Masukkan minimal 2 karakter untuk pencarian</p>';
+          if (printButton) printButton.disabled = true;
+          return;
+        }
+        
+        const filtered = this.data.students.filter(s => 
+          s.nama.toLowerCase().includes(searchTerm.toLowerCase()) || 
+          (s.noPeserta && s.noPeserta.includes(searchTerm))
+        );
+        
+        if (filtered.length === 0) {
+          resultsContainer.innerHTML = '<p style="padding:10px; color:#666;">Tidak ada siswa yang ditemukan</p>';
+          if (printButton) printButton.disabled = true;
+          return;
+        }
+        
+        let resultsHtml = '<div style="margin-top: 10px;">';
+        filtered.forEach((student) => {
+          const actualIndex = this.data.students.findIndex(s => s.noPeserta === student.noPeserta);
+          resultsHtml += `<div class="student-result" style="padding: 8px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="SMKApps.selectStudentForCard(${actualIndex})">
+            <strong>${student.nama}</strong> - ${student.kelas} (${student.noPeserta})
+          </div>`;
+        });
+        resultsHtml += '</div>';
+        resultsContainer.innerHTML = resultsHtml;
+        
+        if (printButton) printButton.disabled = true;
+      },
+
+      selectStudentForCard: function (index) {
+        this.data.selectedStudentIndex = index;
+        const student = this.data.students[index];
+        
+        // Highlight hasil pencarian
+        const resultsContainer = document.getElementById('searchResults');
+        const allResults = resultsContainer.querySelectorAll('.student-result');
+        allResults.forEach((result) => {
+          result.style.backgroundColor = '';
+          result.style.borderLeft = '';
+        });
+        
+        // Cari elemen yang sesuai dan highlight
+        const selectedResult = Array.from(allResults).find(el => 
+          el.textContent.includes(student.nama)
+        );
+        if (selectedResult) {
+          selectedResult.style.backgroundColor = '#e9f7ef';
+          selectedResult.style.borderLeft = '3px solid var(--success-color)';
+        }
+        
+        const printButton = document.getElementById('printSelectedCardBtn');
+        if (printButton) printButton.disabled = false;
+        
+        this.showNotification(`Siswa dipilih: ${student.nama}`, 'info');
+      },
+
+      printIndividualCard: function () {
+        if (this.data.selectedStudentIndex === -1 || !this.data.students[this.data.selectedStudentIndex]) { 
+          this.showNotification('Silakan pilih siswa terlebih dahulu', 'error'); 
+          return; 
+        }
+        
+        const student = this.data.students[this.data.selectedStudentIndex];
+        // Gunakan fungsi printCardsWithData yang sudah ada dengan array berisi 1 siswa
+        this.printCardsWithData([student]);
+        this.closeModal('printCardModal');
+      },
+
+      openPrintMultipleModal: function() {
+        this.data.selectedStudentsForPrinting = [];
+        const tbody = document.getElementById('multipleSelectTableBody');
+        tbody.innerHTML = '';
+        this.data.students.forEach((student, index) => {
+          const row = `<tr><td><input type="checkbox" class="student-checkbox" data-index="${index}"></td><td>${student.noPeserta}</td><td>${student.nama}</td><td>${student.kelas}</td></tr>`;
+          tbody.innerHTML += row;
+        });
+        this.openModal('printMultipleModal');
+        this.updatePrintMultipleButtonState();
       }
     };
 
