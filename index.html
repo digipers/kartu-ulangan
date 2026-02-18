@@ -252,6 +252,7 @@
       gap: 20px;
     }
 
+    /* KARTU UJIAN STYLE */
     .card { 
       width: 9cm !important; 
       height: 6cm !important; 
@@ -378,7 +379,7 @@
       font-size: 0.6rem;
     }
 
-    /* Daftar Hadir - PERBAIKAN: Tanda tangan mengikuti panjang tabel */
+    /* Daftar Hadir */
     .daftar-hadir-wrapper {
       display: flex;
       flex-direction: column;
@@ -460,7 +461,7 @@
       justify-content: center;
     }
 
-    /* ===== DENAH TEMPAT DUDUK ===== */
+    /* ===== DENAH TEMPAT DUDUK - FORMAT BARU ===== */
     .denah-container {
       display: flex;
       gap: 20px;
@@ -468,13 +469,21 @@
     }
     
     .data-panel-denah {
-      flex: 1;
+      flex: 2;
       min-width: 400px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     
     .control-panel-denah {
-      width: 450px;
-      min-width: 300px;
+      flex: 1;
+      min-width: 350px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     
     .filter-panel {
@@ -493,109 +502,28 @@
       min-width: 200px;
     }
     
-    .grid { 
-      display: grid; 
-      grid-template-columns: repeat(6, 1fr); 
-      gap: 6px; 
-      width: 100%; 
-      max-width: 900px; 
-      margin: 20px auto; 
-    }
-    
-    .denah-card { 
-      border: 1px solid #ccc; 
-      visibility: hidden;
-      background: white; 
-      height: 150px; 
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-      border-radius: 6px;
-    }
-    
-    .denah-card.visible { 
-      visibility: visible;
-      border: 3px solid var(--primary-color); 
-    }
-    
-    .denah-box-top { 
-      border-bottom: 1px solid #000; 
-      height: 60%; 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      padding: 5px;
-      overflow: hidden;
-      background-color: #f0f7ff;
-    }
-    
-    .denah-box-mid { 
-      border-bottom: 1px solid #000; 
-      height: 20%; 
-      display: flex; 
-      align-items: center; 
-      padding-left: 6px; 
-      font-size: 11px; 
-      background: #f9f9f9; 
-      font-weight: 600;
-    }
-    
-    .denah-box-bottom { 
-      height: 20%; 
-      display: flex; 
-      align-items: center; 
-      padding-left: 6px; 
-      font-size: 11px; 
-      font-weight: bold; 
-    }
-
-    .controls { 
-      display: grid; 
-      grid-template-columns: repeat(6, 1fr); 
-      gap: 5px; 
-      max-width: 500px; 
-      margin-top: 10px; 
-    }
-    
-    .btn-nomor { 
-      padding: 8px; 
-      background: #eee; 
-      border: 1px solid #555; 
-      cursor: pointer; 
-      text-align: center; 
-      font-size: 14px; 
-      border-radius: 4px; 
-    }
-    
-    .btn-nomor:hover { 
-      background: #ddd; 
-    }
-    
-    .btn-nomor.active { 
-      background: var(--primary-color); 
-      color: white; 
-      font-weight: bold; 
-    }
-
+    /* Table styles for denah data */
     .data-table-denah { 
       border-collapse: collapse; 
       margin-bottom: 20px; 
       width: 100%; 
+      font-size: 14px;
     }
     
     .data-table-denah td, 
     .data-table-denah th { 
-      border: 1px solid #000; 
-      padding: 8px; 
+      border: 1px solid #ddd; 
+      padding: 6px; 
       text-align: left; 
     }
     
     .data-table-denah th { 
-      background-color: #f2f2f2; 
-      font-weight: bold; 
+      background-color: #4CAF50; 
+      color: white; 
     }
     
     .data-table-denah td[contenteditable="true"] { 
-      background: #fafafa; 
+      background: #fff9e6; 
     }
     
     .data-table-denah td[contenteditable="true"]:focus { 
@@ -607,6 +535,131 @@
       background-color: #e9ecef;
       font-weight: bold;
       text-align: center;
+      width: 50px;
+    }
+
+    /* Grid kontrol untuk input nomor */
+    .grid-kontrol {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        margin: 15px 0;
+    }
+    
+    .kotak-kontrol {
+        border: 2px solid #4CAF50;
+        background: white;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: all 0.2s;
+        position: relative;
+    }
+    
+    .kotak-kontrol input {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        border: none;
+        outline: none;
+        background: transparent;
+    }
+    
+    .kotak-kontrol.filled {
+        background: #e8f5e9;
+        border-color: #2e7d32;
+        border-width: 3px;
+    }
+    
+    .kotak-kontrol:hover {
+        background: #f1f8e9;
+        transform: scale(1.02);
+    }
+    
+    .kotak-kontrol .label-posisi {
+        position: absolute;
+        top: 2px;
+        left: 4px;
+        font-size: 10px;
+        color: #666;
+    }
+    
+    /* Grid denah - menampilkan kartu */
+    .grid-denah { 
+        display: grid; 
+        grid-template-columns: repeat(6, 1fr); 
+        gap: 15px;
+        width: 100%;
+    }
+    
+    /* Card dengan format baru: atas nomor peserta, tengah kotak foto, bawah nama */
+    .denah-card { 
+        border: 1px solid #2e7d32; 
+        background: white; 
+        height: 220px; /* Tinggi ditambah untuk nama panjang */
+        box-shadow: 0 4px 8px rgba(0,40,0,0.2); 
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        border-left: 6px solid #4CAF50;
+        transition: transform 0.1s ease;
+    }
+    
+    .denah-nomor-atas { 
+        background: #4CAF50;
+        color: white;
+        padding: 8px 4px;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #2e7d32;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .denah-foto-tengah { 
+        flex: 2;
+        background: #f0f0f0;
+        margin: 10px 10px 5px 10px;
+        border: 2px dashed #8bc34a;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #558b2f;
+        font-size: 13px;
+        font-weight: 500;
+        background: #f9fbe7;
+        min-height: 90px;
+    }
+    
+    .denah-nama-bawah { 
+        background: #ffffff;
+        padding: 6px 4px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #1e3a2e;
+        text-align: center;
+        border-top: 1px solid #c8e6c9;
+        margin: 0 4px 8px 4px;
+        word-wrap: break-word;
+        white-space: normal;
+        overflow: visible;
+        line-height: 1.3;
+        max-height: 42px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
     /* Info ruangan */
@@ -621,7 +674,7 @@
       margin-bottom: 15px;
     }
 
-    /* ===== CETAK DENAH ===== */
+    /* ===== CETAK DENAH - DIPERBAIKI ===== */
     @media print {
       .no-print {
         display: none !important;
@@ -633,31 +686,35 @@
       }
       
       body {
-        padding: 5px;
+        padding: 0;
         background: #fff;
         margin: 0;
         display: block;
+        width: 100%;
       }
 
       .content {
         padding: 0 !important;
         background: #fff !important;
+        width: 100% !important;
       }
 
       .content-container {
         padding: 10px !important;
         box-shadow: none !important;
         margin: 0 !important;
+        background: #fff !important;
+        width: 100% !important;
       }
 
       /* Sembunyikan semua elemen kontrol */
-      .denah-container,
+      .denah-container:not(.grid-denah):not(.denah-container:has(.grid-denah)),
       .filter-panel,
       .data-panel-denah,
       .control-panel-denah,
       .action-buttons,
       .btn,
-      .no-print {
+      hr {
         display: none !important;
       }
 
@@ -667,43 +724,62 @@
         text-align: center !important;
         margin: 10px 0 !important;
         font-size: 16px !important;
+        color: #000 !important;
+        font-weight: bold !important;
       }
 
-      .grid {
+      .grid-denah {
         display: grid !important;
         grid-template-columns: repeat(6, 1fr) !important;
-        gap: 3px !important;
+        gap: 6px !important;
         width: 100% !important;
-        max-width: 100% !important;
         margin: 0 auto !important;
+        page-break-inside: avoid !important;
       }
 
       .denah-card {
-        height: 90px !important;
+        border: 2px solid #000 !important;
+        border-left: 6px solid #000 !important;
+        height: 200px !important;
         box-shadow: none !important;
         page-break-inside: avoid !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
-        border: 1px solid #000 !important;
-      }
-
-      .denah-card:not(.visible) {
-        display: none !important;
+        background: white !important;
       }
       
-      .denah-card.visible {
-        visibility: visible !important;
-        border: 2px solid #000 !important;
+      .denah-nomor-atas {
+        background: #4CAF50 !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        border-bottom: 2px solid #000 !important;
+        font-size: 12px !important;
+        padding: 6px 2px !important;
       }
-
-      .denah-box-mid {
-        font-size: 8px !important;
+      
+      .denah-foto-tengah {
+        border: 2px dashed #333 !important;
+        background: #f0f0f0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        margin: 8px 8px 4px 8px !important;
       }
-      .denah-box-bottom {
-        font-size: 9px !important;
-      }
-      .denah-box-top {
-        font-size: 9px !important;
+      
+      .denah-nama-bawah {
+        color: #000 !important;
+        border-top: 1px solid #000 !important;
+        font-size: 10px !important;
+        padding: 4px 2px !important;
+        margin: 0 4px 6px 4px !important;
+        word-wrap: break-word !important;
+        white-space: normal !important;
+        line-height: 1.2 !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        max-height: 32px !important;
       }
       
       @page {
@@ -711,13 +787,8 @@
         margin: 0.5cm;
       }
       
-      .info-ruangan {
-        border: 1px solid #000 !important;
-        background: none !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        display: flex !important;
-        margin-bottom: 15px !important;
+      #denahKosong {
+        display: none !important;
       }
     }
 
@@ -1048,17 +1119,17 @@
         width: 100%;
       }
       
-      .grid {
+      .grid-denah {
         grid-template-columns: repeat(3, 1fr);
       }
-      .controls {
+      .grid-kontrol {
         grid-template-columns: repeat(4, 1fr);
       }
     }
   </style>
 </head>
 <body>
-  <!-- Sidebar - PERBAIKAN: Ditambahkan class no-print agar tidak ikut tercetak -->
+  <!-- Sidebar -->
   <div class="sidebar no-print">
     <div class="brand">
       <svg class="brand-icon" fill="currentColor" viewBox="0 0 20 20"><path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"></path></svg>
@@ -1102,7 +1173,7 @@
   <!-- Notification -->
   <div id="notification" class="notification"></div>
 
-  <!-- Edit Student Modal -->
+  <!-- Modals -->
   <div id="editModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1129,7 +1200,6 @@
     </div>
   </div>
 
-  <!-- Upload Foto Modal -->
   <div id="uploadFotoModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1157,7 +1227,6 @@
     </div>
   </div>
 
-  <!-- Print Individual Card Modal -->
   <div id="printCardModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1176,7 +1245,6 @@
     </div>
   </div>
 
-  <!-- Cetak Beberapa Kartu Modal -->
   <div id="printMultipleModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1206,16 +1274,9 @@
   <script>
     /*
       APLIKASI KARTU PESERTA UJIAN + DENAH TEMPAT DUDUK
-      - Fitur Denah terintegrasi dengan data siswa
-      - Pilih nomor urut untuk menampilkan kartu di denah
-      - Cetak denah dengan orientasi landscape
-      - Reset tampilan kartu
-      
-      PERBAIKAN:
-      1. Daftar Hadir - Diperbaiki agar preview dan cetak berfungsi normal
-      2. Denah Duduk - Ditambahkan pilihan kelas/ruang, bisa memfilter siswa per kelas
-      3. Identitas - Diperbaiki fungsi simpan identitas
-      4. Cetak Denah - Sidebar tidak ikut tercetak (ditambahkan class no-print)
+      - Denah format: Nomor Peserta di Atas, Kotak Foto di Tengah, Nama di Bawah
+      - Kontrol input nomor urut manual (1-36) tapi menampilkan No Peserta
+      - Nama tidak terpotong (2 baris)
     */
 
     /* ======= BACKGROUND DEFAULT ======= */
@@ -1248,7 +1309,13 @@
         
         // Data denah per kelas
         denahData: {},
-        denahKelasTerpilih: ''
+        denahKelasTerpilih: '',
+        
+        // Data input nomor kontrol (posisi -> nomorPeserta)
+        kontrolNomor: {},
+        
+        // Data peserta lokal untuk denah (no urut -> data)
+        pesertaDataLokal: {}
       },
 
       init: function () {
@@ -1280,53 +1347,24 @@
         });
 
         window.addEventListener('click', (e) => {
-          if (e.target.id === 'editModal') {
-            this.closeModal('editModal');
-          }
-          if (e.target.id === 'uploadFotoModal') {
-            this.closeModal('uploadFotoModal');
-          }
-          if (e.target.id === 'printCardModal') {
-            this.closeModal('printCardModal');
-          }
-          if (e.target.id === 'printMultipleModal') {
-            this.closeModal('printMultipleModal');
-          }
+          if (e.target.id === 'editModal') this.closeModal('editModal');
+          if (e.target.id === 'uploadFotoModal') this.closeModal('uploadFotoModal');
+          if (e.target.id === 'printCardModal') this.closeModal('printCardModal');
+          if (e.target.id === 'printMultipleModal') this.closeModal('printMultipleModal');
         });
       },
 
       loadPage: function (page) {
         const content = document.getElementById('content');
         switch (page) {
-          case 'beranda':
-            content.innerHTML = this.getBerandaPage();
-            break;
-          case 'identitas':
-            content.innerHTML = this.getIdentitasPage();
-            setTimeout(() => this.setupIdentitasPage(), 100);
-            break;
-          case 'input-siswa':
-            content.innerHTML = this.getInputSiswaPage();
-            setTimeout(() => this.setupInputSiswaPage(), 100);
-            break;
-          case 'kartu-ujian':
-            content.innerHTML = this.getKartuUjianPage();
-            setTimeout(() => this.setupKartuUjianPage(), 100);
-            break;
-          case 'daftar-hadir':
-            content.innerHTML = this.getDaftarHadirPage();
-            setTimeout(() => this.setupDaftarHadirPage(), 100);
-            break;
-          case 'denah':
-            content.innerHTML = this.getDenahPage();
-            setTimeout(() => this.setupDenahPage(), 100);
-            break;
-          case 'pengaturan':
-            content.innerHTML = this.getPengaturanPage();
-            setTimeout(() => this.setupPengaturanPage(), 100);
-            break;
-          default:
-            content.innerHTML = '<h1>Halaman Tidak Ditemukan</h1>';
+          case 'beranda': content.innerHTML = this.getBerandaPage(); break;
+          case 'identitas': content.innerHTML = this.getIdentitasPage(); setTimeout(() => this.setupIdentitasPage(), 100); break;
+          case 'input-siswa': content.innerHTML = this.getInputSiswaPage(); setTimeout(() => this.setupInputSiswaPage(), 100); break;
+          case 'kartu-ujian': content.innerHTML = this.getKartuUjianPage(); setTimeout(() => this.setupKartuUjianPage(), 100); break;
+          case 'daftar-hadir': content.innerHTML = this.getDaftarHadirPage(); setTimeout(() => this.setupDaftarHadirPage(), 100); break;
+          case 'denah': content.innerHTML = this.getDenahPage(); setTimeout(() => this.setupDenahPage(), 100); break;
+          case 'pengaturan': content.innerHTML = this.getPengaturanPage(); setTimeout(() => this.setupPengaturanPage(), 100); break;
+          default: content.innerHTML = '<h1>Halaman Tidak Ditemukan</h1>';
         }
       },
 
@@ -1343,14 +1381,10 @@
                 <li>Input Data Siswa Manual</li>
                 <li>Upload Foto Siswa per Individu</li>
                 <li>Pembuatan Kartu Ujian dengan background default</li>
-                <li>Titik dua (:) pada identitas kartu lurus rapi</li>
-                <li>Nama Kepala Sekolah tampil di semua kartu</li>
                 <li>Pembuatan Daftar Hadir Ujian</li>
-                <li>Tanda tangan kepala sekolah mengikuti panjang tabel</li>
-                <li>Cetak Kartu Perorangan</li>
-                <li>Cetak Kartu untuk Beberapa Siswa</li>
-                <li>Jenis Ujian: UH, PTS, PAS, LUAM, UAM</li>
-                <li><strong>Denah Tempat Duduk 36 Peserta per Kelas</strong> - Filter berdasarkan kelas/ruang</li>
+                <li>Cetak Kartu Perorangan / Beberapa Siswa</li>
+                <li><strong>Denah Tempat Duduk 36 Peserta per Kelas</strong> - Format Nomor Peserta (Atas), Kotak Foto (Tengah), Nama (Bawah) - 2 baris</li>
+                <li><strong>Kontrol Manual:</strong> Isi nomor urut di kotak kontrol untuk menampilkan kartu</li>
               </ul>
             </div>
           </div>
@@ -1364,7 +1398,6 @@
         return `
           <div class="content-container">
             <h1>Identitas Lembaga</h1>
-            
             <div class="identitas-grid">
               <div class="identitas-section">
                 <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"></path></svg>Identitas Sekolah</h3>
@@ -1410,7 +1443,6 @@
         return `
           <div class="content-container">
             <h1>Data Siswa</h1>
-            
             <div class="input-siswa-form">
               <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>Tambah Siswa Baru</h3>
               <div class="form-row">
@@ -1455,10 +1487,9 @@
                 <div class="form-group">
                   <label for="bgUpload">Upload Background Kartu (Opsional)</label>
                   <input type="file" id="bgUpload" accept="image/*">
-                  <p style="margin-top:5px; font-size:0.8rem; color:#666;"><strong>Background default sudah terpasang.</strong> Upload di sini jika ingin mengganti.</p>
+                  <p style="margin-top:5px; font-size:0.8rem; color:#666;"><strong>Background default sudah terpasang.</strong></p>
                   <div id="bgPreview" style="margin-top:10px;"><strong>Background saat ini:</strong><br>${bgHtml}</div>
                 </div>
-                
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
                   <button class="btn btn-info" id="previewCardsBtn">👁️ Preview Kartu</button>
                   <button class="btn btn-primary" id="printCardsBtn">🖨️ Cetak Semua</button>
@@ -1468,7 +1499,6 @@
                   <button class="btn btn-danger btn-sm" id="resetBackgroundBtn">🔄 Reset Background</button>
                 </div>
               </div>
-
               <div style="flex:2; min-width:300px;">
                 <h2>Preview Kartu</h2>
                 <div id="cardPreviewContainer" class="card-preview-container"></div>
@@ -1478,7 +1508,6 @@
         `;
       },
 
-      /* ===== HALAMAN DAFTAR HADIR - PERBAIKAN ===== */
       getDaftarHadirPage: function () {
         const kelasOptions = [...new Set(this.data.students.map(s => s.kelas))].filter(k => k && k.trim() !== '').map(k => `<option value="${k}">${k}</option>`).join('');
         return `
@@ -1489,14 +1518,11 @@
                 <h2>Pengaturan Daftar Hadir</h2>
                 <div class="form-group">
                   <label for="kelasSelect">Pilih Kelas</label>
-                  <select id="kelasSelect">
-                    <option value="">-- Pilih Kelas --</option>
-                    ${kelasOptions}
-                  </select>
+                  <select id="kelasSelect"><option value="">-- Pilih Kelas --</option>${kelasOptions}</select>
                 </div>
                 <div class="form-group">
                   <label for="mapelInput">Mata Pelajaran</label>
-                  <input type="text" id="mapelInput" placeholder="Contoh: Matematika, Bahasa Indonesia, dll">
+                  <input type="text" id="mapelInput" placeholder="Contoh: Matematika">
                 </div>
                 <div class="form-group">
                   <label for="hariInput">Hari</label>
@@ -1506,14 +1532,11 @@
                   <button class="btn btn-info" id="previewDaftarHadirBtn">👁️ Preview</button>
                   <button class="btn btn-primary" id="printDaftarHadirBtn">🖨️ Cetak Daftar Hadir</button>
                 </div>
-                <p style="margin-top:15px; color:#666; font-size:0.9rem;">
-                  <strong>Catatan:</strong> Preview dan cetak akan menampilkan daftar hadir berdasarkan kelas yang dipilih.
-                </p>
               </div>
               <div style="flex:2; min-width:300px;">
                 <h2>Preview Daftar Hadir</h2>
                 <div id="daftarHadirPreview" class="daftar-hadir-preview">
-                  <p style="text-align:center; padding:20px;">Silakan pilih kelas dan klik tombol Preview untuk melihat daftar hadir.</p>
+                  <p style="text-align:center; padding:20px;">Silakan pilih kelas dan klik tombol Preview.</p>
                 </div>
               </div>
             </div>
@@ -1521,72 +1544,89 @@
         `;
       },
 
-      /* ===== HALAMAN DENAH DUDUK - PERBAIKAN: DENGAN PILIHAN KELAS ===== */
+      /* ===== HALAMAN DENAH DUDUK - GABUNGAN SCRIPT BARU ===== */
       getDenahPage: function () {
-        // Ambil daftar kelas unik dari data siswa
         const kelasOptions = [...new Set(this.data.students.map(s => s.kelas))].filter(k => k && k.trim() !== '').map(k => `<option value="${k}">${k}</option>`).join('');
         
         return `
           <div class="content-container">
-            <h1>Denah Tempat Duduk Peserta</h1>
+            <h1 style="text-align: center;">Denah Tempat Duduk Peserta</h1>
             
             <div class="denah-container no-print">
+              <!-- Panel Data Peserta -->
               <div class="data-panel-denah">
-                <div class="filter-panel">
-                  <div class="filter-item">
-                    <label for="denahKelasSelect">Pilih Kelas / Ruang</label>
-                    <select id="denahKelasSelect" class="form-control">
-                      <option value="">-- Pilih Kelas --</option>
-                      ${kelasOptions}
-                      <option value="_custom">+ Buat Ruang Baru (Kustom)</option>
-                    </select>
+                  <h2>📊 Data Peserta (1-36)</h2>
+                  <div class="filter-panel" style="margin-top:10px; margin-bottom:10px;">
+                      <div class="filter-item">
+                        <label for="denahKelasSelect">Pilih Kelas</label>
+                        <select id="denahKelasSelect" class="form-control">
+                          <option value="">-- Pilih Kelas --</option>
+                          ${kelasOptions}
+                        </select>
+                      </div>
+                      <div>
+                        <button class="btn btn-primary" id="loadDenahKelasBtn">📋 Muat Data</button>
+                      </div>
                   </div>
-                  <div class="filter-item" id="customRuangContainer" style="display:none;">
-                    <label for="customRuangInput">Nama Ruang</label>
-                    <input type="text" id="customRuangInput" placeholder="Contoh: Ruang 1, Lab Komputer, dll">
+                  <p><small>Paste dari Excel atau isi manual. Kolom "Nomor Test" = No Peserta. Data diedit di sini hanya mempengaruhi tampilan denah.</small></p>
+                  <div style="max-height:450px; overflow-y:auto; border:1px solid #ddd;">
+                      <table class="data-table-denah" id="denahDataTable">
+                          <thead><tr><th>No.</th><th>Nomor Peserta</th><th>Nama Peserta</th></tr></thead>
+                          <tbody id="denahTableBody"></tbody>
+                      </table>
                   </div>
-                  <div>
-                    <button class="btn btn-primary" id="loadDenahKelasBtn">📋 Tampilkan Denah</button>
+                  <div style="margin-top: 10px;">
+                      <button class="btn btn-info" id="resetDenahTableBtn">🔄 Reset Tabel</button>
                   </div>
-                </div>
-                
-                <div style="max-height:450px; overflow-y:auto; border:1px solid #999; padding:10px; margin-bottom:20px;">
-                  <h2>Data Peserta untuk Denah</h2>
-                  <p><small>
-                    <span id="denahInfoKelas"></span>
-                    Data dapat diedit manual. Maksimal 36 peserta per denah.
-                  </small></p>
-                  <table class="data-table-denah" id="denahDataTable">
-                    <thead><tr><th>No. Urut</th><th>Nomor Test</th><th>Nama Peserta</th></tr></thead>
-                    <tbody id="denahTableBody"></tbody>
-                  </table>
-                </div>
-                <div class="action-buttons">
-                  <button class="btn btn-info" id="refreshDenahBtn">🔄 Refresh dari Data Siswa</button>
-                  <button class="btn btn-warning" id="resetDenahTableBtn">🗑️ Reset Tabel Denah</button>
-                  <button class="btn btn-secondary" id="clearAllDenahBtn">✖️ Sembunyikan Semua Kartu</button>
-                </div>
               </div>
 
+              <!-- Panel Kontrol -->
               <div class="control-panel-denah">
-                <h2>Kontrol Tampilan Kartu</h2>
-                <div id="denahInfoRuangan" class="info-ruangan">
-                  <span><strong>Kelas/Ruang:</strong> <span id="ruanganTerpilih">Belum dipilih</span></span>
-                  <span><strong>Total Peserta:</strong> <span id="totalPesertaDenah">0</span></span>
-                </div>
-                <p><small>Klik nomor untuk menampilkan/menyembunyikan kartu di denah.</small></p>
-                <div class="controls" id="denahControls"></div>
-                <div class="action-buttons" style="margin-top: 20px;">
-                  <button class="btn btn-danger" id="resetDenahBtn">🔄 Reset Semua Kartu</button>
-                  <button class="btn btn-success" id="printDenahBtn"><strong>🖨️ Cetak Denah (Landscape)</strong></button>
-                </div>
+                  <h2>🎮 Isi Nomor Urut Peserta (1-36)</h2>
+                  
+                  <div class="info-ruangan">
+                      <div>
+                        <strong>🆕 Format kartu:</strong>
+                        <ul style="margin:5px 0 0 18px; padding-left:0; font-size:12px;">
+                            <li><b>Atas</b> → Nomor Peserta (dari tabel data)</li>
+                            <li><b>Tengah</b> → Kotak foto</li>
+                            <li><b>Bawah</b> → Nama Peserta (2 baris)</li>
+                        </ul>
+                      </div>
+                  </div>
+
+                  <!-- GRID KONTROL - 36 KOTAK -->
+                  <div id="gridKontrol" class="grid-kontrol"></div>
+
+                  <!-- Tombol Aksi -->
+                  <div style="margin-top: 15px;">
+                      <button class="btn btn-danger" id="kosongkanSemuaBtn">🗑️ Kosongkan Semua Kotak</button>
+                  </div>
+                  
+                  <div style="margin-top: 10px; font-size: 14px; background: #f0f7f0; padding: 8px; border-radius: 6px;">
+                      <span>✅ Kotak terisi: <span id="jumlahTerisi">0</span>/36</span>
+                      <span style="margin-left: 20px;">📊 Baris denah: <span id="jumlahBarisDenah">0</span></span>
+                  </div>
               </div>
             </div>
 
-            <hr class="no-print" style="margin: 20px 0;">
+            <hr class="no-print">
 
-            <h2 class="no-print">Denah Tempat Duduk</h2>
-            <div class="grid" id="denahGrid"></div>
+            <!-- DENAH UTAMA -->
+            <h2 class="no-print">📍 Denah Tempat Duduk</h2>
+            <div class="denah-container" style="background:white; padding:20px; border-radius:8px;">
+                <div id="gridDenah" class="grid-denah"></div>
+                <div id="denahKosong" style="text-align: center; padding: 40px; color: #777; background: #f9f9f9; border-radius: 8px; display: block; font-size: 16px;">
+                    ⚡ Denah masih kosong. Pilih kelas, lalu isi nomor di kotak kontrol untuk menampilkan kartu.
+                </div>
+            </div>
+
+            <!-- Tombol Cetak -->
+            <div class="no-print" style="margin-top:20px; text-align:center;">
+                <button class="btn btn-primary" onclick="window.print()" style="font-size:16px; padding:12px 30px;">
+                    🖨️ CETAK DENAH (Landscape)
+                </button>
+            </div>
           </div>
         `;
       },
@@ -1638,11 +1678,7 @@
         }
 
         const saveBtn = document.getElementById('saveIdentitasBtn');
-        if (saveBtn) {
-          saveBtn.addEventListener('click', () => {
-            this.saveIdentitas();
-          });
-        }
+        if (saveBtn) saveBtn.addEventListener('click', () => this.saveIdentitas());
       },
 
       setupInputSiswaPage: function () {
@@ -1657,29 +1693,17 @@
         const formInputs = ['noPeserta', 'nama', 'kelas', 'ttl'];
         formInputs.forEach(id => {
           const input = document.getElementById(id);
-          if (input) {
-            input.addEventListener('keypress', (e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                this.tambahSiswaManual();
-              }
-            });
-          }
+          if (input) input.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.tambahSiswaManual(); } });
         });
 
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
           searchInput.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
-            const filtered = this.data.students.filter(s => 
-              s.nama.toLowerCase().includes(term) || 
-              (s.kelas || '').toLowerCase().includes(term) ||
-              (s.noPeserta || '').toLowerCase().includes(term)
-            );
+            const filtered = this.data.students.filter(s => s.nama.toLowerCase().includes(term) || (s.kelas || '').toLowerCase().includes(term) || (s.noPeserta || '').toLowerCase().includes(term));
             this.populateStudentTable(filtered);
           });
         }
-
         this.setupUploadFotoModal();
       },
 
@@ -1723,26 +1747,16 @@
         if (pdfBtn) pdfBtn.addEventListener('click', () => this.generatePDF());
 
         const openPrintCardModalBtn = document.getElementById('openPrintCardModalBtn');
-        if (openPrintCardModalBtn) {
-          openPrintCardModalBtn.addEventListener('click', () => {
-            this.openModal('printCardModal');
-            document.getElementById('studentSearch').value = '';
-            document.getElementById('searchResults').innerHTML = '';
-            document.getElementById('printSelectedCardBtn').disabled = true;
-          });
-        }
+        if (openPrintCardModalBtn) openPrintCardModalBtn.addEventListener('click', () => { this.openModal('printCardModal'); document.getElementById('studentSearch').value = ''; document.getElementById('searchResults').innerHTML = ''; document.getElementById('printSelectedCardBtn').disabled = true; });
 
         const openPrintMultipleModalBtn = document.getElementById('openPrintMultipleModalBtn');
-        if (openPrintMultipleModalBtn) {
-          openPrintMultipleModalBtn.addEventListener('click', () => this.openPrintMultipleModal());
-        }
+        if (openPrintMultipleModalBtn) openPrintMultipleModalBtn.addEventListener('click', () => this.openPrintMultipleModal());
 
         this.setupPrintCardModal();
         this.setupPrintMultipleModal();
         this.renderCardPreview();
       },
 
-      /* ===== DAFTAR HADIR - PERBAIKAN ===== */
       setupDaftarHadirPage: function () {
         const previewBtn = document.getElementById('previewDaftarHadirBtn');
         if (previewBtn) previewBtn.addEventListener('click', () => this.previewDaftarHadir());
@@ -1751,320 +1765,208 @@
         if (printBtn) printBtn.addEventListener('click', () => this.printDaftarHadir());
       },
 
-      /* ===== DENAH DUDUK - PERBAIKAN ===== */
+      /* ===== DENAH SETUP - INTEGRASI LOGIKA BARU ===== */
       setupDenahPage: function () {
-        const grid = document.getElementById('denahGrid');
-        const controls = document.getElementById('denahControls');
-        const tableBody = document.getElementById('denahTableBody');
+        // Inisialisasi variabel lokal
+        const gridKontrol = document.getElementById("gridKontrol");
+        const gridDenah = document.getElementById("gridDenah");
+        const denahKosong = document.getElementById("denahKosong");
+        const jumlahTerisiSpan = document.getElementById("jumlahTerisi");
+        const jumlahBarisDenahSpan = document.getElementById("jumlahBarisDenah");
         
-        // Hapus konten sebelumnya
-        grid.innerHTML = '';
-        controls.innerHTML = '';
-        
-        // Inisialisasi event listener untuk filter kelas
-        const kelasSelect = document.getElementById('denahKelasSelect');
-        const customRuangContainer = document.getElementById('customRuangContainer');
-        const customRuangInput = document.getElementById('customRuangInput');
+        // Event listener untuk load kelas
         const loadBtn = document.getElementById('loadDenahKelasBtn');
-        
-        if (kelasSelect) {
-          kelasSelect.addEventListener('change', () => {
-            if (kelasSelect.value === '_custom') {
-              customRuangContainer.style.display = 'block';
-            } else {
-              customRuangContainer.style.display = 'none';
-            }
-          });
-        }
-        
         if (loadBtn) {
-          loadBtn.addEventListener('click', () => {
-            let kelasTerpilih = kelasSelect.value;
-            
-            if (kelasTerpilih === '_custom') {
-              kelasTerpilih = customRuangInput.value.trim();
-              if (!kelasTerpilih) {
-                this.showNotification('Silakan masukkan nama ruang!', 'error');
-                return;
-              }
-            }
-            
-            if (!kelasTerpilih) {
-              this.showNotification('Silakan pilih kelas atau buat ruang baru!', 'error');
-              return;
-            }
-            
-            this.data.denahKelasTerpilih = kelasTerpilih;
-            this.loadDenahForKelas(kelasTerpilih);
-          });
+            loadBtn.addEventListener('click', () => {
+                const kelas = document.getElementById('denahKelasSelect').value;
+                if (!kelas) {
+                    this.showNotification('Pilih kelas terlebih dahulu!', 'error');
+                    return;
+                }
+                this.data.denahKelasTerpilih = kelas;
+                this.buatTabelDataDenah(kelas);
+                this.showNotification(`Data kelas ${kelas} dimuat.`, 'success');
+            });
         }
-        
-        // Buat grid default (36 kartu)
-        for (let i = 1; i <= 36; i++) {
-          const card = document.createElement("div");
-          card.className = "denah-card";
-          card.id = "denah-card-" + i;
-          card.innerHTML = `
-            <div class="denah-box-top" id="denah-top-${i}">${i}</div>
-            <div class="denah-box-mid" id="denah-noTes-${i}">Nomor Test</div>
-            <div class="denah-box-bottom" id="denah-nama-${i}">Nama Peserta</div>
-          `;
-          grid.appendChild(card);
-          
-          const btn = document.createElement("div");
-          btn.className = "btn-nomor";
-          btn.id = "denah-btn-" + i;
-          btn.textContent = i;
-          btn.onclick = () => {
-            this.toggleDenahCard(i);
-          };
-          controls.appendChild(btn);
-        }
-        
-        // Event listeners lainnya
-        const refreshBtn = document.getElementById('refreshDenahBtn');
-        if (refreshBtn) refreshBtn.addEventListener('click', () => this.refreshDenahFromSiswa());
-        
+
+        // Event Reset Tabel
         const resetTableBtn = document.getElementById('resetDenahTableBtn');
-        if (resetTableBtn) resetTableBtn.addEventListener('click', () => this.resetDenahTable());
+        if (resetTableBtn) {
+            resetTableBtn.addEventListener('click', () => {
+                if (confirm("Reset tabel denah ke kosong?")) {
+                    this.data.pesertaDataLokal = {};
+                    this.buatTabelDataDenah(this.data.denahKelasTerpilih, true);
+                    this.perbaruiDenah(); // Refresh view
+                }
+            });
+        }
         
-        const clearAllBtn = document.getElementById('clearAllDenahBtn');
-        if (clearAllBtn) clearAllBtn.addEventListener('click', () => this.resetAllDenahCards());
-        
-        const resetDenahBtn = document.getElementById('resetDenahBtn');
-        if (resetDenahBtn) resetDenahBtn.addEventListener('click', () => this.resetAllDenahCards());
-        
-        const printDenahBtn = document.getElementById('printDenahBtn');
-        if (printDenahBtn) printDenahBtn.addEventListener('click', () => window.print());
-        
-        // Paste event
+        // Event Kosongkan Semua Kontrol
+        const kosongkanBtn = document.getElementById('kosongkanSemuaBtn');
+        if (kosongkanBtn) {
+            kosongkanBtn.addEventListener('click', () => this.kosongkanSemuaKotak());
+        }
+
+        // Event Paste ke Tabel
         const denahTable = document.getElementById('denahDataTable');
         if (denahTable) {
-          denahTable.addEventListener("paste", (e) => {
-            this.handleDenahPaste(e);
-          });
+            denahTable.addEventListener("paste", (e) => this.handleDenahPaste(e));
+            // Event input manual
+            denahTable.addEventListener("input", () => {
+                this.bacaDataPesertaLokal();
+                this.perbaruiDenah();
+            });
         }
+
+        // Inisialisasi tampilan awal
+        this.buatGridKontrol();
+        this.buatTabelDataDenah('', true); // Buat tabel kosong dulu
+        this.perbaruiDenah();
       },
 
-      loadDenahForKelas: function (kelas) {
-        // Update info ruangan
-        document.getElementById('ruanganTerpilih').textContent = kelas;
-        
-        // Filter siswa berdasarkan kelas
-        const siswaKelas = this.data.students.filter(s => s.kelas === kelas);
-        document.getElementById('totalPesertaDenah').textContent = siswaKelas.length;
-        
-        // Inisialisasi data denah untuk kelas ini
-        if (!this.data.denahData[kelas]) {
-          this.data.denahData[kelas] = {};
+      /* ---------- FUNGSI SISWA ---------- */
+      tambahSiswaManual: function () {
+        const noPeserta = document.getElementById('noPeserta').value.trim();
+        const nama = document.getElementById('nama').value.trim();
+        const kelas = document.getElementById('kelas').value.trim();
+        const ttl = document.getElementById('ttl').value.trim();
+
+        if (!noPeserta || !nama || !kelas) {
+          this.showNotification('No Peserta, Nama, dan Kelas harus diisi!', 'error');
+          return;
         }
-        
-        const denahKelas = this.data.denahData[kelas];
-        
-        // Isi data dari siswa (max 36)
-        for (let i = 1; i <= 36; i++) {
-          if (i <= siswaKelas.length) {
-            denahKelas[i] = {
-              noTes: siswaKelas[i-1].noPeserta || '',
-              nama: siswaKelas[i-1].nama || ''
-            };
-          } else if (!denahKelas[i]) {
-            denahKelas[i] = { noTes: '', nama: '' };
-          }
+
+        const isDuplicate = this.data.students.some(s => s.noPeserta === noPeserta);
+        if (isDuplicate) {
+          this.showNotification(`No Peserta ${noPeserta} sudah terdaftar!`, 'error');
+          return;
         }
+
+        const siswaBaru = { noPeserta, nama, kelas, ttl, photo: null };
+        this.data.students.push(siswaBaru);
+        this.saveToStorage();
         
-        // Update tabel
-        this.createDenahTableRows(kelas);
-        this.showNotification(`Denah untuk kelas "${kelas}" dimuat!`, 'success');
+        this.resetFormSiswa();
+        this.populateStudentTable(this.data.students);
+        document.getElementById('noPeserta').focus();
+        this.showNotification(`Siswa ${nama} berhasil ditambahkan!`, 'success');
       },
 
-      createDenahTableRows: function (kelas) {
-        const tableBody = document.getElementById('denahTableBody');
-        if (!tableBody) return;
+      resetFormSiswa: function () {
+        document.getElementById('noPeserta').value = '';
+        document.getElementById('nama').value = '';
+        document.getElementById('kelas').value = '';
+        document.getElementById('ttl').value = '';
+      },
+
+      populateStudentTable: function (data) {
+        const tbody = document.getElementById('studentTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
         
-        tableBody.innerHTML = "";
-        const denahKelas = this.data.denahData[kelas] || {};
+        if (data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#666;">Belum ada data siswa.</td></tr>';
+          return;
+        }
         
-        for (let i = 1; i <= 36; i++) {
-          let data = denahKelas[i] || { noTes: '', nama: '' };
-          let row = document.createElement("tr");
-          row.innerHTML = `
-            <td>${i}</td>
-            <td contenteditable="true" onblur="SMKApps.updateDenahData('${kelas}', ${i}, 'noTes', this.textContent)">${data.noTes || ''}</td>
-            <td contenteditable="true" onblur="SMKApps.updateDenahData('${kelas}', ${i}, 'nama', this.textContent)">${data.nama || ''}</td>
+        data.forEach((siswa, index) => {
+          const originalIndex = this.data.students.findIndex(s => s.noPeserta === siswa.noPeserta);
+          const photoStatus = siswa.photo ? '<span style="color:var(--success-color); font-weight:bold;">✓</span>' : '<span style="color:var(--danger-color);">✗</span>';
+          const row = `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${siswa.noPeserta}</td>
+              <td>${siswa.nama}</td>
+              <td>${siswa.kelas}</td>
+              <td>${siswa.ttl || '-'}</td>
+              <td style="text-align:center;">${photoStatus}</td>
+              <td><div class="action-buttons"><button class="btn btn-info btn-sm" onclick="SMKApps.editStudent(${originalIndex})">Edit</button><button class="btn btn-primary btn-sm" onclick="SMKApps.openUploadFotoModal(${originalIndex})">📷 Foto</button><button class="btn btn-danger btn-sm" onclick="SMKApps.deleteStudent(${originalIndex})">Hapus</button></div></td>
+            </tr>
           `;
-          tableBody.appendChild(row);
-        }
-      },
-
-      updateDenahData: function (kelas, no, field, value) {
-        if (!this.data.denahData[kelas]) {
-          this.data.denahData[kelas] = {};
-        }
-        if (!this.data.denahData[kelas][no]) {
-          this.data.denahData[kelas][no] = { noTes: '', nama: '' };
-        }
-        this.data.denahData[kelas][no][field] = value.trim();
-        
-        // Update tampilan kartu jika kelas sedang aktif
-        if (this.data.denahKelasTerpilih === kelas) {
-          const card = document.getElementById(`denah-card-${no}`);
-          if (card && card.classList.contains('visible')) {
-            if (field === 'noTes') {
-              document.getElementById(`denah-noTes-${no}`).textContent = value.trim() || 'Nomor Test';
-            } else {
-              document.getElementById(`denah-nama-${no}`).textContent = value.trim() || 'Nama Peserta';
-            }
-          }
-        }
-      },
-
-      toggleDenahCard: function (no) {
-        const card = document.getElementById(`denah-card-${no}`);
-        const btn = document.getElementById(`denah-btn-${no}`);
-        const isActive = card.classList.contains("visible");
-        
-        if (isActive) {
-          card.classList.remove("visible");
-          btn.classList.remove("active");
-        } else {
-          card.classList.add("visible");
-          btn.classList.add("active");
-          
-          // Update konten kartu dari data denah kelas terpilih
-          const kelas = this.data.denahKelasTerpilih;
-          if (kelas && this.data.denahData[kelas] && this.data.denahData[kelas][no]) {
-            document.getElementById(`denah-noTes-${no}`).textContent = this.data.denahData[kelas][no].noTes || "Nomor Test";
-            document.getElementById(`denah-nama-${no}`).textContent = this.data.denahData[kelas][no].nama || "Nama Peserta";
-          }
-        }
-      },
-
-      refreshDenahFromSiswa: function () {
-        const kelas = this.data.denahKelasTerpilih;
-        if (!kelas) {
-          this.showNotification('Silakan pilih kelas terlebih dahulu!', 'error');
-          return;
-        }
-        
-        this.loadDenahForKelas(kelas);
-      },
-
-      resetDenahTable: function () {
-        const kelas = this.data.denahKelasTerpilih;
-        if (!kelas) {
-          this.showNotification('Silakan pilih kelas terlebih dahulu!', 'error');
-          return;
-        }
-        
-        if (confirm(`Apakah Anda yakin ingin mengosongkan semua data denah untuk kelas "${kelas}"?`)) {
-          this.data.denahData[kelas] = {};
-          this.createDenahTableRows(kelas);
-          this.showNotification(`Tabel denah untuk kelas "${kelas}" dikosongkan!`, 'info');
-        }
-      },
-
-      resetAllDenahCards: function () {
-        for (let j = 1; j <= 36; j++) {
-          const card = document.getElementById(`denah-card-${j}`);
-          if (card) {
-            card.classList.remove("visible");
-            const btn = document.getElementById(`denah-btn-${j}`);
-            if (btn) btn.classList.remove("active");
-          }
-        }
-      },
-
-      handleDenahPaste: function (e) {
-        e.preventDefault();
-        const kelas = this.data.denahKelasTerpilih;
-        if (!kelas) {
-          this.showNotification('Silakan pilih kelas terlebih dahulu!', 'error');
-          return;
-        }
-        
-        let text = (e.clipboardData || window.clipboardData).getData("text");
-        let rows = text.trim().split(/\r?\n/);
-        const tableBody = document.getElementById('denahTableBody');
-        tableBody.innerHTML = "";
-        
-        if (!this.data.denahData[kelas]) {
-          this.data.denahData[kelas] = {};
-        }
-        
-        rows.forEach((rowText, index) => {
-          if (index >= 36) return;
-          let cols = rowText.split(/\t/);
-          let newRow = document.createElement("tr");
-          
-          let cellNo = document.createElement("td");
-          cellNo.textContent = index + 1;
-          newRow.appendChild(cellNo);
-
-          let cellTes = document.createElement("td");
-          cellTes.contentEditable = "true";
-          cellTes.textContent = cols[0] || "";
-          cellTes.onblur = (e) => this.updateDenahData(kelas, index+1, 'noTes', e.target.textContent);
-          newRow.appendChild(cellTes);
-          
-          let cellNama = document.createElement("td");
-          cellNama.contentEditable = "true";
-          cellNama.textContent = cols[1] || "";
-          cellNama.onblur = (e) => this.updateDenahData(kelas, index+1, 'nama', e.target.textContent);
-          newRow.appendChild(cellNama);
-          
-          tableBody.appendChild(newRow);
-          
-          if (!this.data.denahData[kelas][index+1]) {
-            this.data.denahData[kelas][index+1] = {};
-          }
-          this.data.denahData[kelas][index+1].noTes = cols[0] || "";
-          this.data.denahData[kelas][index+1].nama = cols[1] || "";
+          tbody.innerHTML += row;
         });
       },
 
-      setupPengaturanPage: function () {
-        const clearBtn = document.getElementById('clearDataBtn');
-        if (clearBtn) {
-          clearBtn.addEventListener('click', () => {
-            if (confirm('Apakah Anda yakin ingin menghapus semua data? Tindakan ini tidak dapat dibatalkan.')) {
-              localStorage.clear();
-              this.data.students = [];
-              this.data.school = {
-                yayasan: 'YAYASAN ASH SHIDIQI MATARAM BARU',
-                sekolah: 'MA. ASH SHIDIQI RAJABASA BARU',
-                alamat: 'SRI REJO AGUNG',
-                kepalaSekolah: 'RINI ARDOLA,M.Pd.',
-                logo: null,
-                ttdKepalaSekolah: null,
-                jenisUjian: { uh: true, pts: false, pas: false, luam: false, uam: false }
-              };
-              this.data.cardBackground = DEFAULT_CARD_BACKGROUND;
-              this.data.denahData = {};
-              this.showNotification('Semua data telah dihapus', 'success');
-              this.loadPage('beranda');
-            }
-          });
+      editStudent: function (index) {
+        this.data.currentEditIndex = index;
+        const s = this.data.students[index];
+        document.getElementById('editNoPeserta').value = s.noPeserta;
+        document.getElementById('editNama').value = s.nama;
+        document.getElementById('editKelas').value = s.kelas;
+        document.getElementById('editTtl').value = s.ttl || '';
+        this.openModal('editModal');
+
+        const saveBtn = document.getElementById('saveEditBtn');
+        if (saveBtn) {
+          const newSaveBtn = saveBtn.cloneNode(true);
+          saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+          newSaveBtn.addEventListener('click', () => this.saveEditStudent());
         }
+      },
+
+      saveEditStudent: function () {
+        const nama = document.getElementById('editNama').value.trim();
+        const kelas = document.getElementById('editKelas').value.trim();
+        const ttl = document.getElementById('editTtl').value.trim();
+        if (!nama || !kelas) { this.showNotification('Nama dan kelas harus diisi!', 'error'); return; }
+        this.data.students[this.data.currentEditIndex].nama = nama;
+        this.data.students[this.data.currentEditIndex].kelas = kelas;
+        this.data.students[this.data.currentEditIndex].ttl = ttl;
+        this.saveToStorage();
+        this.populateStudentTable(this.data.students);
+        this.closeModal('editModal');
+        this.showNotification('Data siswa berhasil diperbarui!', 'success');
+      },
+
+      deleteStudent: function (index) {
+        const siswa = this.data.students[index];
+        if (confirm(`Apakah Anda yakin ingin menghapus data siswa "${siswa.nama}"?`)) {
+          this.data.students.splice(index, 1);
+          this.saveToStorage();
+          this.populateStudentTable(this.data.students);
+          this.showNotification(`Data siswa ${siswa.nama} berhasil dihapus!`, 'success');
+        }
+      },
+
+      /* ---------- FUNGSI FOTO SISWA ---------- */
+      openUploadFotoModal: function (index) {
+        this.data.currentFotoIndex = index;
+        const siswa = this.data.students[index];
+        document.getElementById('uploadFotoNamaSiswa').textContent = siswa.nama;
+        document.getElementById('uploadFotoNoPeserta').textContent = siswa.noPeserta;
+        const preview = document.getElementById('uploadFotoPreview');
+        const fotoInput = document.getElementById('fotoUpload');
+        fotoInput.value = '';
+        preview.innerHTML = siswa.photo ? `<img src="${siswa.photo}" style="width:100%; height:100%; object-fit:contain;">` : '<span style="color:#999;">Belum ada foto</span>';
+        this.openModal('uploadFotoModal');
+      },
+
+      saveFotoSiswa: function () {
+        const fotoInput = document.getElementById('fotoUpload');
+        if (!fotoInput || !fotoInput.files.length) { this.showNotification('Silakan pilih file foto terlebih dahulu.', 'error'); return; }
+        const file = fotoInput.files[0];
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          this.data.students[this.data.currentFotoIndex].photo = event.target.result;
+          this.saveToStorage();
+          this.populateStudentTable(this.data.students);
+          this.closeModal('uploadFotoModal');
+          this.showNotification('Foto berhasil diupload!', 'success');
+        };
+        reader.readAsDataURL(file);
       },
 
       setupUploadFotoModal: function () {
         const modal = document.getElementById('uploadFotoModal');
         if (!modal) return;
-
         const closeBtn = document.getElementById('closeUploadFotoModalBtn');
         if (closeBtn) closeBtn.addEventListener('click', () => this.closeModal('uploadFotoModal'));
-
         const fotoInput = document.getElementById('fotoUpload');
         if (fotoInput) {
           fotoInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (file) {
-              if (file.size > 2 * 1024 * 1024) {
-                this.showNotification('Ukuran file maksimal 2MB!', 'error');
-                fotoInput.value = '';
-                return;
-              }
+              if (file.size > 2 * 1024 * 1024) { this.showNotification('Ukuran file maksimal 2MB!', 'error'); fotoInput.value = ''; return; }
               const reader = new FileReader();
               reader.onload = (event) => {
                 const preview = document.getElementById('uploadFotoPreview');
@@ -2074,9 +1976,564 @@
             }
           });
         }
-
         const saveBtn = document.getElementById('saveFotoBtn');
         if (saveBtn) saveBtn.addEventListener('click', () => this.saveFotoSiswa());
+      },
+
+      /* ---------- CARD FUNCTIONS ---------- */
+      createCardElement: function (student, cardId) {
+        const bgStyle = this.data.cardBackground ? `background-image: url('${this.data.cardBackground}'); background-size: cover; background-position: center;` : 'background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);';
+        const photoHtml = student.photo ? `<img src="${student.photo}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.5rem; border-radius:4px;">FOTO</div>';
+        const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" class="card-logo" style="width:100%; height:100%; object-fit:contain;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.4rem; border-radius:4px;">LOGO</div>';
+        const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="width:50px; height:25px; object-fit:contain;">` : '';
+        
+        let jenisUjianText = '';
+        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
+        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
+        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
+        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
+        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
+        
+        return `
+          <div class="card" id="${cardId}" style="${bgStyle}">
+            <div class="card-content">
+              <div class="card-header" style="display:flex; align-items:center; gap:8px;">
+                <div class="card-logo" style="width:35px; height:35px;">${logoHtml}</div>
+                <div class="card-school-info" style="flex:1; text-align:center;">
+                  <h3 style="margin:0; font-size:0.65rem; line-height:1.2;">${this.data.school.yayasan}</h3>
+                  <h3 style="margin:0; font-size:0.65rem; line-height:1.2;">${this.data.school.sekolah}</h3>
+                  <h3 style="margin:0; font-size:0.55rem; line-height:1.2;">${this.data.school.alamat}</h3>
+                </div>
+              </div>
+              <div class="card-title" style="margin:4px 0; font-size:0.75rem;">KARTU PESERTA ${jenisUjianText}</div>
+              <div class="card-student-info" style="display:flex; gap:8px;">
+                <div class="card-photo" style="width:55px; height:70px; border-radius:6px; overflow:hidden; border:1px solid #ddd;">${photoHtml}</div>
+                <div class="card-details" style="flex:1; font-size:0.65rem; line-height:1.3;">
+                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">No</span><span class="detail-value">: ${student.noPeserta || ''}</span></div>
+                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">Nama</span><span class="detail-value">: ${student.nama || ''}</span></div>
+                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">Kelas</span><span class="detail-value">: ${student.kelas || ''}</span></div>
+                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">TTL</span><span class="detail-value">: ${student.ttl || ''}</span></div>
+                </div>
+              </div>
+              <div class="card-signature" style="text-align:right; font-size:0.55rem; margin-top:2px; padding-top:4px; border-top:1px solid rgba(0,0,0,0.05);">
+                Dibuat tgl: ${new Date().toLocaleDateString('id-ID')}<br>
+                <span style="display:block;margin-bottom:2px;">Kepala Sekolah</span>
+                <div class="signature-line" style="height:20px; margin-bottom:2px; display:flex; justify-content:flex-end;">${ttdHtml}</div>
+                <div class="signature-name" style="font-weight:700; font-size:0.6rem;">${this.data.school.kepalaSekolah}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      },
+
+      renderCardPreview: function () {
+        const container = document.getElementById('cardPreviewContainer');
+        if (!container) return;
+        if (this.data.students.length === 0) {
+          container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;"><p>Tidak ada data siswa.</p></div>';
+          return;
+        }
+        const html = this.data.students.slice(0, 4).map(s => this.createCardElement(s, 'preview-' + s.noPeserta)).join('');
+        container.innerHTML = html;
+      },
+
+      printCards: function () {
+        if (this.data.students.length === 0) { this.showNotification("Tidak ada data siswa!", "error"); return; }
+        this.printCardsWithData(this.data.students);
+      },
+      
+      printCardsWithData: function (studentsToPrint) {
+        const printWindow = window.open('', '_blank');
+        let jenisUjianText = '';
+        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
+        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
+        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
+        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
+        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
+        
+        let html = `<html><head><title>Cetak Kartu Ujian</title><style>
+          @page { size: A4 portrait; margin: 10mm; }
+          body { margin:0; padding:0; font-family:'Poppins', sans-serif; background: #f5f5f5; }
+          .print-sheet { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, auto); gap: 10px; page-break-after: always; padding: 10px; }
+          .print-card { break-inside: avoid; page-break-inside: avoid; }
+          .card { width: 9cm !important; height: 6cm !important; position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; background-size: cover; background-position: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          .card-content { position:absolute; inset:0; background:rgba(255,255,255,0.95); padding:10px 12px; display:flex; flex-direction:column; justify-content:space-between; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          .card-header { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 6px; }
+          .card-logo { width: 35px; height: 35px; flex-shrink: 0; }
+          .card-school-info { flex: 1; text-align: center; }
+          .card-school-info h3 { font-size: 0.65rem; margin: 1px 0; line-height: 1.2; text-align: center; }
+          .card-title { text-align: center; font-weight: 700; font-size: 0.75rem; margin: 4px 0; text-decoration: underline; color: #4361ee; }
+          .card-student-info { display: flex; gap: 8px; flex-grow: 1; }
+          .card-photo { width: 55px; height: 70px; background: #eee; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; }
+          .card-details { flex: 1; font-size: 0.65rem; line-height: 1.3; }
+          .detail-row { display: flex; margin-bottom: 1px; }
+          .detail-label { width: 32px; font-weight: 600; flex-shrink: 0; }
+          .detail-value { flex: 1; }
+          .card-signature { text-align: right; font-size: 0.55rem; margin-top: 2px; padding-top: 4px; border-top: 1px solid rgba(0,0,0,0.05); }
+          .card-signature .signature-line { height: 20px; margin-bottom: 2px; display: flex; justify-content: flex-end; }
+          .card-signature .signature-name { font-weight: 700; font-size: 0.6rem; }
+        </style></head><body>`;
+        
+        let counter = 0;
+        for (let i = 0; i < studentsToPrint.length; i++) {
+          if (counter % 8 === 0) html += `<div class="print-sheet">`;
+          const student = studentsToPrint[i];
+          const bg = this.data.cardBackground ? `background-image:url('${this.data.cardBackground}'); background-size:cover; background-position:center;` : "background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%)";
+          const photoHtml = student.photo ? `<img src="${student.photo}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666;">FOTO</div>';
+          const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="width:100%; height:100%; object-fit:contain;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666;">LOGO</div>';
+          const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="width:50px; height:25px; object-fit:contain;">` : '';
+          html += `<div class="print-card"><div class="card" style="${bg}"><div class="card-content"><div class="card-header"><div class="card-logo">${logoHtml}</div><div class="card-school-info"><h3>${this.data.school.yayasan}</h3><h3>${this.data.school.sekolah}</h3><h3 style="font-size:0.55rem;">${this.data.school.alamat}</h3></div></div><div class="card-title">KARTU PESERTA ${jenisUjianText}</div><div class="card-student-info"><div class="card-photo">${photoHtml}</div><div class="card-details"><div class="detail-row"><span class="detail-label">No</span><span class="detail-value">: ${student.noPeserta}</span></div><div class="detail-row"><span class="detail-label">Nama</span><span class="detail-value">: ${student.nama}</span></div><div class="detail-row"><span class="detail-label">Kelas</span><span class="detail-value">: ${student.kelas}</span></div><div class="detail-row"><span class="detail-label">TTL</span><span class="detail-value">: ${student.ttl || ''}</span></div></div></div><div class="card-signature">Dibuat tgl: ${new Date().toLocaleDateString('id-ID')}<br><span style="display:block;margin-bottom:2px;">Kepala Sekolah</span><div class="signature-line">${ttdHtml}</div><div class="signature-name">${this.data.school.kepalaSekolah}</div></div></div></div></div>`;
+          counter++;
+          if (counter % 8 === 0) html += `</div>`;
+        }
+        if (counter % 8 !== 0) html += `</div>`;
+        html += `</body></html>`;
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.onload = () => { setTimeout(() => { printWindow.print(); }, 500); };
+      },
+
+      /* ---------- DAFTAR HADIR ---------- */
+      previewDaftarHadir: function () {
+        const kelas = document.getElementById('kelasSelect').value;
+        const mapel = document.getElementById('mapelInput').value.trim() || '....................';
+        const hari = document.getElementById('hariInput').value.trim() || '....................';
+        
+        if (!kelas) { this.showNotification('Silakan pilih kelas terlebih dahulu.', 'error'); return; }
+        
+        const previewContainer = document.getElementById('daftarHadirPreview');
+        const studentsByClass = this.data.students.filter(s => s.kelas === kelas);
+        
+        if (studentsByClass.length === 0) { previewContainer.innerHTML = '<p style="text-align:center; padding:20px;">Tidak ada siswa di kelas yang dipilih.</p>'; return; }
+
+        let tableHeaders = `<th style="text-align:center;">No</th><th style="text-align:center;">No Tes</th><th style="text-align:center;">Nama Siswa</th>`;
+        if (this.data.school.jenisUjian.uh) tableHeaders += '<th style="text-align:center;">UH</th>';
+        if (this.data.school.jenisUjian.pts) tableHeaders += '<th style="text-align:center;">PTS</th>';
+        if (this.data.school.jenisUjian.pas) tableHeaders += '<th style="text-align:center;">PAS</th>';
+        if (this.data.school.jenisUjian.luam) tableHeaders += '<th style="text-align:center;">LUAM</th>';
+        if (this.data.school.jenisUjian.uam) tableHeaders += '<th style="text-align:center;">UAM</th>';
+        tableHeaders += `<th style="text-align:center;">Nilai Asli</th><th style="text-align:center;">Nilai Jadi</th><th style="text-align:center;">Tanda Tangan</th>`;
+
+        const tableRows = studentsByClass.map((siswa, index) => {
+          let row = `<td style="text-align:center;">${index + 1}</td><td style="text-align:center;">${siswa.noPeserta}</td><td style="text-align:left;">${siswa.nama}</td>`;
+          if (this.data.school.jenisUjian.uh) row += '<td></td>';
+          if (this.data.school.jenisUjian.pts) row += '<td></td>';
+          if (this.data.school.jenisUjian.pas) row += '<td></td>';
+          if (this.data.school.jenisUjian.luam) row += '<td></td>';
+          if (this.data.school.jenisUjian.uam) row += '<td></td>';
+          row += '<td></td><td></td><td></td>';
+          return `<tr>${row}</tr>`;
+        }).join('');
+
+        const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="max-height:60px; max-width:60px;">` : '';
+        const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="max-height:40px; max-width:120px;">` : '';
+
+        let jenisUjianText = '';
+        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
+        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
+        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
+        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
+        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
+
+        previewContainer.innerHTML = `
+          <div class="daftar-hadir-wrapper">
+            <div class="kop-surat" style="display:flex; margin-bottom:15px; align-items:center;">
+              <div class="kop-logo" style="width:60px; height:60px; margin-right:20px; display:flex; align-items:center; justify-content:center;">${logoHtml}</div>
+              <div class="kop-identitas" style="flex:1; text-align:center;">
+                <h2 style="font-size:1.1rem; margin:0;">${this.data.school.yayasan}</h2>
+                <h3 style="font-size:0.9rem; margin:0;">${this.data.school.sekolah}</h3>
+                <p style="margin:0; font-size:0.8rem;">${this.data.school.alamat}</p>
+              </div>
+            </div>
+            <div class="judul-daftar-hadir" style="text-align:center; font-weight:bold; font-size:1rem; margin-bottom:10px; text-decoration:underline;">DAFTAR HADIR ${jenisUjianText}</div>
+            <div class="info-daftar-hadir" style="display:flex; justify-content:space-between; margin-bottom:15px; padding:8px; background:#f8f9fa; border-radius:4px;">
+              <div><strong>Kelas:</strong> ${kelas}</div><div><strong>Mata Pelajaran:</strong> ${mapel}</div><div><strong>Hari/Tanggal:</strong> ${hari}</div>
+            </div>
+            <div class="table-container" style="margin-top:0; overflow-x:auto;">
+              <table style="width:100%; border-collapse:collapse;"><thead><tr style="background:#f2f2f2;">${tableHeaders}</tr></thead><tbody>${tableRows}</tbody></table>
+            </div>
+            <div class="tanda-tangan-container" style="margin-top:30px; display:flex; justify-content:space-between; width:100%; border-top:1px solid #333; padding-top:20px;">
+              <div class="tanda-tangan-box" style="width:45%; text-align:center;"><div>Mengetahui,</div><div style="margin-top:5px; font-weight:600;">Kepala Sekolah</div><div class="ttd-placeholder" style="height:50px; margin:5px 0; display:flex; align-items:center; justify-content:center;">${ttdHtml}</div><div style="font-weight:bold;">${this.data.school.kepalaSekolah}</div></div>
+              <div class="tanda-tangan-box" style="width:45%; text-align:center;"><div>...................., ${new Date().toLocaleDateString('id-ID')}</div><div style="margin-top:5px; font-weight:600;">Pengawas Ujian</div><div class="ttd-placeholder" style="height:50px; margin:5px 0;"></div><div style="font-weight:bold;">....................</div></div>
+            </div>
+          </div>
+        `;
+      },
+
+      printDaftarHadir: function () {
+        const kelas = document.getElementById('kelasSelect').value;
+        const mapel = document.getElementById('mapelInput').value.trim() || '....................';
+        const hari = document.getElementById('hariInput').value.trim() || '....................';
+        if (!kelas) { this.showNotification('Silakan pilih kelas.', 'error'); return; }
+        const studentsByClass = this.data.students.filter(s => s.kelas === kelas);
+        if (studentsByClass.length === 0) { this.showNotification('Tidak ada siswa.', 'error'); return; }
+
+        let tableHeaders = `<th style="text-align:center; width:5%;">No</th><th style="text-align:center; width:20%;">No Tes</th><th style="text-align:center; width:30%;">Nama Siswa</th>`;
+        if (this.data.school.jenisUjian.uh) tableHeaders += '<th style="text-align:center; width:5%;">UH</th>';
+        if (this.data.school.jenisUjian.pts) tableHeaders += '<th style="text-align:center; width:5%;">PTS</th>';
+        if (this.data.school.jenisUjian.pas) tableHeaders += '<th style="text-align:center; width:5%;">PAS</th>';
+        if (this.data.school.jenisUjian.luam) tableHeaders += '<th style="text-align:center; width:5%;">LUAM</th>';
+        if (this.data.school.jenisUjian.uam) tableHeaders += '<th style="text-align:center; width:5%;">UAM</th>';
+        tableHeaders += `<th style="text-align:center; width:8%;">Nilai Asli</th><th style="text-align:center; width:8%;">Nilai Jadi</th><th style="text-align:center; width:12%;">Tanda Tangan</th>`;
+
+        const tableRows = studentsByClass.map((s, i) => {
+          let row = `<td style="text-align:center;">${i + 1}</td><td style="text-align:center;">${s.noPeserta}</td><td style="text-align:left;">${s.nama}</td>`;
+          if (this.data.school.jenisUjian.uh) row += '<td></td>';
+          if (this.data.school.jenisUjian.pts) row += '<td></td>';
+          if (this.data.school.jenisUjian.pas) row += '<td></td>';
+          if (this.data.school.jenisUjian.luam) row += '<td></td>';
+          if (this.data.school.jenisUjian.uam) row += '<td></td>';
+          row += '<td></td><td></td><td></td>';
+          return `<tr>${row}</tr>`;
+        }).join('');
+
+        const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="max-height:50px; max-width:50px;">` : '';
+        const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="max-height:40px; max-width:100px;">` : '';
+        
+        let jenisUjianText = '';
+        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
+        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
+        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
+        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
+        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`<!DOCTYPE html><html><head><title>Daftar Hadir - ${kelas}</title><style>@page { size: A4 portrait; margin: 1.5cm; } body { font-family: Arial, sans-serif; margin: 0; padding: 0; font-size: 12px; } .kop-surat { display:flex; margin-bottom: 15px; align-items: center; } .kop-logo { width: 60px; height: 60px; margin-right: 20px; display:flex; align-items:center; justify-content:center; } .kop-identitas { flex:1; text-align:center; } .kop-identitas h2 { font-size:1.2rem; margin:2px 0; } .kop-identitas h3 { font-size:1rem; margin:2px 0; } .judul-daftar-hadir { text-align:center; font-size:1.1rem; font-weight:bold; margin:15px 0; text-decoration:underline; } .info-daftar-hadir { display: flex; justify-content: space-between; margin-bottom: 15px; padding: 8px; background: #f5f5f5; border-radius: 4px; } table { width: 100%; border-collapse: collapse; margin-bottom: 20px; } th, td { border: 1px solid #000; padding: 6px 4px; font-size: 10px; } th { background: #f0f0f0; font-weight: bold; } .tanda-tangan-container { margin-top: 30px; display: flex; justify-content: space-between; width: 100%; border-top: 1px solid #000; padding-top: 20px; } .tanda-tangan-box { width: 45%; text-align: center; } .ttd-placeholder { height: 50px; margin: 5px 0; display: flex; align-items: center; justify-content: center; } @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } th { background: #f0f0f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }</style></head><body><div class="kop-surat"><div class="kop-logo">${logoHtml}</div><div class="kop-identitas"><h2>${this.data.school.yayasan}</h2><h3>${this.data.school.sekolah}</h3><p style="margin:0; font-size:11px;">${this.data.school.alamat}</p></div></div><div class="judul-daftar-hadir">DAFTAR HADIR ${jenisUjianText}</div><div class="info-daftar-hadir"><div><strong>Kelas:</strong> ${kelas}</div><div><strong>Mata Pelajaran:</strong> ${mapel}</div><div><strong>Hari/Tanggal:</strong> ${hari}</div></div><table><thead><tr>${tableHeaders}</tr></thead><tbody>${tableRows}</tbody></table><div class="tanda-tangan-container"><div class="tanda-tangan-box"><div>Mengetahui,</div><div style="font-weight:600;">Kepala Sekolah</div><div class="ttd-placeholder">${ttdHtml}</div><div style="font-weight:bold;">${this.data.school.kepalaSekolah}</div></div><div class="tanda-tangan-box"><div>...................., ${new Date().toLocaleDateString('id-ID')}</div><div style="font-weight:600;">Pengawas Ujian</div><div class="ttd-placeholder"></div><div style="font-weight:bold;">....................</div></div></div></body></html>`);
+        printWindow.document.close();
+        printWindow.onload = function () { setTimeout(() => { printWindow.print(); }, 500); };
+      },
+
+      /* ---------- PDF GENERATION ---------- */
+      generatePDF: async function () {
+        if (this.data.students.length === 0) { this.showNotification('Tidak ada data siswa untuk dibuat PDF-nya.', 'error'); return; }
+        const btn = document.getElementById('generatePDFBtn');
+        if (btn) { btn.innerHTML = 'Membuat PDF<span class="loading"></span>'; btn.disabled = true; }
+        this.showNotification('Sedang membuat PDF, mohon tunggu...', 'info');
+        try {
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+          const cardWidth = 80; const cardHeight = 50; const cardsPerRow = 2; const cardsPerCol = 4;
+          const pageWidth = pdf.internal.pageSize.getWidth(); const pageHeight = pdf.internal.pageSize.getHeight();
+          const margin = 15;
+          const cardXSpacing = (pageWidth - 2 * margin - cardsPerRow * cardWidth) / (cardsPerRow - 1);
+          const cardYSpacing = (pageHeight - 2 * margin - cardsPerCol * cardHeight) / (cardsPerCol - 1);
+          const templateContainer = document.createElement('div');
+          templateContainer.style.position = 'absolute'; templateContainer.style.left = '-9999px';
+          templateContainer.style.width = '160px'; templateContainer.style.height = '100px';
+          document.body.appendChild(templateContainer);
+          const batchSize = 4;
+          for (let i = 0; i < this.data.students.length; i += batchSize) {
+            const batch = this.data.students.slice(i, i + batchSize);
+            for (let j = 0; j < batch.length; j++) {
+              const studentIndex = i + j;
+              if (studentIndex > 0 && studentIndex % (cardsPerRow * cardsPerCol) === 0) pdf.addPage();
+              const indexOnPage = studentIndex % (cardsPerRow * cardsPerCol);
+              const row = Math.floor(indexOnPage / cardsPerRow); const col = indexOnPage % cardsPerRow;
+              const x = margin + col * (cardWidth + cardXSpacing); const y = margin + row * (cardHeight + cardYSpacing);
+              const siswa = batch[j];
+              templateContainer.innerHTML = this.createCardElement(siswa, 'temp-card');
+              const canvas = await html2canvas(templateContainer.firstElementChild, { scale: 1.5, useCORS: true, allowTaint: true, backgroundColor: null, logging: false });
+              const imgData = canvas.toDataURL('image/jpeg', 0.8);
+              pdf.addImage(imgData, 'JPEG', x, y, cardWidth, cardHeight);
+            }
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+          document.body.removeChild(templateContainer);
+          pdf.save('kartu_peserta_ujian.pdf');
+          this.showNotification(`PDF dengan ${this.data.students.length} kartu berhasil dibuat dan diunduh!`, 'success');
+        } catch (err) {
+          console.error('Error save pdf', err);
+          this.showNotification('Gagal menyimpan PDF.', 'error');
+        } finally {
+          if (btn) { btn.innerHTML = '💾 Generate PDF'; btn.disabled = false; }
+        }
+      },
+
+      /* ---------- DENAH FUNCTIONS - IMPLEMENTASI BARU ---------- */
+      buatTabelDataDenah: function(kelas, kosong = false) {
+        const tableBody = document.getElementById("denahTableBody");
+        if(!tableBody) return;
+
+        // Jika kelas dipilih dan bukan kosong, filter siswa
+        let siswaKelas = [];
+        if (kelas && !kosong) {
+            siswaKelas = this.data.students.filter(s => s.kelas === kelas);
+        }
+
+        tableBody.innerHTML = "";
+        this.data.pesertaDataLokal = {}; // Reset data lokal
+
+        for (let i = 1; i <= 36; i++) {
+            let data = { noTes: '', nama: '' };
+            if (siswaKelas[i-1]) {
+                data.noTes = siswaKelas[i-1].noPeserta;
+                data.nama = siswaKelas[i-1].nama;
+            }
+            // Simpan ke lokal
+            this.data.pesertaDataLokal[i] = data;
+
+            let row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${i}</td>
+                <td contenteditable="true" onblur="SMKApps.updatePesertaLokal(${i}, 'noTes', this.textContent)">${data.noTes}</td>
+                <td contenteditable="true" onblur="SMKApps.updatePesertaLokal(${i}, 'nama', this.textContent)">${data.nama}</td>
+            `;
+            tableBody.appendChild(row);
+        }
+        
+        // Reset kontrol saat ganti kelas
+        this.kosongkanSemuaKotak(false); // false = tidak perlu konfirmasi
+      },
+
+      updatePesertaLokal: function(no, field, value) {
+          if (!this.data.pesertaDataLokal[no]) this.data.pesertaDataLokal[no] = { noTes: '', nama: '' };
+          this.data.pesertaDataLokal[no][field] = value.trim();
+          this.perbaruiDenah();
+      },
+
+      bacaDataPesertaLokal: function() {
+          const tableBody = document.getElementById("denahTableBody");
+          if (!tableBody) return;
+          const rows = tableBody.querySelectorAll("tr");
+          rows.forEach((row, index) => {
+              let no = index + 1;
+              let noTes = row.children[1] ? row.children[1].textContent.trim() : '';
+              let nama = row.children[2] ? row.children[2].textContent.trim() : '';
+              if (!this.data.pesertaDataLokal[no]) this.data.pesertaDataLokal[no] = {};
+              this.data.pesertaDataLokal[no].noTes = noTes;
+              this.data.pesertaDataLokal[no].nama = nama;
+          });
+      },
+
+      buatGridKontrol: function() {
+          const gridKontrol = document.getElementById("gridKontrol");
+          if(!gridKontrol) return;
+
+          gridKontrol.innerHTML = '';
+          
+          for (let i = 1; i <= 36; i++) {
+              let kotak = document.createElement("div");
+              kotak.className = "kotak-kontrol";
+              kotak.id = `kontrol-${i}`;
+              
+              let label = document.createElement("span");
+              label.className = "label-posisi";
+              label.textContent = i;
+              
+              let input = document.createElement("input");
+              input.type = "text";
+              input.id = `input-${i}`;
+              input.maxLength = 2;
+              input.placeholder = "";
+              
+              // Muat data tersimpan jika ada
+              if (this.data.kontrolNomor[i]) {
+                  input.value = this.data.kontrolNomor[i];
+                  input.setAttribute('data-nomor', this.data.kontrolNomor[i]);
+                  kotak.classList.add('filled');
+              }
+              
+              kotak.appendChild(label);
+              kotak.appendChild(input);
+              gridKontrol.appendChild(kotak);
+              
+              input.onkeypress = (e) => {
+                  if (e.key === 'Enter') {
+                      e.preventDefault();
+                      this.prosesInputNomor(i, e.target.value);
+                  }
+              };
+              
+              input.onblur = (e) => {
+                  this.prosesInputNomor(i, e.target.value);
+              };
+          }
+      },
+
+      prosesInputNomor: function(posisi, value) {
+          let input = document.getElementById(`input-${posisi}`);
+          let kotak = document.getElementById(`kontrol-${posisi}`);
+          if(!input || !kotak) return;
+          
+          value = value.trim();
+          
+          if (value === '') {
+              input.value = '';
+              input.removeAttribute('data-nomor');
+              delete this.data.kontrolNomor[posisi];
+              kotak.classList.remove('filled');
+              this.saveToStorage();
+              this.perbaruiDenah();
+              return;
+          }
+          
+          let nomorPeserta = parseInt(value);
+          if (isNaN(nomorPeserta) || nomorPeserta < 1 || nomorPeserta > 36) {
+              this.showNotification("Nomor harus antara 1 - 36", "error");
+              let nomorLama = input.getAttribute('data-nomor');
+              input.value = nomorLama || '';
+              return;
+          }
+          
+          // Cek duplikat
+          for (let i = 1; i <= 36; i++) {
+              if (i === posisi) continue;
+              let inputLain = document.getElementById(`input-${i}`);
+              if (inputLain && inputLain.getAttribute('data-nomor') == nomorPeserta) {
+                  if (!confirm(`Nomor ${nomorPeserta} sudah digunakan di posisi ${i}. Pindahkan ke sini?`)) {
+                      let nomorLama = input.getAttribute('data-nomor');
+                      input.value = nomorLama || '';
+                      return;
+                  }
+                  inputLain.value = '';
+                  inputLain.removeAttribute('data-nomor');
+                  delete this.data.kontrolNomor[i];
+                  document.getElementById(`kontrol-${i}`).classList.remove('filled');
+                  break;
+              }
+          }
+          
+          input.value = nomorPeserta;
+          input.setAttribute('data-nomor', nomorPeserta);
+          this.data.kontrolNomor[posisi] = nomorPeserta;
+          kotak.classList.add('filled');
+          
+          this.saveToStorage();
+          this.perbaruiDenah();
+      },
+
+      perbaruiDenah: function() {
+          const gridDenah = document.getElementById("gridDenah");
+          const denahKosong = document.getElementById("denahKosong");
+          const jumlahTerisiSpan = document.getElementById("jumlahTerisi");
+          const jumlahBarisDenahSpan = document.getElementById("jumlahBarisDenah");
+
+          if(!gridDenah || !denahKosong) return;
+
+          let dataTerisi = [];
+          for (let i = 1; i <= 36; i++) {
+              let input = document.getElementById(`input-${i}`);
+              if (input && input.getAttribute('data-nomor')) {
+                  let nomorPeserta = parseInt(input.getAttribute('data-nomor'));
+                  dataTerisi.push({
+                      posisi: i,
+                      nomorPeserta: nomorPeserta,
+                      data: this.data.pesertaDataLokal[nomorPeserta] || { noTes: '?', nama: '?' }
+                  });
+              }
+          }
+          
+          if (jumlahTerisiSpan) jumlahTerisiSpan.textContent = dataTerisi.length;
+          
+          dataTerisi.sort((a, b) => a.posisi - b.posisi);
+          
+          let jumlahBaris = 0;
+          if (dataTerisi.length > 0) {
+              let posisiTerakhir = dataTerisi[dataTerisi.length - 1].posisi;
+              jumlahBaris = Math.ceil(posisiTerakhir / 6);
+          }
+          if (jumlahBarisDenahSpan) jumlahBarisDenahSpan.textContent = jumlahBaris;
+          
+          if (dataTerisi.length === 0) {
+            gridDenah.innerHTML = '';
+            denahKosong.style.display = 'block';
+            return;
+        }
+        
+        denahKosong.style.display = 'none';
+        gridDenah.style.gridTemplateColumns = 'repeat(6, 1fr)';
+        
+        let maxPosisi = dataTerisi[dataTerisi.length - 1].posisi;
+        let barisTotal = Math.ceil(maxPosisi / 6);
+        
+        let matriks = Array.from({ length: barisTotal }, () => Array(6).fill(null));
+        dataTerisi.forEach(item => {
+            let pos = item.posisi;
+            let baris = Math.floor((pos - 1) / 6);
+            let kolom = (pos - 1) % 6;
+            if (baris < barisTotal) {
+                matriks[baris][kolom] = item;
+            }
+        });
+        
+        // Bangun HTML dengan format baru (Nomor Peserta | Foto | Nama)
+        let html = '';
+        for (let b = 0; b < barisTotal; b++) {
+            for (let k = 0; k < 6; k++) {
+                let item = matriks[b][k];
+                if (item) {
+                    // Tampilkan No Peserta dari database, bukan nomor urut
+                    let noPesertaTampil = item.data.noTes || item.nomorPeserta || '?';
+                    html += `
+                        <div class="denah-card">
+                            <div class="denah-nomor-atas" title="${noPesertaTampil}">${noPesertaTampil}</div>
+                            <div class="denah-foto-tengah" title="Tempat foto">📷</div>
+                            <div class="denah-nama-bawah" title="${item.data.nama || '?'}">${item.data.nama || '?'}</div>
+                        </div>
+                    `;
+                } else {
+                    // Placeholder kosong untuk menjaga grid
+                    html += `<div style="border: none; background: transparent; height: 0;"></div>`;
+                }
+            }
+        }
+        
+        gridDenah.innerHTML = html;
+      },
+
+      kosongkanSemuaKotak: function(showConfirm = true) {
+          if (showConfirm && !confirm("Kosongkan semua kotak kontrol?")) return;
+          
+          for (let i = 1; i <= 36; i++) {
+              let input = document.getElementById(`input-${i}`);
+              if (input) {
+                  input.value = '';
+                  input.removeAttribute('data-nomor');
+                  let kotak = document.getElementById(`kontrol-${i}`);
+                  if(kotak) kotak.classList.remove('filled');
+              }
+          }
+          this.data.kontrolNomor = {};
+          this.saveToStorage();
+          this.perbaruiDenah();
+      },
+      
+      handleDenahPaste: function(e) {
+          e.preventDefault();
+          const tableBody = document.getElementById("denahTableBody");
+          if(!tableBody) return;
+          
+          let text = (e.clipboardData || window.clipboardData).getData("text");
+          let rows = text.trim().split(/\r?\n/);
+          
+          tableBody.innerHTML = "";
+          this.data.pesertaDataLokal = {};
+          
+          for (let i = 1; i <= 36; i++) {
+              let row = document.createElement("tr");
+              let cellNo = document.createElement("td");
+              cellNo.textContent = i;
+              row.appendChild(cellNo);
+              
+              let cols = (i <= rows.length) ? rows[i-1].split(/\t/) : [];
+              
+              let cellTes = document.createElement("td");
+              cellTes.contentEditable = "true";
+              cellTes.textContent = cols[0] || "";
+              cellTes.onblur = (e) => this.updatePesertaLokal(i, 'noTes', e.target.textContent);
+              row.appendChild(cellTes);
+              
+              let cellNama = document.createElement("td");
+              cellNama.contentEditable = "true";
+              cellNama.textContent = cols[1] || "";
+              cellNama.onblur = (e) => this.updatePesertaLokal(i, 'nama', e.target.textContent);
+              row.appendChild(cellNama);
+              
+              tableBody.appendChild(row);
+              
+              this.data.pesertaDataLokal[i] = { noTes: cols[0] || "", nama: cols[1] || "" };
+          }
+          this.perbaruiDenah();
       },
 
       /* ---------- DATA STORAGE ---------- */
@@ -2086,6 +2543,7 @@
           try { this.data.students = JSON.parse(savedStudents); }
           catch (e) { console.error('Error load students', e); this.data.students = []; }
         } else {
+          // DATA CONTOH DEFAULT
           this.data.students = [
 // ======================
 // KELAS X (SEPULUH)
@@ -2184,7 +2642,6 @@
 { noPeserta: '12-807-0032-9', nama: 'Laura Meliyana Dewi', kelas: 'XII (DUA BELAS)', ttl: 'Braja Indah, 01 Mei 2008', photo: null },
 { noPeserta: '12-807-0033-8', nama: 'Eko Nuzulul Misbah', kelas: 'XII (DUA BELAS)', ttl: 'Sidorejo, 12 Mei 2008', photo: null },
 { noPeserta: '12-807-0034-7', nama: 'Muhammad Khoirur Rozikin', kelas: 'XII (DUA BELAS)', ttl: 'Sumber Agung, 24 Januari 2007', photo: null },
-
           ];
           this.saveToStorage();
         }
@@ -2193,30 +2650,19 @@
         if (savedSchool) {
           try {
             this.data.school = JSON.parse(savedSchool);
-            if (this.data.school.jenisUjian && this.data.school.jenisUjian.us !== undefined) {
-              this.data.school.jenisUjian.luam = this.data.school.jenisUjian.us;
-              delete this.data.school.jenisUjian.us;
-            }
+            // Migration safety
             if (!this.data.school.jenisUjian) this.data.school.jenisUjian = { uh: true, pts: false, pas: false, luam: false, uam: false };
-            if (!this.data.school.jenisUjian.luam) this.data.school.jenisUjian.luam = false;
-            if (!this.data.school.jenisUjian.uam) this.data.school.jenisUjian.uam = false;
-            if (!this.data.school.ttdKepalaSekolah) this.data.school.ttdKepalaSekolah = null;
           } catch (e) { console.error('Error load school', e); }
         }
 
         const savedBg = localStorage.getItem('cardBackground');
-        if (savedBg) {
-          this.data.cardBackground = savedBg;
-        } else {
-          this.data.cardBackground = DEFAULT_CARD_BACKGROUND;
-        }
+        if (savedBg) this.data.cardBackground = savedBg;
+        else this.data.cardBackground = DEFAULT_CARD_BACKGROUND;
         
-        const savedDenah = localStorage.getItem('denahData');
-        if (savedDenah) {
-          try { this.data.denahData = JSON.parse(savedDenah); }
-          catch (e) { console.error('Error load denah', e); this.data.denahData = {}; }
-        } else {
-          this.data.denahData = {};
+        const savedKontrol = localStorage.getItem('kontrolNomor');
+        if (savedKontrol) {
+             try { this.data.kontrolNomor = JSON.parse(savedKontrol); }
+             catch (e) { this.data.kontrolNomor = {}; }
         }
       },
 
@@ -2225,16 +2671,17 @@
           localStorage.setItem('studentData', JSON.stringify(this.data.students));
           localStorage.setItem('schoolData', JSON.stringify(this.data.school));
           if (this.data.cardBackground) localStorage.setItem('cardBackground', this.data.cardBackground);
-          localStorage.setItem('denahData', JSON.stringify(this.data.denahData));
+          localStorage.setItem('kontrolNomor', JSON.stringify(this.data.kontrolNomor));
         } catch (e) {
           console.error('Error saving', e);
-          this.showNotification('Gagal menyimpan data ke penyimpanan lokal', 'error');
+          this.showNotification('Gagal menyimpan data', 'error');
         }
       },
 
       /* ---------- UI HELPERS ---------- */
       showNotification: function (message, type = 'info') {
         const n = document.getElementById('notification');
+        if(!n) return;
         n.innerHTML = `<span>${message}</span>`;
         n.className = `notification ${type} show`;
         setTimeout(() => { n.classList.remove('show'); }, 3000);
@@ -2255,610 +2702,86 @@
           setTimeout(() => modal.style.display = 'none', 300);
         }
       },
-
-      /* ---------- FUNGSI SISWA ---------- */
-      tambahSiswaManual: function () {
-        const noPeserta = document.getElementById('noPeserta').value.trim();
-        const nama = document.getElementById('nama').value.trim();
-        const kelas = document.getElementById('kelas').value.trim();
-        const ttl = document.getElementById('ttl').value.trim();
-
-        if (!noPeserta || !nama || !kelas) {
-          this.showNotification('No Peserta, Nama, dan Kelas harus diisi!', 'error');
-          return;
-        }
-
-        const isDuplicate = this.data.students.some(s => s.noPeserta === noPeserta);
-        if (isDuplicate) {
-          this.showNotification(`No Peserta ${noPeserta} sudah terdaftar!`, 'error');
-          return;
-        }
-
-        const siswaBaru = { noPeserta, nama, kelas, ttl, photo: null };
-        this.data.students.push(siswaBaru);
-        this.saveToStorage();
-        
-        this.resetFormSiswa();
-        this.populateStudentTable(this.data.students);
-        document.getElementById('noPeserta').focus();
-        this.showNotification(`Siswa ${nama} berhasil ditambahkan!`, 'success');
-      },
-
-      resetFormSiswa: function () {
-        document.getElementById('noPeserta').value = '';
-        document.getElementById('nama').value = '';
-        document.getElementById('kelas').value = '';
-        document.getElementById('ttl').value = '';
-        document.getElementById('noPeserta').focus();
-      },
-
-      populateStudentTable: function (data) {
-        const tbody = document.getElementById('studentTableBody');
-        if (!tbody) return;
-        tbody.innerHTML = '';
-        
-        if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#666;">Belum ada data siswa. Silakan tambahkan siswa baru.</td></tr>';
-          return;
-        }
-        
-        data.forEach((siswa, index) => {
-          const originalIndex = this.data.students.findIndex(s => s.noPeserta === siswa.noPeserta);
-          const photoStatus = siswa.photo ? '<span style="color:var(--success-color); font-weight:bold;">✓</span>' : '<span style="color:var(--danger-color);">✗</span>';
-          const row = `
-            <tr>
-              <td>${index + 1}</td>
-              <td>${siswa.noPeserta}</td>
-              <td>${siswa.nama}</td>
-              <td>${siswa.kelas}</td>
-              <td>${siswa.ttl || '-'}</td>
-              <td style="text-align:center;">${photoStatus}</td>
-              <td><div class="action-buttons"><button class="btn btn-info btn-sm" onclick="SMKApps.editStudent(${originalIndex})">Edit</button><button class="btn btn-primary btn-sm" onclick="SMKApps.openUploadFotoModal(${originalIndex})">📷 Foto</button><button class="btn btn-danger btn-sm" onclick="SMKApps.deleteStudent(${originalIndex})">Hapus</button></div></td>
-            </tr>
-          `;
-          tbody.innerHTML += row;
-        });
-      },
-
-      editStudent: function (index) {
-        this.data.currentEditIndex = index;
-        const s = this.data.students[index];
-        document.getElementById('editNoPeserta').value = s.noPeserta;
-        document.getElementById('editNama').value = s.nama;
-        document.getElementById('editKelas').value = s.kelas;
-        document.getElementById('editTtl').value = s.ttl || '';
-        this.openModal('editModal');
-
-        const saveBtn = document.getElementById('saveEditBtn');
-        if (saveBtn) {
-          const newSaveBtn = saveBtn.cloneNode(true);
-          saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
-          newSaveBtn.addEventListener('click', () => this.saveEditStudent());
-        }
-      },
-
-      saveEditStudent: function () {
-        const nama = document.getElementById('editNama').value.trim();
-        const kelas = document.getElementById('editKelas').value.trim();
-        const ttl = document.getElementById('editTtl').value.trim();
-        if (!nama || !kelas) { this.showNotification('Nama dan kelas harus diisi!', 'error'); return; }
-        this.data.students[this.data.currentEditIndex].nama = nama;
-        this.data.students[this.data.currentEditIndex].kelas = kelas;
-        this.data.students[this.data.currentEditIndex].ttl = ttl;
-        this.saveToStorage();
-        this.populateStudentTable(this.data.students);
-        this.closeModal('editModal');
-        this.showNotification('Data siswa berhasil diperbarui!', 'success');
-      },
-
-      deleteStudent: function (index) {
-        const siswa = this.data.students[index];
-        if (confirm(`Apakah Anda yakin ingin menghapus data siswa "${siswa.nama}"?`)) {
-          this.data.students.splice(index, 1);
-          this.saveToStorage();
-          this.populateStudentTable(this.data.students);
-          this.showNotification(`Data siswa ${siswa.nama} berhasil dihapus!`, 'success');
-        }
-      },
-
-      /* ---------- FUNGSI FOTO SISWA ---------- */
-      openUploadFotoModal: function (index) {
-        this.data.currentFotoIndex = index;
-        const siswa = this.data.students[index];
-        document.getElementById('uploadFotoNamaSiswa').textContent = siswa.nama;
-        document.getElementById('uploadFotoNoPeserta').textContent = siswa.noPeserta;
-        const preview = document.getElementById('uploadFotoPreview');
-        const fotoInput = document.getElementById('fotoUpload');
-        fotoInput.value = '';
-        preview.innerHTML = siswa.photo ? `<img src="${siswa.photo}" style="width:100%; height:100%; object-fit:contain;">` : '<span style="color:#999;">Belum ada foto</span>';
-        this.openModal('uploadFotoModal');
-      },
-
-      saveFotoSiswa: function () {
-        const fotoInput = document.getElementById('fotoUpload');
-        if (!fotoInput || !fotoInput.files.length) { this.showNotification('Silakan pilih file foto terlebih dahulu.', 'error'); return; }
-        const file = fotoInput.files[0];
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          this.data.students[this.data.currentFotoIndex].photo = event.target.result;
-          this.saveToStorage();
-          this.populateStudentTable(this.data.students);
-          this.closeModal('uploadFotoModal');
-          this.showNotification('Foto berhasil diupload!', 'success');
-        };
-        reader.readAsDataURL(file);
-      },
-
-      /* ---------- CARD FUNCTIONS ---------- */
-      createCardElement: function (student, cardId) {
-        const bgStyle = this.data.cardBackground ? 
-          `background-image: url('${this.data.cardBackground}'); background-size: cover; background-position: center;` : 
-          'background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);';
-        const photoHtml = student.photo ? 
-          `<img src="${student.photo}" style="width:100%; height:100%; object-fit:cover;">` : 
-          '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.5rem; border-radius:4px;">FOTO</div>';
-        const logoHtml = this.data.school.logo ? 
-          `<img src="${this.data.school.logo}" class="card-logo" style="width:100%; height:100%; object-fit:contain;">` : 
-          '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.4rem; border-radius:4px;">LOGO</div>';
-        const ttdHtml = this.data.school.ttdKepalaSekolah ? 
-          `<img src="${this.data.school.ttdKepalaSekolah}" style="width:50px; height:25px; object-fit:contain;">` : '';
-        
-        let jenisUjianText = '';
-        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
-        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
-        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
-        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
-        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
-        
-        return `
-          <div class="card" id="${cardId}" style="${bgStyle}">
-            <div class="card-content">
-              <div class="card-header" style="display:flex; align-items:center; gap:8px;">
-                <div class="card-logo" style="width:35px; height:35px;">${logoHtml}</div>
-                <div class="card-school-info" style="flex:1; text-align:center;">
-                  <h3 style="margin:0; font-size:0.65rem; line-height:1.2;">${this.data.school.yayasan}</h3>
-                  <h3 style="margin:0; font-size:0.65rem; line-height:1.2;">${this.data.school.sekolah}</h3>
-                  <h3 style="margin:0; font-size:0.55rem; line-height:1.2;">${this.data.school.alamat}</h3>
-                </div>
-              </div>
-              <div class="card-title" style="margin:4px 0; font-size:0.75rem;">KARTU PESERTA ${jenisUjianText}</div>
-              <div class="card-student-info" style="display:flex; gap:8px;">
-                <div class="card-photo" style="width:55px; height:70px; border-radius:6px; overflow:hidden; border:1px solid #ddd;">${photoHtml}</div>
-                <div class="card-details" style="flex:1; font-size:0.65rem; line-height:1.3;">
-                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">No</span><span class="detail-value">: ${student.noPeserta || ''}</span></div>
-                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">Nama</span><span class="detail-value">: ${student.nama || ''}</span></div>
-                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">Kelas</span><span class="detail-value">: ${student.kelas || ''}</span></div>
-                  <div class="detail-row" style="display:flex; margin-bottom:1px;"><span class="detail-label" style="width:32px; font-weight:600;">TTL</span><span class="detail-value">: ${student.ttl || ''}</span></div>
-                </div>
-              </div>
-              <div class="card-signature" style="text-align:right; font-size:0.55rem; margin-top:2px; padding-top:4px; border-top:1px solid rgba(0,0,0,0.05);">
-                Dibuat tgl: ${new Date().toLocaleDateString('id-ID')}<br>
-                <span style="display:block;margin-bottom:2px;">Kepala Sekolah</span>
-                <div class="signature-line" style="height:20px; margin-bottom:2px; display:flex; justify-content:flex-end;">${ttdHtml}</div>
-                <div class="signature-name" style="font-weight:700; font-size:0.6rem;">${this.data.school.kepalaSekolah}</div>
-              </div>
-            </div>
-          </div>
-        `;
-      },
-
-      renderCardPreview: function () {
-        const container = document.getElementById('cardPreviewContainer');
-        if (!container) return;
-        if (this.data.students.length === 0) {
-          container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;"><p>Tidak ada data siswa untuk ditampilkan.</p><p>Silakan tambahkan data siswa terlebih dahulu di menu <strong>Data Siswa</strong>.</p></div>';
-          return;
-        }
-        const html = this.data.students.slice(0, 4).map(s => this.createCardElement(s, 'preview-' + s.noPeserta)).join('');
-        container.innerHTML = html;
-      },
-
-      printCards: function () {
-        if (this.data.students.length === 0) { this.showNotification("Tidak ada data siswa!", "error"); return; }
-        this.printCardsWithData(this.data.students);
-      },
       
-      printCardsWithData: function (studentsToPrint) {
-        const printWindow = window.open('', '_blank');
-        let jenisUjianText = '';
-        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
-        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
-        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
-        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
-        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
-        
-        let html = `<html><head><title>Cetak Kartu Ujian</title><style>
-          @page { size: A4 portrait; margin: 10mm; }
-          body { margin:0; padding:0; font-family:'Poppins', sans-serif; background: #f5f5f5; }
-          .print-sheet { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, auto); gap: 10px; page-break-after: always; padding: 10px; }
-          .print-card { break-inside: avoid; page-break-inside: avoid; }
-          .card { width: 9cm !important; height: 6cm !important; position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; background-size: cover; background-position: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          .card-content { position:absolute; inset:0; background:rgba(255,255,255,0.95); padding:10px 12px; display:flex; flex-direction:column; justify-content:space-between; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          .card-header { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 6px; }
-          .card-logo { width: 35px; height: 35px; flex-shrink: 0; }
-          .card-school-info { flex: 1; text-align: center; }
-          .card-school-info h3 { font-size: 0.65rem; margin: 1px 0; line-height: 1.2; text-align: center; }
-          .card-title { text-align: center; font-weight: 700; font-size: 0.75rem; margin: 4px 0; text-decoration: underline; color: #4361ee; }
-          .card-student-info { display: flex; gap: 8px; flex-grow: 1; }
-          .card-photo { width: 55px; height: 70px; background: #eee; border-radius: 6px; overflow: hidden; border: 1px solid #ddd; }
-          .card-details { flex: 1; font-size: 0.65rem; line-height: 1.3; }
-          .detail-row { display: flex; margin-bottom: 1px; }
-          .detail-label { width: 32px; font-weight: 600; flex-shrink: 0; }
-          .detail-value { flex: 1; }
-          .card-signature { text-align: right; font-size: 0.55rem; margin-top: 2px; padding-top: 4px; border-top: 1px solid rgba(0,0,0,0.05); }
-          .card-signature .signature-line { height: 20px; margin-bottom: 2px; display: flex; justify-content: flex-end; }
-          .card-signature .signature-name { font-weight: 700; font-size: 0.6rem; }
-        </style></head><body>`;
-        
-        let counter = 0;
-        for (let i = 0; i < studentsToPrint.length; i++) {
-          if (counter % 8 === 0) html += `<div class="print-sheet">`;
-          const student = studentsToPrint[i];
-          const bg = this.data.cardBackground ? `background-image:url('${this.data.cardBackground}'); background-size:cover; background-position:center;` : "background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%)";
-          const photoHtml = student.photo ? `<img src="${student.photo}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666;">FOTO</div>';
-          const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="width:100%; height:100%; object-fit:contain;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666;">LOGO</div>';
-          const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="width:50px; height:25px; object-fit:contain;">` : '';
-          html += `<div class="print-card"><div class="card" style="${bg}"><div class="card-content"><div class="card-header"><div class="card-logo">${logoHtml}</div><div class="card-school-info"><h3>${this.data.school.yayasan}</h3><h3>${this.data.school.sekolah}</h3><h3 style="font-size:0.55rem;">${this.data.school.alamat}</h3></div></div><div class="card-title">KARTU PESERTA ${jenisUjianText}</div><div class="card-student-info"><div class="card-photo">${photoHtml}</div><div class="card-details"><div class="detail-row"><span class="detail-label">No</span><span class="detail-value">: ${student.noPeserta}</span></div><div class="detail-row"><span class="detail-label">Nama</span><span class="detail-value">: ${student.nama}</span></div><div class="detail-row"><span class="detail-label">Kelas</span><span class="detail-value">: ${student.kelas}</span></div><div class="detail-row"><span class="detail-label">TTL</span><span class="detail-value">: ${student.ttl || ''}</span></div></div></div><div class="card-signature">Dibuat tgl: ${new Date().toLocaleDateString('id-ID')}<br><span style="display:block;margin-bottom:2px;">Kepala Sekolah</span><div class="signature-line">${ttdHtml}</div><div class="signature-name">${this.data.school.kepalaSekolah}</div></div></div></div></div>`;
-          counter++;
-          if (counter % 8 === 0) html += `</div>`;
-        }
-        if (counter % 8 !== 0) html += `</div>`;
-        html += `</body></html>`;
-        printWindow.document.write(html);
-        printWindow.document.close();
-        printWindow.onload = () => { setTimeout(() => { printWindow.print(); }, 500); };
-      },
-
-      /* ---------- DAFTAR HADIR - PERBAIKAN ===== */
-      previewDaftarHadir: function () {
-        const kelas = document.getElementById('kelasSelect').value;
-        const mapel = document.getElementById('mapelInput').value.trim() || '....................';
-        const hari = document.getElementById('hariInput').value.trim() || '....................';
-        
-        if (!kelas) { 
-          this.showNotification('Silakan pilih kelas terlebih dahulu.', 'error'); 
-          return; 
-        }
-        
-        const previewContainer = document.getElementById('daftarHadirPreview');
-        const studentsByClass = this.data.students.filter(s => s.kelas === kelas);
-        
-        if (studentsByClass.length === 0) { 
-          previewContainer.innerHTML = '<p style="text-align:center; padding:20px;">Tidak ada siswa di kelas yang dipilih.</p>'; 
-          return; 
-        }
-
-        let tableHeaders = `
-          <th style="text-align:center;">No</th>
-          <th style="text-align:center;">No Tes</th>
-          <th style="text-align:center;">Nama Siswa</th>
-        `;
-        
-        if (this.data.school.jenisUjian.uh) tableHeaders += '<th style="text-align:center;">UH</th>';
-        if (this.data.school.jenisUjian.pts) tableHeaders += '<th style="text-align:center;">PTS</th>';
-        if (this.data.school.jenisUjian.pas) tableHeaders += '<th style="text-align:center;">PAS</th>';
-        if (this.data.school.jenisUjian.luam) tableHeaders += '<th style="text-align:center;">LUAM</th>';
-        if (this.data.school.jenisUjian.uam) tableHeaders += '<th style="text-align:center;">UAM</th>';
-        
-        tableHeaders += `<th style="text-align:center;">Nilai Asli</th><th style="text-align:center;">Nilai Jadi</th><th style="text-align:center;">Tanda Tangan</th>`;
-
-        const tableRows = studentsByClass.map((siswa, index) => {
-          let row = `<td style="text-align:center;">${index + 1}</td><td style="text-align:center;">${siswa.noPeserta}</td><td style="text-align:left;">${siswa.nama}</td>`;
-          if (this.data.school.jenisUjian.uh) row += '<td></td>';
-          if (this.data.school.jenisUjian.pts) row += '<td></td>';
-          if (this.data.school.jenisUjian.pas) row += '<td></td>';
-          if (this.data.school.jenisUjian.luam) row += '<td></td>';
-          if (this.data.school.jenisUjian.uam) row += '<td></td>';
-          row += '<td></td><td></td><td></td>';
-          return `<tr>${row}</tr>`;
-        }).join('');
-
-        const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="max-height:60px; max-width:60px;">` : '';
-        const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="max-height:40px; max-width:120px;">` : '';
-
-        let jenisUjianText = '';
-        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
-        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
-        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
-        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
-        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
-
-        previewContainer.innerHTML = `
-          <div class="daftar-hadir-wrapper">
-            <div class="kop-surat" style="display:flex; margin-bottom:15px; align-items:center;">
-              <div class="kop-logo" style="width:60px; height:60px; margin-right:20px; display:flex; align-items:center; justify-content:center;">
-                ${logoHtml}
-              </div>
-              <div class="kop-identitas" style="flex:1; text-align:center;">
-                <h2 style="font-size:1.1rem; margin:0;">${this.data.school.yayasan}</h2>
-                <h3 style="font-size:0.9rem; margin:0;">${this.data.school.sekolah}</h3>
-                <p style="margin:0; font-size:0.8rem;">${this.data.school.alamat}</p>
-              </div>
-            </div>
-
-            <div class="judul-daftar-hadir" style="text-align:center; font-weight:bold; font-size:1rem; margin-bottom:10px; text-decoration:underline;">
-              DAFTAR HADIR ${jenisUjianText}
-            </div>
-
-            <div class="info-daftar-hadir" style="display:flex; justify-content:space-between; margin-bottom:15px; padding:8px; background:#f8f9fa; border-radius:4px;">
-              <div><strong>Kelas:</strong> ${kelas}</div>
-              <div><strong>Mata Pelajaran:</strong> ${mapel}</div>
-              <div><strong>Hari/Tanggal:</strong> ${hari}</div>
-            </div>
-
-            <div class="table-container" style="margin-top:0; overflow-x:auto;">
-              <table style="width:100%; border-collapse:collapse;">
-                <thead>
-                  <tr style="background:#f2f2f2;">${tableHeaders}</tr>
-                </thead>
-                <tbody>
-                  ${tableRows}
-                </tbody>
-              </table>
-            </div>
-
-            <div class="tanda-tangan-container" style="margin-top:30px; display:flex; justify-content:space-between; width:100%; border-top:1px solid #333; padding-top:20px;">
-              <div class="tanda-tangan-box" style="width:45%; text-align:center;">
-                <div>Mengetahui,</div>
-                <div style="margin-top:5px; font-weight:600;">Kepala Sekolah</div>
-                <div class="ttd-placeholder" style="height:50px; margin:5px 0; display:flex; align-items:center; justify-content:center;">
-                  ${ttdHtml}
-                </div>
-                <div style="font-weight:bold;">${this.data.school.kepalaSekolah}</div>
-              </div>
-              <div class="tanda-tangan-box" style="width:45%; text-align:center;">
-                <div>...................., ${new Date().toLocaleDateString('id-ID')}</div>
-                <div style="margin-top:5px; font-weight:600;">Pengawas Ujian</div>
-                <div class="ttd-placeholder" style="height:50px; margin:5px 0;"></div>
-                <div style="font-weight:bold;">....................</div>
-              </div>
-            </div>
-          </div>
-        `;
-      },
-
-      printDaftarHadir: function () {
-        const kelas = document.getElementById('kelasSelect').value;
-        const mapel = document.getElementById('mapelInput').value.trim() || '....................';
-        const hari = document.getElementById('hariInput').value.trim() || '....................';
-        
-        if (!kelas) { 
-          this.showNotification('Silakan pilih kelas terlebih dahulu.', 'error'); 
-          return; 
-        }
-        
-        const studentsByClass = this.data.students.filter(s => s.kelas === kelas);
-        if (studentsByClass.length === 0) { 
-          this.showNotification('Tidak ada siswa di kelas yang dipilih.', 'error'); 
-          return; 
-        }
-
-        let tableHeaders = `
-          <th style="text-align:center; width:5%;">No</th>
-          <th style="text-align:center; width:20%;">No Tes</th>
-          <th style="text-align:center; width:30%;">Nama Siswa</th>
-        `;
-        
-        if (this.data.school.jenisUjian.uh) tableHeaders += '<th style="text-align:center; width:5%;">UH</th>';
-        if (this.data.school.jenisUjian.pts) tableHeaders += '<th style="text-align:center; width:5%;">PTS</th>';
-        if (this.data.school.jenisUjian.pas) tableHeaders += '<th style="text-align:center; width:5%;">PAS</th>';
-        if (this.data.school.jenisUjian.luam) tableHeaders += '<th style="text-align:center; width:5%;">LUAM</th>';
-        if (this.data.school.jenisUjian.uam) tableHeaders += '<th style="text-align:center; width:5%;">UAM</th>';
-        
-        tableHeaders += `<th style="text-align:center; width:8%;">Nilai Asli</th><th style="text-align:center; width:8%;">Nilai Jadi</th><th style="text-align:center; width:12%;">Tanda Tangan</th>`;
-
-        const tableRows = studentsByClass.map((s, i) => {
-          let row = `<td style="text-align:center;">${i + 1}</td><td style="text-align:center;">${s.noPeserta}</td><td style="text-align:left;">${s.nama}</td>`;
-          if (this.data.school.jenisUjian.uh) row += '<td></td>';
-          if (this.data.school.jenisUjian.pts) row += '<td></td>';
-          if (this.data.school.jenisUjian.pas) row += '<td></td>';
-          if (this.data.school.jenisUjian.luam) row += '<td></td>';
-          if (this.data.school.jenisUjian.uam) row += '<td></td>';
-          row += '<td></td><td></td><td></td>';
-          return `<tr>${row}</tr>`;
-        }).join('');
-
-        const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" style="max-height:50px; max-width:50px;">` : '';
-        const ttdHtml = this.data.school.ttdKepalaSekolah ? `<img src="${this.data.school.ttdKepalaSekolah}" style="max-height:40px; max-width:100px;">` : '';
-        
-        let jenisUjianText = '';
-        if (this.data.school.jenisUjian.uh) jenisUjianText += 'UH ';
-        if (this.data.school.jenisUjian.pts) jenisUjianText += 'PTS ';
-        if (this.data.school.jenisUjian.pas) jenisUjianText += 'PAS ';
-        if (this.data.school.jenisUjian.luam) jenisUjianText += 'LUAM ';
-        if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
-
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <title>Daftar Hadir Ujian - ${kelas}</title>
-            <style>
-              @page { size: A4 portrait; margin: 1.5cm; }
-              body { font-family: Arial, sans-serif; margin: 0; padding: 0; font-size: 12px; }
-              .kop-surat { display:flex; margin-bottom: 15px; align-items: center; }
-              .kop-logo { width: 60px; height: 60px; margin-right: 20px; display:flex; align-items:center; justify-content:center; }
-              .kop-identitas { flex:1; text-align:center; }
-              .kop-identitas h2 { font-size:1.2rem; margin:2px 0; }
-              .kop-identitas h3 { font-size:1rem; margin:2px 0; }
-              .judul-daftar-hadir { text-align:center; font-size:1.1rem; font-weight:bold; margin:15px 0; text-decoration:underline; }
-              .info-daftar-hadir { display: flex; justify-content: space-between; margin-bottom: 15px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
-              table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-              th, td { border: 1px solid #000; padding: 6px 4px; font-size: 10px; }
-              th { background: #f0f0f0; font-weight: bold; }
-              .tanda-tangan-container { margin-top: 30px; display: flex; justify-content: space-between; width: 100%; border-top: 1px solid #000; padding-top: 20px; }
-              .tanda-tangan-box { width: 45%; text-align: center; }
-              .tanda-tangan-box .jabatan { margin-bottom: 5px; font-weight: 600; }
-              .ttd-placeholder { height: 50px; margin: 5px 0; display: flex; align-items: center; justify-content: center; }
-              @media print {
-                body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                th { background: #f0f0f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-              }
-            </style>
-          </head>
-          <body>
-            <div class="kop-surat">
-              <div class="kop-logo">${logoHtml}</div>
-              <div class="kop-identitas">
-                <h2>${this.data.school.yayasan}</h2>
-                <h3>${this.data.school.sekolah}</h3>
-                <p style="margin:0; font-size:11px;">${this.data.school.alamat}</p>
-              </div>
-            </div>
-            
-            <div class="judul-daftar-hadir">DAFTAR HADIR ${jenisUjianText}</div>
-            
-            <div class="info-daftar-hadir">
-              <div><strong>Kelas:</strong> ${kelas}</div>
-              <div><strong>Mata Pelajaran:</strong> ${mapel}</div>
-              <div><strong>Hari/Tanggal:</strong> ${hari}</div>
-            </div>
-            
-            <table>
-              <thead>
-                <tr>${tableHeaders}</tr>
-              </thead>
-              <tbody>
-                ${tableRows}
-              </tbody>
-            </table>
-            
-            <div class="tanda-tangan-container">
-              <div class="tanda-tangan-box">
-                <div>Mengetahui,</div>
-                <div class="jabatan">Kepala Sekolah</div>
-                <div class="ttd-placeholder">${ttdHtml}</div>
-                <div style="font-weight:bold;">${this.data.school.kepalaSekolah}</div>
-              </div>
-              <div class="tanda-tangan-box">
-                <div>...................., ${new Date().toLocaleDateString('id-ID')}</div>
-                <div class="jabatan">Pengawas Ujian</div>
-                <div class="ttd-placeholder"></div>
-                <div style="font-weight:bold;">....................</div>
-              </div>
-            </div>
-          </body>
-          </html>
-        `);
-        printWindow.document.close();
-        printWindow.onload = function () { setTimeout(() => { printWindow.print(); }, 500); };
-      },
-
-      /* ---------- PDF GENERATION ---------- */
-      generatePDF: async function () {
-        if (this.data.students.length === 0) { this.showNotification('Tidak ada data siswa untuk dibuat PDF-nya.', 'error'); return; }
-        const btn = document.getElementById('generatePDFBtn');
-        if (btn) { btn.innerHTML = 'Membuat PDF<span class="loading"></span>'; btn.disabled = true; }
-        this.showNotification('Sedang membuat PDF, mohon tunggu...', 'info');
-        try {
-          const { jsPDF } = window.jspdf;
-          const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-          const cardWidth = 80; const cardHeight = 50; const cardsPerRow = 2; const cardsPerCol = 4;
-          const pageWidth = pdf.internal.pageSize.getWidth(); const pageHeight = pdf.internal.pageSize.getHeight();
-          const margin = 15;
-          const cardXSpacing = (pageWidth - 2 * margin - cardsPerRow * cardWidth) / (cardsPerRow - 1);
-          const cardYSpacing = (pageHeight - 2 * margin - cardsPerCol * cardHeight) / (cardsPerCol - 1);
-          const templateContainer = document.createElement('div');
-          templateContainer.style.position = 'absolute'; templateContainer.style.left = '-9999px';
-          templateContainer.style.width = '160px'; templateContainer.style.height = '100px';
-          document.body.appendChild(templateContainer);
-          const batchSize = 4;
-          for (let i = 0; i < this.data.students.length; i += batchSize) {
-            const batch = this.data.students.slice(i, i + batchSize);
-            for (let j = 0; j < batch.length; j++) {
-              const studentIndex = i + j;
-              if (studentIndex > 0 && studentIndex % (cardsPerRow * cardsPerCol) === 0) pdf.addPage();
-              const indexOnPage = studentIndex % (cardsPerRow * cardsPerCol);
-              const row = Math.floor(indexOnPage / cardsPerRow); const col = indexOnPage % cardsPerRow;
-              const x = margin + col * (cardWidth + cardXSpacing); const y = margin + row * (cardHeight + cardYSpacing);
-              const siswa = batch[j];
-              templateContainer.innerHTML = this.createCardElement(siswa, 'temp-card');
-              const canvas = await html2canvas(templateContainer.firstElementChild, { scale: 1.5, useCORS: true, allowTaint: true, backgroundColor: null, logging: false });
-              const imgData = canvas.toDataURL('image/jpeg', 0.8);
-              pdf.addImage(imgData, 'JPEG', x, y, cardWidth, cardHeight);
-            }
-            await new Promise(resolve => setTimeout(resolve, 100));
-          }
-          document.body.removeChild(templateContainer);
-          pdf.save('kartu_peserta_ujian.pdf');
-          this.showNotification(`PDF dengan ${this.data.students.length} kartu berhasil dibuat dan diunduh!`, 'success');
-        } catch (err) {
-          console.error('Error save pdf', err);
-          this.showNotification('Gagal menyimpan PDF.', 'error');
-        } finally {
-          if (btn) { btn.innerHTML = '💾 Generate PDF'; btn.disabled = false; }
-        }
-      },
-
-      // ========== FUNGSI-FUNGSI YANG DITAMBAHKAN ==========
       saveIdentitas: function () {
-        // Ambil nilai dari input di halaman
-        const yayasan = document.getElementById('yayasan')?.value.trim() || this.data.school.yayasan;
-        const sekolah = document.getElementById('sekolah')?.value.trim() || this.data.school.sekolah;
-        const alamat = document.getElementById('alamat')?.value.trim() || this.data.school.alamat;
-        const kepalaSekolah = document.getElementById('kepalaSekolah')?.value.trim() || this.data.school.kepalaSekolah;
-
-        // Ambil status checkbox jenis ujian
-        const uh = document.getElementById('jenisUH')?.checked || false;
-        const pts = document.getElementById('jenisPTS')?.checked || false;
-        const pas = document.getElementById('jenisPAS')?.checked || false;
-        const luam = document.getElementById('jenisLUAM')?.checked || false;
-        const uam = document.getElementById('jenisUAM')?.checked || false;
-
-        // Update objek data
-        this.data.school.yayasan = yayasan;
-        this.data.school.sekolah = sekolah;
-        this.data.school.alamat = alamat;
-        this.data.school.kepalaSekolah = kepalaSekolah;
-        this.data.school.jenisUjian = { uh, pts, pas, luam, uam };
-
-        // Ambil data gambar dari preview (jika ada)
-        const logoPreviewImg = document.querySelector('.identitas-logo-preview img');
-        if (logoPreviewImg) {
-          this.data.school.logo = logoPreviewImg.src;
-        }
-
-        const ttdPreviewImg = document.querySelector('.identitas-signature-preview img');
-        if (ttdPreviewImg) {
-          this.data.school.ttdKepalaSekolah = ttdPreviewImg.src;
-        }
-
-        // Simpan ke localStorage
-        this.saveToStorage();
+        this.data.school.yayasan = document.getElementById('yayasan').value.trim();
+        this.data.school.sekolah = document.getElementById('sekolah').value.trim();
+        this.data.school.alamat = document.getElementById('alamat').value.trim();
+        this.data.school.kepalaSekolah = document.getElementById('kepalaSekolah').value.trim();
         
-        // Tampilkan notifikasi sukses
-        this.showNotification('Identitas sekolah berhasil disimpan!', 'success');
+        this.data.school.jenisUjian = {
+            uh: document.getElementById('jenisUH').checked,
+            pts: document.getElementById('jenisPTS').checked,
+            pas: document.getElementById('jenisPAS').checked,
+            luam: document.getElementById('jenisLUAM').checked,
+            uam: document.getElementById('jenisUAM').checked
+        };
 
-        // Opsional: Refresh preview di halaman lain jika sedang aktif
-        if (document.getElementById('cardPreviewContainer')) {
-            this.renderCardPreview();
+        // Handle Images
+        const logoPreviewImg = document.querySelector('.identitas-logo-preview img');
+        if (logoPreviewImg) this.data.school.logo = logoPreviewImg.src;
+        
+        const ttdPreviewImg = document.querySelector('.identitas-signature-preview img');
+        if (ttdPreviewImg) this.data.school.ttdKepalaSekolah = ttdPreviewImg.src;
+
+        this.saveToStorage();
+        this.showNotification('Identitas sekolah berhasil disimpan!', 'success');
+      },
+
+      setupPengaturanPage: function () {
+        const clearBtn = document.getElementById('clearDataBtn');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', () => {
+            if (confirm('Hapus semua data?')) {
+              localStorage.clear();
+              location.reload();
+            }
+          });
         }
       },
 
+      /* ---------- PRINT MODAL FUNCTIONS ---------- */
       setupPrintCardModal: function () {
         const searchInput = document.getElementById('studentSearch');
-        const resultsContainer = document.getElementById('searchResults');
         const printBtn = document.getElementById('printSelectedCardBtn');
         const closeBtn = document.getElementById('closePrintModalBtn');
 
-        if (searchInput) {
-          searchInput.addEventListener('input', (e) => {
-            this.searchStudentsForCard(e.target.value);
-          });
+        if (searchInput) searchInput.addEventListener('input', (e) => this.searchStudentsForCard(e.target.value));
+        if (printBtn) printBtn.addEventListener('click', () => this.printIndividualCard());
+        if (closeBtn) closeBtn.addEventListener('click', () => this.closeModal('printCardModal'));
+      },
+      
+      searchStudentsForCard: function (term) {
+        const resultsContainer = document.getElementById('searchResults');
+        const printBtn = document.getElementById('printSelectedCardBtn');
+        if (!resultsContainer) return;
+        
+        if (!term || term.length < 2) {
+            resultsContainer.innerHTML = '';
+            if(printBtn) printBtn.disabled = true;
+            return;
         }
-
-        if (printBtn) {
-          printBtn.addEventListener('click', () => {
-            this.printIndividualCard();
-          });
-        }
-
-        if (closeBtn) {
-          closeBtn.addEventListener('click', () => {
-            this.closeModal('printCardModal');
-          });
-        }
+        
+        const filtered = this.data.students.filter(s => s.nama.toLowerCase().includes(term.toLowerCase()) || s.noPeserta.includes(term));
+        resultsContainer.innerHTML = filtered.map(s => {
+            const idx = this.data.students.findIndex(st => st.noPeserta === s.noPeserta);
+            return `<div class="student-result" style="padding: 8px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="SMKApps.selectStudentForCard(${idx})">${s.nama} (${s.kelas})</div>`;
+        }).join('');
+      },
+      
+      selectStudentForCard: function(index) {
+          this.data.selectedStudentIndex = index;
+          const s = this.data.students[index];
+          const printBtn = document.getElementById('printSelectedCardBtn');
+          if(printBtn) printBtn.disabled = false;
+          this.showNotification(`Dipilih: ${s.nama}`, 'info');
+      },
+      
+      printIndividualCard: function() {
+          if(this.data.selectedStudentIndex < 0) return;
+          const student = this.data.students[this.data.selectedStudentIndex];
+          this.printCardsWithData([student]);
+          this.closeModal('printCardModal');
       },
 
       setupPrintMultipleModal: function () {
@@ -2867,156 +2790,42 @@
         const closeBtn = document.getElementById('closePrintMultipleModalBtn');
 
         if (selectAllCheckbox) {
-          selectAllCheckbox.addEventListener('change', (e) => {
-            const checkboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox');
-            checkboxes.forEach(cb => {
-              cb.checked = e.target.checked;
+            selectAllCheckbox.addEventListener('change', (e) => {
+                document.querySelectorAll('#multipleSelectTableBody .student-checkbox').forEach(cb => cb.checked = e.target.checked);
+                this.updatePrintMultipleButtonState();
             });
-            this.updatePrintMultipleButtonState();
-          });
         }
-
-        // Event delegation untuk checkbox di tabel
+        
         const tableBody = document.getElementById('multipleSelectTableBody');
-        if (tableBody) {
-          tableBody.addEventListener('change', (e) => {
-            if (e.target.classList.contains('student-checkbox')) {
-              this.updatePrintMultipleButtonState();
-              
-              // Update "select all" checkbox
-              const allCheckboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox');
-              const checkedCheckboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox:checked');
-              if (selectAllCheckbox) {
-                selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length;
-              }
-            }
-          });
+        if(tableBody) {
+            tableBody.addEventListener('change', (e) => {
+                if(e.target.classList.contains('student-checkbox')) this.updatePrintMultipleButtonState();
+            });
         }
-
-        if (printBtn) {
-          printBtn.addEventListener('click', () => {
-            this.printMultipleCards();
-          });
-        }
-
-        if (closeBtn) {
-          closeBtn.addEventListener('click', () => {
-            this.closeModal('printMultipleModal');
-          });
-        }
+        
+        if(printBtn) printBtn.addEventListener('click', () => this.printMultipleCards());
+        if(closeBtn) closeBtn.addEventListener('click', () => this.closeModal('printMultipleModal'));
       },
-
-      updatePrintMultipleButtonState: function () {
-        const checkboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox:checked');
-        const printButton = document.getElementById('printMultipleCardsBtn');
-        if (printButton) {
-          printButton.disabled = checkboxes.length === 0;
-        }
-      },
-
-      printMultipleCards: function () {
-        const checkboxes = document.querySelectorAll('#multipleSelectTableBody .student-checkbox:checked');
-        if (checkboxes.length === 0) {
-          this.showNotification('Pilih minimal satu siswa', 'error');
-          return;
-        }
-
-        const selectedIndices = [];
-        checkboxes.forEach(cb => {
-          selectedIndices.push(parseInt(cb.getAttribute('data-index')));
-        });
-
-        const studentsToPrint = selectedIndices.map(index => this.data.students[index]);
-        
-        // Gunakan fungsi printCardsWithData yang sudah ada
-        this.printCardsWithData(studentsToPrint);
-        
-        this.closeModal('printMultipleModal');
-      },
-
-      searchStudentsForCard: function (searchTerm) {
-        const resultsContainer = document.getElementById('searchResults');
-        const printButton = document.getElementById('printSelectedCardBtn');
-        
-        if (!searchTerm || searchTerm.length < 2) {
-          resultsContainer.innerHTML = '<p style="padding:10px; color:#666;">Masukkan minimal 2 karakter untuk pencarian</p>';
-          if (printButton) printButton.disabled = true;
-          return;
-        }
-        
-        const filtered = this.data.students.filter(s => 
-          s.nama.toLowerCase().includes(searchTerm.toLowerCase()) || 
-          (s.noPeserta && s.noPeserta.includes(searchTerm))
-        );
-        
-        if (filtered.length === 0) {
-          resultsContainer.innerHTML = '<p style="padding:10px; color:#666;">Tidak ada siswa yang ditemukan</p>';
-          if (printButton) printButton.disabled = true;
-          return;
-        }
-        
-        let resultsHtml = '<div style="margin-top: 10px;">';
-        filtered.forEach((student) => {
-          const actualIndex = this.data.students.findIndex(s => s.noPeserta === student.noPeserta);
-          resultsHtml += `<div class="student-result" style="padding: 8px; border-bottom: 1px solid #eee; cursor: pointer;" onclick="SMKApps.selectStudentForCard(${actualIndex})">
-            <strong>${student.nama}</strong> - ${student.kelas} (${student.noPeserta})
-          </div>`;
-        });
-        resultsHtml += '</div>';
-        resultsContainer.innerHTML = resultsHtml;
-        
-        if (printButton) printButton.disabled = true;
-      },
-
-      selectStudentForCard: function (index) {
-        this.data.selectedStudentIndex = index;
-        const student = this.data.students[index];
-        
-        // Highlight hasil pencarian
-        const resultsContainer = document.getElementById('searchResults');
-        const allResults = resultsContainer.querySelectorAll('.student-result');
-        allResults.forEach((result) => {
-          result.style.backgroundColor = '';
-          result.style.borderLeft = '';
-        });
-        
-        // Cari elemen yang sesuai dan highlight
-        const selectedResult = Array.from(allResults).find(el => 
-          el.textContent.includes(student.nama)
-        );
-        if (selectedResult) {
-          selectedResult.style.backgroundColor = '#e9f7ef';
-          selectedResult.style.borderLeft = '3px solid var(--success-color)';
-        }
-        
-        const printButton = document.getElementById('printSelectedCardBtn');
-        if (printButton) printButton.disabled = false;
-        
-        this.showNotification(`Siswa dipilih: ${student.nama}`, 'info');
-      },
-
-      printIndividualCard: function () {
-        if (this.data.selectedStudentIndex === -1 || !this.data.students[this.data.selectedStudentIndex]) { 
-          this.showNotification('Silakan pilih siswa terlebih dahulu', 'error'); 
-          return; 
-        }
-        
-        const student = this.data.students[this.data.selectedStudentIndex];
-        // Gunakan fungsi printCardsWithData yang sudah ada dengan array berisi 1 siswa
-        this.printCardsWithData([student]);
-        this.closeModal('printCardModal');
-      },
-
+      
       openPrintMultipleModal: function() {
-        this.data.selectedStudentsForPrinting = [];
-        const tbody = document.getElementById('multipleSelectTableBody');
-        tbody.innerHTML = '';
-        this.data.students.forEach((student, index) => {
-          const row = `<tr><td><input type="checkbox" class="student-checkbox" data-index="${index}"></td><td>${student.noPeserta}</td><td>${student.nama}</td><td>${student.kelas}</td></tr>`;
-          tbody.innerHTML += row;
-        });
-        this.openModal('printMultipleModal');
-        this.updatePrintMultipleButtonState();
+          const tbody = document.getElementById('multipleSelectTableBody');
+          tbody.innerHTML = this.data.students.map((s, i) => `<tr><td><input type="checkbox" class="student-checkbox" data-index="${i}"></td><td>${s.noPeserta}</td><td>${s.nama}</td><td>${s.kelas}</td></tr>`).join('');
+          this.openModal('printMultipleModal');
+          this.updatePrintMultipleButtonState();
+      },
+      
+      updatePrintMultipleButtonState: function() {
+          const checked = document.querySelectorAll('#multipleSelectTableBody .student-checkbox:checked');
+          const btn = document.getElementById('printMultipleCardsBtn');
+          if(btn) btn.disabled = checked.length === 0;
+      },
+      
+      printMultipleCards: function() {
+          const checked = document.querySelectorAll('#multipleSelectTableBody .student-checkbox:checked');
+          const indices = Array.from(checked).map(cb => parseInt(cb.getAttribute('data-index')));
+          const students = indices.map(i => this.data.students[i]);
+          this.printCardsWithData(students);
+          this.closeModal('printMultipleModal');
       }
     };
 
@@ -3024,5 +2833,4 @@
     window.SMKApps = SMKApps;
   </script>
 </body>
-
 </html>
