@@ -461,7 +461,7 @@
       justify-content: center;
     }
 
-    /* ===== DENAH TEMPAT DUDUK - FORMAT BARU ===== */
+    /* ===== DENAH TEMPAT DUDUK - FORMAT BARU DENGAN FOTO ===== */
     .denah-container {
       display: flex;
       gap: 20px;
@@ -591,7 +591,7 @@
         color: #666;
     }
     
-    /* Grid denah - menampilkan kartu */
+    /* Grid denah - menampilkan kartu dengan foto */
     .grid-denah { 
         display: grid; 
         grid-template-columns: repeat(6, 1fr); 
@@ -599,11 +599,11 @@
         width: 100%;
     }
     
-    /* Card dengan format baru: atas nomor peserta, tengah kotak foto, bawah nama */
+    /* Card dengan format baru: atas nomor peserta, tengah FOTO, bawah nama */
     .denah-card { 
         border: 1px solid #2e7d32; 
         background: white; 
-        height: 220px; /* Tinggi ditambah untuk nama panjang */
+        height: 240px; /* Tinggi ditambah untuk foto */
         box-shadow: 0 4px 8px rgba(0,40,0,0.2); 
         border-radius: 12px;
         overflow: hidden;
@@ -629,18 +629,32 @@
     
     .denah-foto-tengah { 
         flex: 2;
-        background: #f0f0f0;
-        margin: 10px 10px 5px 10px;
+        margin: 8px 8px 4px 8px;
         border: 2px dashed #8bc34a;
         border-radius: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #558b2f;
-        font-size: 13px;
-        font-weight: 500;
         background: #f9fbe7;
-        min-height: 90px;
+        min-height: 110px;
+        overflow: hidden;
+    }
+    
+    .denah-foto-tengah img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+    
+    .denah-foto-tengah .placeholder-foto {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #558b2f;
+        font-size: 28px;
     }
     
     .denah-nama-bawah { 
@@ -674,7 +688,7 @@
       margin-bottom: 15px;
     }
 
-    /* ===== CETAK DENAH - DIPERBAIKI ===== */
+    /* ===== CETAK DENAH - DENGAN FOTO ===== */
     @media print {
       .no-print {
         display: none !important;
@@ -740,7 +754,7 @@
       .denah-card {
         border: 2px solid #000 !important;
         border-left: 6px solid #000 !important;
-        height: 200px !important;
+        height: 220px !important;
         box-shadow: none !important;
         page-break-inside: avoid !important;
         -webkit-print-color-adjust: exact !important;
@@ -763,7 +777,16 @@
         background: #f0f0f0 !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
-        margin: 8px 8px 4px 8px !important;
+        margin: 6px 6px 3px 6px !important;
+        overflow: hidden !important;
+      }
+      
+      .denah-foto-tengah img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
       
       .denah-nama-bawah {
@@ -1273,10 +1296,11 @@
 
   <script>
     /*
-      APLIKASI KARTU PESERTA UJIAN + DENAH TEMPAT DUDUK
-      - Denah format: Nomor Peserta di Atas, Kotak Foto di Tengah, Nama di Bawah
+      APLIKASI KARTU PESERTA UJIAN + DENAH TEMPAT DUDUK DENGAN FOTO
+      - Denah format: Nomor Peserta di Atas, FOTO di Tengah, Nama di Bawah
       - Kontrol input nomor urut manual (1-36) tapi menampilkan No Peserta
       - Nama tidak terpotong (2 baris)
+      - Foto tampil jika sudah diupload
     */
 
     /* ======= BACKGROUND DEFAULT ======= */
@@ -1383,7 +1407,7 @@
                 <li>Pembuatan Kartu Ujian dengan background default</li>
                 <li>Pembuatan Daftar Hadir Ujian</li>
                 <li>Cetak Kartu Perorangan / Beberapa Siswa</li>
-                <li><strong>Denah Tempat Duduk 36 Peserta per Kelas</strong> - Format Nomor Peserta (Atas), Kotak Foto (Tengah), Nama (Bawah) - 2 baris</li>
+                <li><strong>Denah Tempat Duduk 36 Peserta per Kelas</strong> - Format Nomor Peserta (Atas), FOTO Peserta (Tengah), Nama (Bawah) - 2 baris</li>
                 <li><strong>Kontrol Manual:</strong> Isi nomor urut di kotak kontrol untuk menampilkan kartu</li>
               </ul>
             </div>
@@ -1544,13 +1568,13 @@
         `;
       },
 
-      /* ===== HALAMAN DENAH DUDUK - GABUNGAN SCRIPT BARU ===== */
+      /* ===== HALAMAN DENAH DUDUK - DENGAN FOTO ===== */
       getDenahPage: function () {
         const kelasOptions = [...new Set(this.data.students.map(s => s.kelas))].filter(k => k && k.trim() !== '').map(k => `<option value="${k}">${k}</option>`).join('');
         
         return `
           <div class="content-container">
-            <h1 style="text-align: center;">Denah Tempat Duduk Peserta</h1>
+             <h1 style="text-align: center;">Denah Tempat Duduk Peserta</h1>
             
             <div class="denah-container no-print">
               <!-- Panel Data Peserta -->
@@ -1568,7 +1592,7 @@
                         <button class="btn btn-primary" id="loadDenahKelasBtn">📋 Muat Data</button>
                       </div>
                   </div>
-                  <p><small>Paste dari Excel atau isi manual. Kolom "Nomor Test" = No Peserta. Data diedit di sini hanya mempengaruhi tampilan denah.</small></p>
+                  <p><small>Paste dari Excel atau isi manual. Kolom "Nomor Peserta" = No Peserta. Data diedit di sini hanya mempengaruhi tampilan denah.</small></p>
                   <div style="max-height:450px; overflow-y:auto; border:1px solid #ddd;">
                       <table class="data-table-denah" id="denahDataTable">
                           <thead><tr><th>No.</th><th>Nomor Peserta</th><th>Nama Peserta</th></tr></thead>
@@ -1589,7 +1613,7 @@
                         <strong>🆕 Format kartu:</strong>
                         <ul style="margin:5px 0 0 18px; padding-left:0; font-size:12px;">
                             <li><b>Atas</b> → Nomor Peserta (dari tabel data)</li>
-                            <li><b>Tengah</b> → Kotak foto</li>
+                            <li><b>Tengah</b> → FOTO Peserta (jika ada)</li>
                             <li><b>Bawah</b> → Nama Peserta (2 baris)</li>
                         </ul>
                       </div>
@@ -1765,7 +1789,7 @@
         if (printBtn) printBtn.addEventListener('click', () => this.printDaftarHadir());
       },
 
-      /* ===== DENAH SETUP - INTEGRASI LOGIKA BARU ===== */
+      /* ===== DENAH SETUP - DENGAN FOTO ===== */
       setupDenahPage: function () {
         // Inisialisasi variabel lokal
         const gridKontrol = document.getElementById("gridKontrol");
@@ -2249,7 +2273,7 @@
         }
       },
 
-      /* ---------- DENAH FUNCTIONS - IMPLEMENTASI BARU ---------- */
+      /* ---------- DENAH FUNCTIONS - DENGAN FOTO ---------- */
       buatTabelDataDenah: function(kelas, kosong = false) {
         const tableBody = document.getElementById("denahTableBody");
         if(!tableBody) return;
@@ -2456,18 +2480,35 @@
             }
         });
         
-        // Bangun HTML dengan format baru (Nomor Peserta | Foto | Nama)
+        // Bangun HTML dengan format (Nomor Peserta | FOTO | Nama)
         let html = '';
         for (let b = 0; b < barisTotal; b++) {
             for (let k = 0; k < 6; k++) {
                 let item = matriks[b][k];
                 if (item) {
+                    // Cari data siswa berdasarkan noTes (noPeserta) untuk mendapatkan foto
+                    let dataSiswa = null;
+                    if (item.data && item.data.noTes) {
+                        dataSiswa = this.data.students.find(s => s.noPeserta === item.data.noTes);
+                    }
+                    
                     // Tampilkan No Peserta dari database, bukan nomor urut
                     let noPesertaTampil = item.data.noTes || item.nomorPeserta || '?';
+                    
+                    // Buat HTML untuk foto
+                    let fotoHtml = '';
+                    if (dataSiswa && dataSiswa.photo) {
+                        fotoHtml = `<img src="${dataSiswa.photo}" alt="Foto ${item.data.nama}" title="Foto ${item.data.nama}">`;
+                    } else {
+                        fotoHtml = `<div class="placeholder-foto" title="Tidak ada foto">📷</div>`;
+                    }
+                    
                     html += `
                         <div class="denah-card">
                             <div class="denah-nomor-atas" title="${noPesertaTampil}">${noPesertaTampil}</div>
-                            <div class="denah-foto-tengah" title="Tempat foto">📷</div>
+                            <div class="denah-foto-tengah" title="Foto ${item.data.nama || 'peserta'}">
+                                ${fotoHtml}
+                            </div>
                             <div class="denah-nama-bawah" title="${item.data.nama || '?'}">${item.data.nama || '?'}</div>
                         </div>
                     `;
@@ -2543,7 +2584,7 @@
           try { this.data.students = JSON.parse(savedStudents); }
           catch (e) { console.error('Error load students', e); this.data.students = []; }
         } else {
-          // DATA CONTOH DEFAULT
+          // DATA CONTOH DEFAULT dengan beberapa foto contoh (base64 sederhana - sebenarnya null dulu)
           this.data.students = [
 // ======================
 // KELAS X (SEPULUH)
