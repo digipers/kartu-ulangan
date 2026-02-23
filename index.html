@@ -1297,10 +1297,7 @@
   <script>
     /*
       APLIKASI KARTU PESERTA UJIAN + DENAH TEMPAT DUDUK DENGAN FOTO
-      - Denah format: Nomor Peserta di Atas, FOTO di Tengah, Nama di Bawah
-      - Kontrol input nomor urut manual (1-36) tapi menampilkan No Peserta
-      - Nama tidak terpotong (2 baris)
-      - Foto tampil jika sudah diupload
+      - Dilengkapi fitur Backup & Restore JSON di halaman Pengaturan
     */
 
     /* ======= BACKGROUND DEFAULT ======= */
@@ -1409,6 +1406,7 @@
                 <li>Cetak Kartu Perorangan / Beberapa Siswa</li>
                 <li><strong>Denah Tempat Duduk 36 Peserta per Kelas</strong> - Format Nomor Peserta (Atas), FOTO Peserta (Tengah), Nama (Bawah) - 2 baris</li>
                 <li><strong>Kontrol Manual:</strong> Isi nomor urut di kotak kontrol untuk menampilkan kartu</li>
+                <li><strong>Backup & Restore JSON</strong> di halaman Pengaturan</li>
               </ul>
             </div>
           </div>
@@ -1658,13 +1656,23 @@
       getPengaturanPage: function () {
         return `
           <div class="content-container">
-            <h1>Pengaturan</h1>
-            <p>Atur preferensi aplikasi di sini.</p>
-            <div style="margin-top:20px;">
-              <h2>Pengaturan Aplikasi</h2>
-              <div class="form-group">
+            <h1>Pengaturan & Backup Data</h1>
+            <div style="margin-top:20px; display: flex; flex-direction: column; gap: 30px;">
+              <div>
+                <h2>💾 Backup Data</h2>
+                <p>Download seluruh data aplikasi (siswa, identitas, background, denah) ke file JSON.</p>
+                <button class="btn btn-success" id="backupDataBtn">📥 Backup ke JSON</button>
+              </div>
+              <div>
+                <h2>📂 Restore Data</h2>
+                <p>Pilih file backup JSON untuk mengembalikan data. <strong>Peringatan:</strong> Data yang ada sekarang akan ditimpa.</p>
+                <input type="file" id="restoreFileInput" accept=".json,application/json">
+                <button class="btn btn-warning" id="restoreDataBtn" style="margin-left: 10px;">🔄 Restore</button>
+              </div>
+              <div>
+                <h2 style="color: var(--danger-color);">⚠️ Hapus Semua Data</h2>
+                <p>Hapus semua data siswa, identitas, dan pengaturan lainnya dari penyimpanan lokal.</p>
                 <button class="btn btn-danger" id="clearDataBtn">Hapus Semua Data</button>
-                <p style="color:var(--danger-color); font-size:0.9rem; margin-top:5px;">Peringatan: Tindakan ini akan menghapus semua data siswa dan identitas sekolah yang tersimpan.</p>
               </div>
             </div>
           </div>
@@ -1789,7 +1797,7 @@
         if (printBtn) printBtn.addEventListener('click', () => this.printDaftarHadir());
       },
 
-      /* ===== DENAH SETUP - DENGAN FOTO ===== */
+      /* ===== DENAH SETUP ===== */
       setupDenahPage: function () {
         // Inisialisasi variabel lokal
         const gridKontrol = document.getElementById("gridKontrol");
@@ -1846,6 +1854,28 @@
         this.buatGridKontrol();
         this.buatTabelDataDenah('', true); // Buat tabel kosong dulu
         this.perbaruiDenah();
+      },
+
+      setupPengaturanPage: function () {
+        const backupBtn = document.getElementById('backupDataBtn');
+        if (backupBtn) {
+          backupBtn.addEventListener('click', () => this.backupData());
+        }
+
+        const restoreBtn = document.getElementById('restoreDataBtn');
+        if (restoreBtn) {
+          restoreBtn.addEventListener('click', () => this.restoreData());
+        }
+
+        const clearBtn = document.getElementById('clearDataBtn');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', () => {
+            if (confirm('Hapus semua data? Tindakan ini tidak dapat dibatalkan.')) {
+              localStorage.clear();
+              location.reload();
+            }
+          });
+        }
       },
 
       /* ---------- FUNGSI SISWA ---------- */
@@ -2271,6 +2301,67 @@
         } finally {
           if (btn) { btn.innerHTML = '💾 Generate PDF'; btn.disabled = false; }
         }
+      },
+
+      /* ---------- BACKUP & RESTORE JSON ---------- */
+      backupData: function () {
+        const backupObj = {
+          students: this.data.students,
+          school: this.data.school,
+          cardBackground: this.data.cardBackground,
+          kontrolNomor: this.data.kontrolNomor,
+          // kita tidak backup pesertaDataLokal karena itu turunan, bisa dibangun ulang
+        };
+        const jsonStr = JSON.stringify(backupObj, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `backup_kartu_ujian_${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        this.showNotification('Backup berhasil diunduh!', 'success');
+      },
+
+      restoreData: function () {
+        const fileInput = document.getElementById('restoreFileInput');
+        if (!fileInput.files || fileInput.files.length === 0) {
+          this.showNotification('Pilih file backup terlebih dahulu.', 'error');
+          return;
+        }
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const restored = JSON.parse(e.target.result);
+            // Validasi sederhana
+            if (!restored.students || !restored.school) {
+              this.showNotification('File backup tidak valid.', 'error');
+              return;
+            }
+            if (confirm('Restore data akan menimpa data yang ada. Lanjutkan?')) {
+              this.data.students = restored.students || [];
+              this.data.school = restored.school || this.data.school;
+              this.data.cardBackground = restored.cardBackground || DEFAULT_CARD_BACKGROUND;
+              this.data.kontrolNomor = restored.kontrolNomor || {};
+              // Reset data denah
+              this.data.pesertaDataLokal = {};
+              this.data.denahKelasTerpilih = '';
+              
+              this.saveToStorage();
+              // Muat ulang halaman saat ini agar tampilan sesuai
+              const activePage = document.querySelector('.menu-btn.active')?.getAttribute('data-page') || 'beranda';
+              this.loadPage(activePage);
+              this.showNotification('Restore data berhasil!', 'success');
+            }
+          } catch (err) {
+            console.error(err);
+            this.showNotification('Gagal membaca file JSON.', 'error');
+          }
+        };
+        reader.readAsText(file);
       },
 
       /* ---------- DENAH FUNCTIONS - DENGAN FOTO ---------- */
@@ -2769,18 +2860,6 @@
         this.showNotification('Identitas sekolah berhasil disimpan!', 'success');
       },
 
-      setupPengaturanPage: function () {
-        const clearBtn = document.getElementById('clearDataBtn');
-        if (clearBtn) {
-          clearBtn.addEventListener('click', () => {
-            if (confirm('Hapus semua data?')) {
-              localStorage.clear();
-              location.reload();
-            }
-          });
-        }
-      },
-
       /* ---------- PRINT MODAL FUNCTIONS ---------- */
       setupPrintCardModal: function () {
         const searchInput = document.getElementById('studentSearch');
@@ -2875,4 +2954,3 @@
   </script>
 </body>
 </html>
-
