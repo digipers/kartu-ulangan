@@ -252,7 +252,7 @@
       gap: 20px;
     }
 
-    /* KARTU UJIAN STYLE */
+    /* ========== KARTU UJIAN STYLE - DIPERBAIKI OPACITY LEBIH RENDAH AGAR BACKGROUND TERANG ========== */
     .card { 
       width: 9cm !important; 
       height: 6cm !important; 
@@ -267,6 +267,7 @@
       print-color-adjust: exact !important;
     }
 
+    /* LAPISAN BACKGROUND PUTIH DENGAN OPACITAS RENDAH (0.55) AGAR BACKGROUND TERLIHAT TERANG DAN JELAS */
     .card-content {
       position: absolute;
       top: 0;
@@ -277,9 +278,31 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: rgba(255, 255, 255, 0.95);
+      /* Opacity 55% - background lebih terlihat terang dan jelas */
+      background: rgba(255, 255, 255, 0.55);
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
+      backdrop-filter: none;
+    }
+
+    /* PERBAIKAN KHUSUS UNTUK CETAK - MEMASTIKAN BACKGROUND TETAP TERANG */
+    @media print {
+      .card-content {
+        background: rgba(255, 255, 255, 0.60) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .card {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
     }
 
     .card-header {
@@ -425,7 +448,7 @@
       padding: 20px;
       border: 1px solid var(--border-color);
       background: white;
-      font-size: 14px; /* Diperbesar dari 12px */
+      font-size: 14px;
       border-radius: 8px;
       box-shadow: var(--shadow);
       display: flex;
@@ -440,27 +463,27 @@
 
     .daftar-hadir-preview th,
     .daftar-hadir-preview td {
-      padding: 10px 8px; /* Padding diperbesar */
+      padding: 10px 8px;
       border: 1px solid #444;
-      font-size: 13px; /* Diperbesar dari 11px */
+      font-size: 13px;
       text-align: center;
       vertical-align: middle;
     }
 
     /* Nomor dan nama peserta diperbesar */
     .daftar-hadir-preview td:first-child {
-      font-size: 14px; /* Lebih besar untuk nomor */
+      font-size: 14px;
       font-weight: 600;
     }
     
     .daftar-hadir-preview td:nth-child(2) {
-      font-size: 13px; /* No Tes */
+      font-size: 13px;
       font-weight: 500;
     }
     
     .daftar-hadir-preview td:nth-child(3) {
       text-align: left;
-      font-size: 14px; /* Nama siswa diperbesar */
+      font-size: 14px;
       font-weight: 500;
     }
 
@@ -468,10 +491,10 @@
       display: flex;
       justify-content: space-between;
       margin-bottom: 15px;
-      padding: 12px; /* Diperbesar */
+      padding: 12px;
       background-color: var(--light-color);
       border-radius: 6px;
-      font-size: 14px; /* Diperbesar */
+      font-size: 14px;
     }
 
     .info-daftar-hadir div {
@@ -484,9 +507,9 @@
       display: flex;
       justify-content: space-between;
       width: 100%;
-      border-top: 2px solid #333; /* Lebih tebal */
-      padding-top: 25px; /* Lebih besar */
-      font-size: 14px; /* Diperbesar */
+      border-top: 2px solid #333;
+      padding-top: 25px;
+      font-size: 14px;
     }
 
     .tanda-tangan-box {
@@ -495,19 +518,19 @@
     }
 
     .tanda-tangan-box .jabatan {
-      margin-bottom: 8px; /* Diperbesar */
+      margin-bottom: 8px;
       font-weight: 600;
-      font-size: 14px; /* Diperbesar */
+      font-size: 14px;
     }
     
     .tanda-tangan-box .nama {
-      margin-top: 8px; /* Diperbesar */
+      margin-top: 8px;
       font-weight: bold;
-      font-size: 14px; /* Diperbesar */
+      font-size: 14px;
     }
     
     .tanda-tangan-box .ttd-placeholder {
-      height: 60px; /* Lebih tinggi */
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1351,17 +1374,17 @@
         <span class="close" style="cursor:pointer;">&times;</span>
       </div>
       <div class="table-container" style="max-height: 50vh; overflow-y: auto;">
-        <table>
+         <table>
           <thead>
-            <tr>
+             <tr>
               <th><input type="checkbox" id="selectAllCheckbox"></th>
               <th>No Peserta</th>
               <th>Nama</th>
               <th>Kelas</th>
-            </tr>
+             </tr>
           </thead>
           <tbody id="multipleSelectTableBody"></tbody>
-        </table>
+         </table>
       </div>
       <div class="input-actions" style="margin-top: 20px; justify-content: flex-end;">
         <button class="btn btn-secondary" id="closePrintMultipleModalBtn">Tutup</button>
@@ -1373,14 +1396,12 @@
   <script>
     /*
       APLIKASI KARTU PESERTA UJIAN + DENAH TEMPAT DUDUK DENGAN FOTO
-      - Fitur baru: 
-        * Orientasi cetak denah bisa dipilih (Portrait/Landscape)
-        * Foto mengisi penuh kotak tengah denah
-        * Font daftar hadir diperbesar (standar)
+      - PERBAIKAN: Opacity lapisan putih dikurangi menjadi 55% agar background lebih terang dan jelas saat dicetak
+      - Fitur lengkap: identitas, data siswa, kartu ujian, daftar hadir, denah, pengaturan
     */
 
-    /* ======= BACKGROUND DEFAULT ======= */
-    const DEFAULT_CARD_BACKGROUND = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iI2UzZjJmZCIvPjxwYXRoIGQ9Ik0wIDYwMEw4MDAgME0wIDBMODAwIDYwMCIgc3Ryb2tlPSIjYjhkZmZmIiBzdHJva2Utd2lkdGg9IjIiIG9wYWNpdHk9IjAuMiIvPjxjaXJjbGUgY3g9IjQwMCIgY3k9IjMwMCIgcj0iMjAwIiBmaWxsPSJub25lIiBzdHJva2U9IiM5MmM1ZmYiIHN0cm9rZS13aWR0aD0iMyIgb3BhY2l0eT0iMC4xIi8+PGNpcmNsZSBjeD0iNDAwIiBjeT0iMzAwIiByPSIxNTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2IzZGVmZiIgc3Ryb2tlLXdpZHRoPSIyIiBvcGFjaXR5PSIwLjEiLz48cG9seWdvbiBwb2ludHM9IjAsMCA4MDAsNjAwIDgwMCwwIDAsNjAwIiBmaWxsPSIjYzBlNWZmIiBmaWxsLW9wYWNpdHk9IjAuMDgiLz48L3N2Zz4=';
+    /* ======= BACKGROUND DEFAULT (TERANG) ======= */
+    const DEFAULT_CARD_BACKGROUND = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iI2ZmZjRlMCIvPjxjaXJjbGUgY3g9IjQwMCIgY3k9IjMwMCIgcj0iMjUwIiBmaWxsPSIjZmZkY2I5IiBmaWxsLW9wYWNpdHk9IjAuNCIvPjxjaXJjbGUgY3g9IjQwMCIgY3k9IjMwMCIgcj0iMTUwIiBmaWxsPSIjZmZlMGIwIiBmaWxsLW9wYWNpdHk9IjAuMyIvPjwvc3ZnPg==';
 
     /* ======= APLIKASI UTAMA ======= */
     const SMKApps = {
@@ -1478,15 +1499,12 @@
                 <li>Manajemen Identitas Sekolah</li>
                 <li>Input Data Siswa Manual</li>
                 <li>Upload Foto Siswa per Individu</li>
-                <li>Pembuatan Kartu Ujian dengan background default</li>
-                <li>Pembuatan Daftar Hadir Ujian</li>
-                <li><strong>Font daftar hadir diperbesar</strong> untuk kemudahan membaca</li>
+                <li>Pembuatan Kartu Ujian dengan background terang & area tulisan transparan (opacity 55%)</li>
+                <li>Pembuatan Daftar Hadir Ujian (font diperbesar)</li>
                 <li>Cetak Kartu Perorangan / Beberapa Siswa</li>
-                <li><strong>Denah Tempat Duduk 36 Peserta per Kelas</strong> - Format Nomor Peserta (Atas), FOTO Peserta (Tengah), Nama (Bawah) - 2 baris</li>
-                <li><strong>Foto mengisi penuh kotak tengah</strong> - object-fit: cover</li>
-                <li><strong>Pilih orientasi cetak:</strong> Portrait atau Landscape</li>
-                <li><strong>Kontrol Manual:</strong> Isi nomor urut di kotak kontrol untuk menampilkan kartu</li>
-                <li><strong>Backup & Restore JSON</strong> di halaman Pengaturan</li>
+                <li>Denah Tempat Duduk 36 Peserta per Kelas</li>
+                <li>Kontrol Manual untuk denah</li>
+                <li>Backup & Restore JSON</li>
               </ul>
             </div>
           </div>
@@ -1502,7 +1520,7 @@
             <h1>Identitas Lembaga</h1>
             <div class="identitas-grid">
               <div class="identitas-section">
-                <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"></path></svg>Identitas Sekolah</h3>
+                <h3>Identitas Sekolah</h3>
                 <div class="form-group"><label for="yayasan">Nama Yayasan</label><input type="text" id="yayasan" value="${this.data.school.yayasan}"></div>
                 <div class="form-group"><label for="sekolah">Nama Lembaga</label><input type="text" id="sekolah" value="${this.data.school.sekolah}"></div>
                 <div class="form-group"><label for="kepalaSekolah">Nama Kepala Sekolah</label><input type="text" id="kepalaSekolah" value="${this.data.school.kepalaSekolah}"></div>
@@ -1510,7 +1528,7 @@
               </div>
               
               <div class="identitas-section">
-                <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path></svg>Logo Sekolah</h3>
+                <h3>Logo Sekolah</h3>
                 <div class="identitas-logo-container">
                   <div class="identitas-logo-preview">${logoHtml || '<span style="color:#999;">Logo belum diunggah</span>'}</div>
                   <input type="file" id="logoInput" accept="image/*" style="width:200px;">
@@ -1518,7 +1536,7 @@
               </div>
               
               <div class="identitas-section">
-                <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>Tanda Tangan Kepala Sekolah</h3>
+                <h3>Tanda Tangan Kepala Sekolah</h3>
                 <div class="identitas-signature-container">
                   <div class="identitas-signature-preview">${ttdHtml || '<span style="color:#999;">Tanda tangan belum diunggah</span>'}</div>
                   <input type="file" id="ttdInput" accept="image/*" style="width:200px;">
@@ -1526,7 +1544,7 @@
               </div>
               
               <div class="identitas-section">
-                <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 1 1 0 000 2H6a2 2 0 00-2 2v6a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2a1 1 0 100-2 2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" clip-rule="evenodd"></path></svg>Jenis Ujian</h3>
+                <h3>Jenis Ujian</h3>
                 <div class="checkbox-group">
                   <div class="checkbox-item"><input type="checkbox" id="jenisUH" ${this.data.school.jenisUjian.uh ? 'checked' : ''}><label for="jenisUH">Ulangan Harian (UH)</label></div>
                   <div class="checkbox-item"><input type="checkbox" id="jenisPTS" ${this.data.school.jenisUjian.pts ? 'checked' : ''}><label for="jenisPTS">Penilaian Tengah Semester (PTS)</label></div>
@@ -1546,7 +1564,7 @@
           <div class="content-container">
             <h1>Data Siswa</h1>
             <div class="input-siswa-form">
-              <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>Tambah Siswa Baru</h3>
+              <h3>➕ Tambah Siswa Baru</h3>
               <div class="form-row">
                 <div class="form-col"><label for="noPeserta">No Peserta</label><input type="text" id="noPeserta" placeholder="Contoh: 12.08.07.1001.0001-8"></div>
                 <div class="form-col"><label for="nama">Nama Siswa</label><input type="text" id="nama" placeholder="Masukkan nama lengkap"></div>
@@ -1562,7 +1580,7 @@
             </div>
 
             <div class="input-siswa-form" style="margin-top: 20px;">
-              <h3><svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path></svg>Daftar Siswa (${this.data.students.length} siswa)</h3>
+              <h3>📋 Daftar Siswa (${this.data.students.length} siswa)</h3>
               <div class="student-search-container"><input type="text" id="searchInput" placeholder="Cari siswa berdasarkan nama, kelas, atau no peserta..."></div>
               <div class="table-container">
                 <table>
@@ -1589,7 +1607,7 @@
                 <div class="form-group">
                   <label for="bgUpload">Upload Background Kartu (Opsional)</label>
                   <input type="file" id="bgUpload" accept="image/*">
-                  <p style="margin-top:5px; font-size:0.8rem; color:#666;"><strong>Background default sudah terpasang.</strong></p>
+                  <p style="margin-top:5px; font-size:0.8rem; color:#666;"><strong>Background default sudah terpasang (warna terang). Lapisan putih opacity 55% agar background terlihat jelas.</strong></p>
                   <div id="bgPreview" style="margin-top:10px;"><strong>Background saat ini:</strong><br>${bgHtml}</div>
                 </div>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
@@ -1673,7 +1691,7 @@
                       <table class="data-table-denah" id="denahDataTable">
                           <thead><tr><th>No.</th><th>Nomor Peserta</th><th>Nama Peserta</th></tr></thead>
                           <tbody id="denahTableBody"></tbody>
-                      </table>
+                       </table>
                   </div>
                   <div style="margin-top: 10px;">
                       <button class="btn btn-info" id="resetDenahTableBtn">🔄 Reset Tabel</button>
@@ -1766,7 +1784,7 @@
         `;
       },
 
-      /* ---------- SETUP FUNCTIONS ---------- */
+      /* ---------- SETUP FUNCTIONS (sama seperti sebelumnya) ---------- */
       setupIdentitasPage: function () {
         const logoInput = document.getElementById('logoInput');
         if (logoInput) {
@@ -1852,7 +1870,7 @@
             document.getElementById('bgPreview').innerHTML = `<strong>Background saat ini:</strong><br><img src="${DEFAULT_CARD_BACKGROUND}" style="max-width:200px; border:1px solid #ddd; border-radius:4px;">`;
             this.saveToStorage();
             this.renderCardPreview();
-            this.showNotification('Background dikembalikan ke default!', 'success');
+            this.showNotification('Background dikembalikan ke default (warna terang)!', 'success');
           });
         }
 
@@ -1882,15 +1900,15 @@
 
         const printBtn = document.getElementById('printDaftarHadirBtn');
         if (printBtn) printBtn.addEventListener('click', () => this.printDaftarHadir());
+        
+        const kelasSelect = document.getElementById('kelasSelect');
+        if (kelasSelect) {
+          const kelasOptions = [...new Set(this.data.students.map(s => s.kelas))].filter(k => k && k.trim() !== '');
+          kelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>' + kelasOptions.map(k => `<option value="${k}">${k}</option>`).join('');
+        }
       },
 
       setupDenahPage: function () {
-        const gridKontrol = document.getElementById("gridKontrol");
-        const gridDenah = document.getElementById("gridDenah");
-        const denahKosong = document.getElementById("denahKosong");
-        const jumlahTerisiSpan = document.getElementById("jumlahTerisi");
-        const jumlahBarisDenahSpan = document.getElementById("jumlahBarisDenah");
-        
         const loadBtn = document.getElementById('loadDenahKelasBtn');
         if (loadBtn) {
             loadBtn.addEventListener('click', () => {
@@ -1930,7 +1948,6 @@
             });
         }
 
-        // Kontrol orientasi cetak
         const orientationPortrait = document.getElementById('orientationPortrait');
         const orientationLandscape = document.getElementById('orientationLandscape');
         const applyBtn = document.getElementById('applyOrientationBtn');
@@ -1947,10 +1964,15 @@
             });
         }
         
-        // Tombol cetak denah dengan orientasi yang dipilih
         const printDenahBtn = document.getElementById('printDenahBtn');
         if (printDenahBtn) {
             printDenahBtn.addEventListener('click', () => this.printDenah());
+        }
+
+        const denahKelasSelect = document.getElementById('denahKelasSelect');
+        if (denahKelasSelect) {
+          const kelasOptions = [...new Set(this.data.students.map(s => s.kelas))].filter(k => k && k.trim() !== '');
+          denahKelasSelect.innerHTML = '<option value="">-- Pilih Kelas --</option>' + kelasOptions.map(k => `<option value="${k}">${k}</option>`).join('');
         }
 
         this.buatGridKontrol();
@@ -1960,14 +1982,10 @@
 
       setupPengaturanPage: function () {
         const backupBtn = document.getElementById('backupDataBtn');
-        if (backupBtn) {
-          backupBtn.addEventListener('click', () => this.backupData());
-        }
+        if (backupBtn) backupBtn.addEventListener('click', () => this.backupData());
 
         const restoreBtn = document.getElementById('restoreDataBtn');
-        if (restoreBtn) {
-          restoreBtn.addEventListener('click', () => this.restoreData());
-        }
+        if (restoreBtn) restoreBtn.addEventListener('click', () => this.restoreData());
 
         const clearBtn = document.getElementById('clearDataBtn');
         if (clearBtn) {
@@ -1980,143 +1998,37 @@
         }
       },
 
-      /* ---------- FUNGSI CETAK DENAH DENGAN ORIENTASI ---------- */
+      /* ---------- FUNGSI CETAK DENAH ---------- */
       printDenah: function () {
         const gridDenah = document.getElementById('gridDenah');
         const denahKosong = document.getElementById('denahKosong');
         
-        // Cek apakah denah kosong
         if (gridDenah.children.length === 0 || (denahKosong && denahKosong.style.display !== 'none')) {
             this.showNotification('Denah masih kosong!', 'error');
             return;
         }
         
-        // Buat jendela cetak baru
         const printWindow = window.open('', '_blank');
-        
-        // Ambil elemen denah yang akan dicetak
         const denahHTML = gridDenah.outerHTML;
         const judul = '<h2 style="text-align:center; margin:10px 0;">DENAH TEMPAT DUDUK PESERTA UJIAN</h2>';
-        
-        // Tentukan orientasi berdasarkan pilihan
         const orientation = this.data.printOrientation || 'landscape';
         
-        // Buat konten HTML untuk cetak
         let html = `<!DOCTYPE html>
 <html>
 <head>
     <title>Cetak Denah Tempat Duduk</title>
     <style>
-        @page {
-            size: A4 ${orientation};
-            margin: 0.8cm;
-        }
-        body {
-            font-family: 'Poppins', Arial, sans-serif;
-            margin: 0;
-            padding: 10px;
-            background: white;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-        .print-container {
-            width: 100%;
-            max-width: 100%;
-        }
-        h2 {
-            text-align: center;
-            margin: 5px 0 15px 0;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .grid-denah {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 6px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        .denah-card {
-            border: 2px solid #000;
-            border-left: 6px solid #000;
-            background: white;
-            height: auto;
-            min-height: 200px;
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            page-break-inside: avoid;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-        .denah-nomor-atas {
-            background: #4CAF50;
-            color: white;
-            padding: 6px 2px;
-            font-size: 12px;
-            font-weight: bold;
-            text-align: center;
-            border-bottom: 2px solid #000;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-        .denah-foto-tengah {
-            flex: 2;
-            margin: 6px 6px 3px 6px;
-            border: 2px dashed #333;
-            border-radius: 6px;
-            background: #f0f0f0;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100px;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-        .denah-foto-tengah img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-        .denah-foto-tengah .placeholder-foto {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #558b2f;
-            font-size: 24px;
-            background: #f9fbe7;
-        }
-        .denah-nama-bawah {
-            background: white;
-            padding: 4px 2px;
-            margin: 0 4px 6px 4px;
-            font-size: 10px;
-            font-weight: 500;
-            color: #000;
-            text-align: center;
-            border-top: 1px solid #000;
-            word-wrap: break-word;
-            line-height: 1.2;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            max-height: 32px;
-        }
-        @media print {
-            body { margin: 0; padding: 0; }
-            .no-print { display: none; }
-        }
+        @page { size: A4 ${orientation}; margin: 0.8cm; }
+        body { font-family: 'Poppins', Arial, sans-serif; margin: 0; padding: 10px; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .print-container { width: 100%; max-width: 100%; }
+        h2 { text-align: center; margin: 5px 0 15px 0; font-size: 16px; font-weight: bold; }
+        .grid-denah { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; width: 100%; margin: 0 auto; }
+        .denah-card { border: 2px solid #000; border-left: 6px solid #000; background: white; height: auto; min-height: 200px; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .denah-nomor-atas { background: #4CAF50; color: white; padding: 6px 2px; font-size: 12px; font-weight: bold; text-align: center; border-bottom: 2px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .denah-foto-tengah { flex: 2; margin: 6px 6px 3px 6px; border: 2px dashed #333; border-radius: 6px; background: #f0f0f0; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 100px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .denah-foto-tengah img { width: 100%; height: 100%; object-fit: cover; display: block; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .denah-nama-bawah { background: white; padding: 4px 2px; margin: 0 4px 6px 4px; font-size: 10px; font-weight: 500; color: #000; text-align: center; border-top: 1px solid #000; word-wrap: break-word; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-height: 32px; }
+        @media print { body { margin: 0; padding: 0; } }
     </style>
 </head>
 <body>
@@ -2129,13 +2041,7 @@
         
         printWindow.document.write(html);
         printWindow.document.close();
-        
-        // Tunggu hingga konten siap lalu cetak
-        printWindow.onload = function() {
-            setTimeout(() => {
-                printWindow.print();
-            }, 500);
-        };
+        printWindow.onload = function() { setTimeout(() => { printWindow.print(); }, 500); };
       },
 
       /* ---------- FUNGSI SISWA ---------- */
@@ -2259,6 +2165,7 @@
         const fotoInput = document.getElementById('fotoUpload');
         if (!fotoInput || !fotoInput.files.length) { this.showNotification('Silakan pilih file foto terlebih dahulu.', 'error'); return; }
         const file = fotoInput.files[0];
+        if (file.size > 2 * 1024 * 1024) { this.showNotification('Ukuran file maksimal 2MB!', 'error'); return; }
         const reader = new FileReader();
         reader.onload = (event) => {
           this.data.students[this.data.currentFotoIndex].photo = event.target.result;
@@ -2294,13 +2201,12 @@
         if (saveBtn) saveBtn.addEventListener('click', () => this.saveFotoSiswa());
       },
 
-      /* ---------- CARD FUNCTIONS ---------- */
+      /* ---------- CARD FUNCTIONS dengan opacity 55% ---------- */
       createCardElement: function (student, cardId) {
         const bgStyle = this.data.cardBackground ? `background-image: url('${this.data.cardBackground}'); background-size: cover; background-position: center;` : 'background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);';
         const photoHtml = student.photo ? `<img src="${student.photo}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.5rem; border-radius:4px;">FOTO</div>';
         const logoHtml = this.data.school.logo ? `<img src="${this.data.school.logo}" class="card-logo" style="width:100%; height:100%; object-fit:contain;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.4rem; border-radius:4px;">LOGO</div>';
         
-        // Tanda tangan
         const ttdHtml = this.data.school.ttdKepalaSekolah 
           ? `<img src="${this.data.school.ttdKepalaSekolah}" class="signature-image" style="max-width:100px; max-height:35px; object-fit:contain;">` 
           : '<div class="signature-placeholder"></div>';
@@ -2377,7 +2283,7 @@
           .print-sheet { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, auto); gap: 10px; page-break-after: always; padding: 10px; }
           .print-card { break-inside: avoid; page-break-inside: avoid; }
           .card { width: 9cm !important; height: 6cm !important; position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; background-size: cover; background-position: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          .card-content { position:absolute; inset:0; background:rgba(255,255,255,0.95); padding:8px 10px; display:flex; flex-direction:column; justify-content:space-between; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          .card-content { position:absolute; inset:0; background:rgba(255,255,255,0.60); padding:8px 10px; display:flex; flex-direction:column; justify-content:space-between; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           .card-header { display: flex; align-items: center; gap: 6px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 4px; }
           .card-logo { width: 30px; height: 30px; flex-shrink: 0; }
           .card-school-info { flex: 1; text-align: center; }
@@ -2394,6 +2300,9 @@
           .signature-container { display:flex; flex-direction:column; align-items:flex-end; width:100%; }
           .signature-image { max-width:100px; max-height:35px; object-fit:contain; }
           .signature-name { font-weight:700; font-size:0.6rem; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; color:#000; }
+          @media print {
+            .card-content { background: rgba(255,255,255,0.60) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          }
         </style></head><body>`;
         
         let counter = 0;
@@ -2418,7 +2327,7 @@
         printWindow.onload = () => { setTimeout(() => { printWindow.print(); }, 500); };
       },
 
-      /* ---------- DAFTAR HADIR DENGAN FONT DIPERBESAR ---------- */
+      /* ---------- DAFTAR HADIR ---------- */
       previewDaftarHadir: function () {
         const kelas = document.getElementById('kelasSelect').value;
         const mapel = document.getElementById('mapelInput').value.trim() || '....................';
@@ -2533,7 +2442,30 @@
         if (this.data.school.jenisUjian.uam) jenisUjianText += 'UAM ';
 
         const printWindow = window.open('', '_blank');
-        printWindow.document.write(`<!DOCTYPE html><html><head><title>Daftar Hadir - ${kelas}</title><style>@page { size: A4 portrait; margin: 1.5cm; } body { font-family: Arial, sans-serif; margin: 0; padding: 0; font-size: 14px; } .kop-surat { display:flex; margin-bottom: 20px; align-items: center; } .kop-logo { width: 70px; height: 70px; margin-right: 20px; display:flex; align-items:center; justify-content:center; } .kop-identitas { flex:1; text-align:center; } .kop-identitas h2 { font-size:1.4rem; margin:2px 0; } .kop-identitas h3 { font-size:1.2rem; margin:2px 0; } .judul-daftar-hadir { text-align:center; font-size:1.3rem; font-weight:bold; margin:20px 0; text-decoration:underline; } .info-daftar-hadir { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; } table { width: 100%; border-collapse: collapse; margin-bottom: 20px; } th, td { border: 1px solid #000; padding: 10px; font-size: 14px; } th { background: #f0f0f0; font-weight: bold; } td:first-child { font-weight: 600; font-size: 14px; } td:nth-child(3) { text-align: left; font-size: 14px; } .tanda-tangan-container { margin-top: 40px; display: flex; justify-content: space-between; width: 100%; border-top: 2px solid #000; padding-top: 25px; font-size: 14px; } .tanda-tangan-box { width: 45%; text-align: center; } .ttd-placeholder { height: 60px; margin: 10px 0; display: flex; align-items: center; justify-content: center; } @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } th { background: #f0f0f0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }</style></head><body><div class="kop-surat"><div class="kop-logo">${logoHtml}</div><div class="kop-identitas"><h2>${this.data.school.yayasan}</h2><h3>${this.data.school.sekolah}</h3><p style="margin:0; font-size:12px;">${this.data.school.alamat}</p></div></div><div class="judul-daftar-hadir">DAFTAR HADIR ${jenisUjianText}</div><div class="info-daftar-hadir"><div><strong>Kelas:</strong> ${kelas}</div><div><strong>Mata Pelajaran:</strong> ${mapel}</div><div><strong>Hari/Tanggal:</strong> ${hari}</div></div><table><thead><tr>${tableHeaders}</tr></thead><tbody>${tableRows}</tbody></table><div class="tanda-tangan-container"><div class="tanda-tangan-box"><div style="font-size:14px;">Mengetahui,</div><div style="font-weight:600; font-size:14px; margin-top:8px;">Kepala Sekolah</div><div class="ttd-placeholder">${ttdHtml}</div><div style="font-weight:bold; font-size:14px;">${this.data.school.kepalaSekolah}</div></div><div class="tanda-tangan-box"><div style="font-size:14px;">...................., ${new Date().toLocaleDateString('id-ID')}</div><div style="font-weight:600; font-size:14px; margin-top:8px;">Pengawas Ujian</div><div class="ttd-placeholder"></div><div style="font-weight:bold; font-size:14px;">....................</div></div></div></body></html>`);
+        printWindow.document.write(`<!DOCTYPE html><html><head><title>Daftar Hadir - ${kelas}</title><style>
+          @page { size: A4 portrait; margin: 1.5cm; }
+          body { font-family: Arial, sans-serif; margin: 0; padding: 0; font-size: 14px; }
+          .kop-surat { display:flex; margin-bottom: 20px; align-items: center; }
+          .kop-logo { width: 70px; height: 70px; margin-right: 20px; display:flex; align-items:center; justify-content:center; }
+          .kop-identitas { flex:1; text-align:center; }
+          .kop-identitas h2 { font-size:1.4rem; margin:2px 0; }
+          .kop-identitas h3 { font-size:1.2rem; margin:2px 0; }
+          .judul-daftar-hadir { text-align:center; font-size:1.3rem; font-weight:bold; margin:20px 0; text-decoration:underline; }
+          .info-daftar-hadir { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; }
+          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          th, td { border: 1px solid #000; padding: 10px; font-size: 14px; }
+          th { background: #f0f0f0; font-weight: bold; }
+          .tanda-tangan-container { margin-top: 40px; display: flex; justify-content: space-between; width: 100%; border-top: 2px solid #000; padding-top: 25px; font-size: 14px; }
+          .tanda-tangan-box { width: 45%; text-align: center; }
+          .ttd-placeholder { height: 60px; margin: 10px 0; display: flex; align-items: center; justify-content: center; }
+          @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } th { background: #f0f0f0 !important; } }
+        </style></head><body>
+        <div class="kop-surat"><div class="kop-logo">${logoHtml}</div><div class="kop-identitas"><h2>${this.data.school.yayasan}</h2><h3>${this.data.school.sekolah}</h3><p style="margin:0; font-size:12px;">${this.data.school.alamat}</p></div></div>
+        <div class="judul-daftar-hadir">DAFTAR HADIR ${jenisUjianText}</div>
+        <div class="info-daftar-hadir"><div><strong>Kelas:</strong> ${kelas}</div><div><strong>Mata Pelajaran:</strong> ${mapel}</div><div><strong>Hari/Tanggal:</strong> ${hari}</div></div>
+        <table><thead><tr>${tableHeaders}</tr></thead><tbody>${tableRows}</tbody></table>
+        <div class="tanda-tangan-container"><div class="tanda-tangan-box"><div>Mengetahui,</div><div style="font-weight:600; margin-top:8px;">Kepala Sekolah</div><div class="ttd-placeholder">${ttdHtml}</div><div style="font-weight:bold;">${this.data.school.kepalaSekolah}</div></div><div class="tanda-tangan-box"><div>...................., ${new Date().toLocaleDateString('id-ID')}</div><div style="font-weight:600; margin-top:8px;">Pengawas Ujian</div><div class="ttd-placeholder"></div><div style="font-weight:bold;">....................</div></div></div>
+        </body></html>`);
         printWindow.document.close();
         printWindow.onload = function () { setTimeout(() => { printWindow.print(); }, 500); };
       },
@@ -2584,7 +2516,7 @@
         }
       },
 
-      /* ---------- BACKUP & RESTORE JSON ---------- */
+      /* ---------- BACKUP & RESTORE ---------- */
       backupData: function () {
         const backupObj = {
           students: this.data.students,
@@ -2945,91 +2877,10 @@
           catch (e) { console.error('Error load students', e); this.data.students = []; }
         } else {
           this.data.students = [
-{ noPeserta: '12-807-1001-8', nama: 'Adi Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 19 Agustus 2009', photo: null },
-{ noPeserta: '12-807-1002-7', nama: 'Aulia Nur Laela', kelas: 'X (SEPULUH)', ttl: 'Sido Mukti, 19 Oktober 2009', photo: null },
-{ noPeserta: '12-807-1003-6', nama: 'Cipa Nadia Salma', kelas: 'X (SEPULUH)', ttl: 'Way Kanan, 11 Juli 2010', photo: null },
-{ noPeserta: '12-807-1004-5', nama: 'Dedi Irawan', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 08 Desember 2008', photo: null },
-{ noPeserta: '12-807-1005-4', nama: 'Farel Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 17 November 2009', photo: null },
-{ noPeserta: '12-807-1006-3', nama: 'Ismawati Dwi Anggraini', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 03 April 2010', photo: null },
-{ noPeserta: '12-807-1007-2', nama: 'Irfan', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 13 Juni 2008', photo: null },
-{ noPeserta: '12-807-1008-9', nama: 'Luthfi Hakim', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 11 Desember 2009', photo: null },
-{ noPeserta: '12-807-1009-8', nama: 'M. Al Imron', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 24 Februari 2009', photo: null },
-{ noPeserta: '12-807-1010-7', nama: 'M. Haris Setiawan', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 08 Agustus 2009', photo: null },
-{ noPeserta: '12-807-1011-6', nama: 'M. Riki Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 11 Mei 2007', photo: null },
-{ noPeserta: '12-807-1012-5', nama: 'Raditia Danu Pratama', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 26 Mei 2010', photo: null },
-{ noPeserta: '12-807-1013-4', nama: 'Ridho Firmansyah', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 19 Maret 2010', photo: null },
-{ noPeserta: '12-807-1014-3', nama: 'Rizki Cahyo Sugeng Wibowo', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 24 September 2009', photo: null },
-{ noPeserta: '12-807-1015-2', nama: 'Rizal Abdul Haq', kelas: 'X (SEPULUH)', ttl: 'Braja Mas, 28 April 2010', photo: null },
-{ noPeserta: '12-807-1016-9', nama: 'Safa Aulia Putri', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 03 Mei 2010', photo: null },
-{ noPeserta: '12-807-1017-8', nama: 'Shinta Sastya Wati', kelas: 'X (SEPULUH)', ttl: 'Way Jepara, 03 Januari 2010', photo: null },
-{ noPeserta: '12-807-1018-7', nama: 'Tiyas Farida Sari', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 23 September 2009', photo: null },
-{ noPeserta: '12-807-1019-6', nama: 'Nayla Himmatul Ulya', kelas: 'X (SEPULUH)', ttl: 'Brawijaya, 04 Juli 2009', photo: null },
-{ noPeserta: '12-807-1101-8', nama: 'Ahmad Iqbal', kelas: 'XI (SEBELAS)', ttl: 'Jepara, 05 September 2008', photo: null },
-{ noPeserta: '12-807-1102-7', nama: 'Ahmad Ramadhani', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 15 September 2008', photo: null },
-{ noPeserta: '12-807-1103-6', nama: 'Argi Setiyawan', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 02 Mei 2008', photo: null },
-{ noPeserta: '12-807-1104-5', nama: "Aisyah Lu'lu'ul Husna", kelas: 'XI (SEBELAS)', ttl: 'Metro, 21 November 2008', photo: null },
-{ noPeserta: '12-807-1105-4', nama: 'Anggun Puspita Anggraini', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 24 April 2009', photo: null },
-{ noPeserta: '12-807-1106-3', nama: 'Dafa', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 31 Oktober 2008', photo: null },
-{ noPeserta: '12-807-1107-2', nama: 'Devita Anjani', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 22 Mei 2008', photo: null },
-{ noPeserta: '12-807-1108-9', nama: 'Ferdi Kurniawan', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 29 Juli 2009', photo: null },
-{ noPeserta: '12-807-1109-8', nama: 'Fitra Afriza', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 09 September 2009', photo: null },
-{ noPeserta: '12-807-1110-7', nama: 'Indah Kasturi Kusuma Putri', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 28 Februari 2009', photo: null },
-{ noPeserta: '12-807-1111-6', nama: 'Lefiyana Juwita', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 20 Juli 2008', photo: null },
-{ noPeserta: '12-807-1112-5', nama: 'Marchfel Firdyansah', kelas: 'XI (SEBELAS)', ttl: 'Sriwangi, 07 Maret 2009', photo: null },
-{ noPeserta: '12-807-1113-4', nama: 'Melinda Kusuma Dewi', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 28 Mei 2009', photo: null },
-{ noPeserta: '12-807-1114-3', nama: 'Muhamad Yudha Rizky Iftori', kelas: 'XI (SEBELAS)', ttl: 'Karawang, 27 April 2009', photo: null },
-{ noPeserta: '12-807-1115-2', nama: 'Mohamad Ibnu Rosid', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 07 April 2008', photo: null },
-{ noPeserta: '12-807-1116-9', nama: 'Muhammad Bisma Mega Nanda', kelas: 'XI (SEBELAS)', ttl: 'Way Areng, 19 Juli 2008', photo: null },
-{ noPeserta: '12-807-1117-8', nama: 'Muhammad Rizki Ramadhani', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 14 September 2009', photo: null },
-{ noPeserta: '12-807-1118-7', nama: 'Muhammad Aufa Azmi', kelas: 'XI (SEBELAS)', ttl: 'Way jepara, 29 Mei 2008', photo: null },
-{ noPeserta: '12-807-1119-6', nama: 'M. Badru Muwafaq', kelas: 'XI (SEBELAS)', ttl: 'Labuhan Ratu IV, 01 Oktober 2008', photo: null },
-{ noPeserta: '12-807-1120-5', nama: 'Rima', kelas: 'XI (SEBELAS)', ttl: 'Gunung Pasir Jaya, 06 April 2009', photo: null },
-{ noPeserta: '12-807-1121-4', nama: 'Rima Ulvania', kelas: 'XI (SEBELAS)', ttl: 'Kebon Damar, 27 Juni 2009', photo: null },
-{ noPeserta: '12-807-1122-3', nama: 'Riski Munandar', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 11 Juli 2007', photo: null },
-{ noPeserta: '12-807-1123-2', nama: 'Siti Miftakhul Makmuroh', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 04 Juni 2009', photo: null },
-{ noPeserta: '12-807-1124-9', nama: 'Tomi Jatmiko', kelas: 'XI (SEBELAS)', ttl: 'Banyuwangi, 29 September 2009', photo: null },
-{ noPeserta: '12-807-1125-8', nama: 'Tia Dwi Saputri', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 01 September 2008', photo: null },
-{ noPeserta: '12-807-1126-7', nama: 'Wafiq Khariri', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 04 Juli 2008', photo: null },
-{ noPeserta: '12-807-1127-6', nama: 'Yeni Winarni', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 26 Januari 2009', photo: null },
-{ noPeserta: '12-807-1128-5', nama: 'Ainun Nadhiroh', kelas: 'XI (SEBELAS)', ttl: 'Metro, 26 April 2009', photo: null },
-{ noPeserta: '12-807-1129-4', nama: 'Dwi Fatimah', kelas: 'XI (SEBELAS)', ttl: 'Sidorejo, 04 Juli 2009', photo: null },
-{ noPeserta: '12-807-1130-3', nama: 'M. Akbar Panjalu', kelas: 'XI (SEBELAS)', ttl: 'Brawijaya, 24 Juli 2008', photo: null },
-{ noPeserta: '12-807-1131-2', nama: 'Habibatus Zakia', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 01 Maret 2009', photo: null },
-{ noPeserta: '12-807-1132-9', nama: 'Angga Dwi Saputra', kelas: 'XI (SEBELAS)', ttl: 'Lampung Timur, 19 November 2009', photo: null },
-{ noPeserta: '12-807-1201-8', nama: 'Ahmad Maulana', kelas: 'XII (DUA BELAS)', ttl: 'Metro, 29 Desember 2007', photo: null },
-{ noPeserta: '12-807-1202-7', nama: 'Aliya Ayu Marlina', kelas: 'XII (DUA BELAS)', ttl: 'Metro, 31 Maret 2008', photo: null },
-{ noPeserta: '12-807-1203-6', nama: 'Aprilia Winanti', kelas: 'XII (DUA BELAS)', ttl: 'Labuhan Ratu II, 13 April 2008', photo: null },
-{ noPeserta: '12-807-1204-5', nama: 'Bagas Setiawan', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 10 Januari 2008', photo: null },
-{ noPeserta: '12-807-1205-4', nama: 'Bagus Akbar Rani', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 09 Juni 2007', photo: null },
-{ noPeserta: '12-807-1206-3', nama: 'Binti Lutfiyah Zakiyah', kelas: 'XII (DUA BELAS)', ttl: 'Sribhawono, 30 Januari 2008', photo: null },
-{ noPeserta: '12-807-1207-2', nama: 'Cantika Dwi Jayanti', kelas: 'XII (DUA BELAS)', ttl: 'Mataram Baru, 14 April 2008', photo: null },
-{ noPeserta: '12-807-1208-9', nama: 'Denis Prasetyo', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 08 Maret 2007', photo: null },
-{ noPeserta: '12-807-1209-8', nama: 'Disky Ramadani', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 08 Oktober 2007', photo: null },
-{ noPeserta: '12-807-1210-7', nama: 'Ega Saputra', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 21 Oktober 2007', photo: null },
-{ noPeserta: '12-807-1211-6', nama: 'Eka Putri Febriani', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 20 Februari 2008', photo: null },
-{ noPeserta: '12-807-1212-5', nama: 'Endra Saputra', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 25 Juli 2008', photo: null },
-{ noPeserta: '12-807-1213-4', nama: 'Farid Ahmad Faisal', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 29 Oktober 2008', photo: null },
-{ noPeserta: '12-807-1214-3', nama: 'Maulana Dava', kelas: 'XII (DUA BELAS)', ttl: 'Braja Fajar, 01 Januari 2008', photo: null },
-{ noPeserta: '12-807-1215-2', nama: 'Maya Safitri', kelas: 'XII (DUA BELAS)', ttl: 'Braja Fajar, 22 Maret 2008', photo: null },
-{ noPeserta: '12-807-1216-9', nama: 'Miranti', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 11 Juni 2007', photo: null },
-{ noPeserta: '12-807-1217-8', nama: 'Muhammad Aldino Ama Rasya', kelas: 'XII (DUA BELAS)', ttl: 'Way Jepara, 18 September 2007', photo: null },
-{ noPeserta: '12-807-1218-7', nama: 'Muhammad Ahya', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 21 Januari 2008', photo: null },
-{ noPeserta: '12-807-1219-6', nama: 'Muhammad Dendi Firmanto', kelas: 'XII (DUA BELAS)', ttl: 'Braja Fajar, 16 Agustus 2008', photo: null },
-{ noPeserta: '12-807-1220-5', nama: 'Muhammad Misbahul Munir', kelas: 'XII (DUA BELAS)', ttl: 'Kebon Damar, 19 Februari 2008', photo: null },
-{ noPeserta: '12-807-1221-4', nama: 'Muhamad Rejaki', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 09 November 2008', photo: null },
-{ noPeserta: '12-807-1222-3', nama: 'Mohammad Sulton Al Azhar', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 08 November 2007', photo: null },
-{ noPeserta: '12-807-1223-2', nama: 'Nanda Ayu Ningsih', kelas: 'XII (DUA BELAS)', ttl: 'Mandala Sari, 16 Mei 2006', photo: null },
-{ noPeserta: '12-807-1224-9', nama: 'Nayla Amin', kelas: 'XII (DUA BELAS)', ttl: 'Braja Fajar, 28 November 2007', photo: null },
-{ noPeserta: '12-807-1225-8', nama: 'Rahma Wulandari', kelas: 'XII (DUA BELAS)', ttl: 'Rajabasa Baru, 08 Oktober 2007', photo: null },
-{ noPeserta: '12-807-1226-7', nama: 'Rendi Hidayat', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 24 Februari 2008', photo: null },
-{ noPeserta: '12-807-1227-6', nama: 'Sahal Wahyudin', kelas: 'XII (DUA BELAS)', ttl: 'Sriwangi, 26 April 2008', photo: null },
-{ noPeserta: '12-807-1228-5', nama: 'Shera Aurelia Sariana', kelas: 'XII (DUA BELAS)', ttl: 'Mataram Baru, 07 Agustus 2008', photo: null },
-{ noPeserta: '12-807-1229-4', nama: 'Sulaiman Nul Jamal', kelas: 'XII (DUA BELAS)', ttl: 'Kebumen, 06 Oktober 2007', photo: null },
-{ noPeserta: '12-807-1230-3', nama: 'Tiara Saputri', kelas: 'XII (DUA BELAS)', ttl: 'Braja Emas, 19 Desember 2007', photo: null },
-{ noPeserta: '12-807-1231-2', nama: 'Wahyuni Naila Ngilma', kelas: 'XII (DUA BELAS)', ttl: 'Kebon Damar, 16 Juli 2008', photo: null },
-{ noPeserta: '12-807-1232-9', nama: 'Laura Meliyana Dewi', kelas: 'XII (DUA BELAS)', ttl: 'Braja Indah, 01 Mei 2008', photo: null },
-{ noPeserta: '12-807-1233-8', nama: 'Eko Nuzulul Misbah', kelas: 'XII (DUA BELAS)', ttl: 'Sidorejo, 12 Mei 2008', photo: null },
-{ noPeserta: '12-807-1234-7', nama: 'Muhammad Khoirur Rozikin', kelas: 'XII (DUA BELAS)', ttl: 'Sumber Agung, 24 Januari 2007', photo: null },
+            { noPeserta: '12-807-1001-8', nama: 'Adi Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 19 Agustus 2009', photo: null },
+            { noPeserta: '12-807-1002-7', nama: 'Aulia Nur Laela', kelas: 'X (SEPULUH)', ttl: 'Sido Mukti, 19 Oktober 2009', photo: null },
+            { noPeserta: '12-807-1003-6', nama: 'Cipa Nadia Salma', kelas: 'X (SEPULUH)', ttl: 'Way Kanan, 11 Juli 2010', photo: null },
+            { noPeserta: '12-807-1004-5', nama: 'Dedi Irawan', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 08 Desember 2008', photo: null }
           ];
           this.saveToStorage();
         }
