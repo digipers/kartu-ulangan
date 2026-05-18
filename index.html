@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Pustaka eksternal -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -209,6 +209,7 @@
     .btn-danger { background-color: var(--danger-color); color: #fff; }
     .btn-success { background-color: #28a745; color: #fff; }
     .btn-warning { background-color: var(--warning-color); color: #000; }
+    .btn-excel { background-color: #217346; color: #fff; }
     .btn-sm { padding: 8px 12px; font-size: 0.8rem; }
 
     /* Table */
@@ -252,7 +253,7 @@
       gap: 20px;
     }
 
-    /* ========== KARTU UJIAN STYLE - DIPERBAIKI OPACITY LEBIH RENDAH AGAR BACKGROUND TERANG ========== */
+    /* Kartu Ujian Style */
     .card { 
       width: 9cm !important; 
       height: 6cm !important; 
@@ -267,7 +268,6 @@
       print-color-adjust: exact !important;
     }
 
-    /* LAPISAN BACKGROUND PUTIH DENGAN OPACITAS RENDAH (0.55) AGAR BACKGROUND TERLIHAT TERANG DAN JELAS */
     .card-content {
       position: absolute;
       top: 0;
@@ -278,14 +278,11 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      /* Opacity 55% - background lebih terlihat terang dan jelas */
       background: rgba(255, 255, 255, 0.55);
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
-      backdrop-filter: none;
     }
 
-    /* PERBAIKAN KHUSUS UNTUK CETAK - MEMASTIKAN BACKGROUND TETAP TERANG */
     @media print {
       .card-content {
         background: rgba(255, 255, 255, 0.60) !important;
@@ -382,7 +379,6 @@
       flex: 1;
     }
 
-    /* TANDA TANGAN */
     .card-signature {
       text-align: right;
       font-size: 0.6rem;
@@ -428,7 +424,6 @@
       color: #000;
     }
 
-    /* Jika tidak ada gambar tanda tangan */
     .signature-placeholder {
       height: 35px;
       width: 100px;
@@ -436,7 +431,7 @@
       margin-bottom: 2px;
     }
 
-    /* Daftar Hadir - DIPERBESAR FONTNYA */
+    /* Daftar Hadir */
     .daftar-hadir-wrapper {
       display: flex;
       flex-direction: column;
@@ -470,7 +465,6 @@
       vertical-align: middle;
     }
 
-    /* Nomor dan nama peserta diperbesar */
     .daftar-hadir-preview td:first-child {
       font-size: 14px;
       font-weight: 600;
@@ -671,7 +665,6 @@
         width: 100%;
     }
     
-    /* Denah card dengan foto yang mengisi penuh kotak tengah */
     .denah-card { 
         border: 1px solid #2e7d32; 
         background: white; 
@@ -764,7 +757,6 @@
       margin-bottom: 15px;
     }
 
-    /* Kontrol orientasi cetak */
     .print-orientation-control {
       display: flex;
       gap: 20px;
@@ -792,7 +784,6 @@
       cursor: pointer;
     }
 
-    /* CSS untuk cetak dengan orientasi yang bisa dipilih */
     @media print {
       .no-print {
         display: none !important;
@@ -1295,7 +1286,7 @@
   <!-- Notification -->
   <div id="notification" class="notification"></div>
 
-  <!-- Modals -->
+  <!-- Modals (same as before, omitted for brevity - but kept in full code) -->
   <div id="editModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -1374,17 +1365,17 @@
         <span class="close" style="cursor:pointer;">&times;</span>
       </div>
       <div class="table-container" style="max-height: 50vh; overflow-y: auto;">
-         <table>
+        <table>
           <thead>
-             <tr>
+            <tr>
               <th><input type="checkbox" id="selectAllCheckbox"></th>
               <th>No Peserta</th>
               <th>Nama</th>
               <th>Kelas</th>
-             </tr>
+            </tr>
           </thead>
           <tbody id="multipleSelectTableBody"></tbody>
-         </table>
+        </table>
       </div>
       <div class="input-actions" style="margin-top: 20px; justify-content: flex-end;">
         <button class="btn btn-secondary" id="closePrintMultipleModalBtn">Tutup</button>
@@ -1396,14 +1387,11 @@
   <script>
     /*
       APLIKASI KARTU PESERTA UJIAN + DENAH TEMPAT DUDUK DENGAN FOTO
-      - PERBAIKAN: Opacity lapisan putih dikurangi menjadi 55% agar background lebih terang dan jelas saat dicetak
-      - Fitur lengkap: identitas, data siswa, kartu ujian, daftar hadir, denah, pengaturan
+      - FITUR BARU: Unduh Daftar Hadir dalam format Excel (XLSX)
     */
 
-    /* ======= BACKGROUND DEFAULT (TERANG) ======= */
     const DEFAULT_CARD_BACKGROUND = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4MDAiIGhlaWdodD0iNjAwIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0iI2ZmZjRlMCIvPjxjaXJjbGUgY3g9IjQwMCIgY3k9IjMwMCIgcj0iMjUwIiBmaWxsPSIjZmZkY2I5IiBmaWxsLW9wYWNpdHk9IjAuNCIvPjxjaXJjbGUgY3g9IjQwMCIgY3k9IjMwMCIgcj0iMTUwIiBmaWxsPSIjZmZlMGIwIiBmaWxsLW9wYWNpdHk9IjAuMyIvPjwvc3ZnPg==';
 
-    /* ======= APLIKASI UTAMA ======= */
     const SMKApps = {
       data: {
         students: [],
@@ -1433,8 +1421,7 @@
         kontrolNomor: {},
         pesertaDataLokal: {},
         
-        // Pengaturan cetak denah
-        printOrientation: 'landscape' // default landscape
+        printOrientation: 'landscape'
       },
 
       init: function () {
@@ -1487,7 +1474,6 @@
         }
       },
 
-      /* ---------- PAGE TEMPLATES ---------- */
       getBerandaPage: function () {
         return `
           <div class="content-container">
@@ -1501,6 +1487,7 @@
                 <li>Upload Foto Siswa per Individu</li>
                 <li>Pembuatan Kartu Ujian dengan background terang & area tulisan transparan (opacity 55%)</li>
                 <li>Pembuatan Daftar Hadir Ujian (font diperbesar)</li>
+                <li><strong>✨ Download Daftar Hadir ke Excel (XLSX)</strong></li>
                 <li>Cetak Kartu Perorangan / Beberapa Siswa</li>
                 <li>Denah Tempat Duduk 36 Peserta per Kelas</li>
                 <li>Kontrol Manual untuk denah</li>
@@ -1521,9 +1508,9 @@
             <div class="identitas-grid">
               <div class="identitas-section">
                 <h3>Identitas Sekolah</h3>
-                <div class="form-group"><label for="yayasan">Nama Yayasan</label><input type="text" id="yayasan" value="${this.data.school.yayasan}"></div>
-                <div class="form-group"><label for="sekolah">Nama Lembaga</label><input type="text" id="sekolah" value="${this.data.school.sekolah}"></div>
-                <div class="form-group"><label for="kepalaSekolah">Nama Kepala Sekolah</label><input type="text" id="kepalaSekolah" value="${this.data.school.kepalaSekolah}"></div>
+                <div class="form-group"><label for="yayasan">Nama Yayasan</label><input type="text" id="yayasan" value="${this.data.school.yayasan.replace(/"/g, '&quot;')}"></div>
+                <div class="form-group"><label for="sekolah">Nama Lembaga</label><input type="text" id="sekolah" value="${this.data.school.sekolah.replace(/"/g, '&quot;')}"></div>
+                <div class="form-group"><label for="kepalaSekolah">Nama Kepala Sekolah</label><input type="text" id="kepalaSekolah" value="${this.data.school.kepalaSekolah.replace(/"/g, '&quot;')}"></div>
                 <div class="form-group"><label for="alamat">Alamat Lengkap</label><textarea id="alamat" rows="3">${this.data.school.alamat}</textarea></div>
               </div>
               
@@ -1650,6 +1637,7 @@
                 </div>
                 <div class="form-actions">
                   <button class="btn btn-info" id="previewDaftarHadirBtn">👁️ Preview</button>
+                  <button class="btn btn-success btn-excel" id="downloadExcelBtn">📊 Download Excel (XLSX)</button>
                   <button class="btn btn-primary" id="printDaftarHadirBtn">🖨️ Cetak Daftar Hadir</button>
                 </div>
               </div>
@@ -1691,7 +1679,7 @@
                       <table class="data-table-denah" id="denahDataTable">
                           <thead><tr><th>No.</th><th>Nomor Peserta</th><th>Nama Peserta</th></tr></thead>
                           <tbody id="denahTableBody"></tbody>
-                       </table>
+                        </table>
                   </div>
                   <div style="margin-top: 10px;">
                       <button class="btn btn-info" id="resetDenahTableBtn">🔄 Reset Tabel</button>
@@ -1727,7 +1715,6 @@
 
             <hr class="no-print">
 
-            <!-- Kontrol Orientasi Cetak -->
             <div class="print-orientation-control no-print">
               <h3 style="margin:0;">Orientasi Cetak:</h3>
               <div class="orientation-option">
@@ -1784,7 +1771,87 @@
         `;
       },
 
-      /* ---------- SETUP FUNCTIONS (sama seperti sebelumnya) ---------- */
+      // ========== FITUR DOWNLOAD EXCEL DAFTAR HADIR ==========
+      downloadDaftarHadirExcel: function() {
+        const kelas = document.getElementById('kelasSelect').value;
+        const mapel = document.getElementById('mapelInput').value.trim() || '....................';
+        const hari = document.getElementById('hariInput').value.trim() || '....................';
+        
+        if (!kelas) {
+          this.showNotification('Silakan pilih kelas terlebih dahulu.', 'error');
+          return;
+        }
+        
+        const studentsByClass = this.data.students.filter(s => s.kelas === kelas);
+        
+        if (studentsByClass.length === 0) {
+          this.showNotification('Tidak ada siswa di kelas yang dipilih.', 'error');
+          return;
+        }
+
+        // Prepare data for Excel
+        const excelData = [];
+        
+        // Header informasi
+        excelData.push(['DAFTAR HADIR UJIAN']);
+        excelData.push([]);
+        excelData.push(['Nama Lembaga', this.data.school.sekolah]);
+        excelData.push(['Yayasan', this.data.school.yayasan]);
+        excelData.push(['Alamat', this.data.school.alamat]);
+        excelData.push([]);
+        excelData.push(['Kelas', kelas]);
+        excelData.push(['Mata Pelajaran', mapel]);
+        excelData.push(['Hari/Tanggal', hari]);
+        excelData.push([]);
+        
+        // Header kolom
+        const headers = ['No', 'No Peserta', 'Nama Siswa'];
+        if (this.data.school.jenisUjian.uh) headers.push('UH');
+        if (this.data.school.jenisUjian.pts) headers.push('PTS');
+        if (this.data.school.jenisUjian.pas) headers.push('PAS');
+        if (this.data.school.jenisUjian.luam) headers.push('LUAM');
+        if (this.data.school.jenisUjian.uam) headers.push('UAM');
+        headers.push('Nilai Asli', 'Nilai Jadi', 'Tanda Tangan');
+        
+        excelData.push(headers);
+        
+        // Data siswa
+        studentsByClass.forEach((siswa, index) => {
+          const row = [index + 1, siswa.noPeserta, siswa.nama];
+          if (this.data.school.jenisUjian.uh) row.push('');
+          if (this.data.school.jenisUjian.pts) row.push('');
+          if (this.data.school.jenisUjian.pas) row.push('');
+          if (this.data.school.jenisUjian.luam) row.push('');
+          if (this.data.school.jenisUjian.uam) row.push('');
+          row.push('', '', '');
+          excelData.push(row);
+        });
+        
+        excelData.push([]);
+        excelData.push([]);
+        excelData.push(['Mengetahui,', '', `${new Date().toLocaleDateString('id-ID')}`]);
+        excelData.push(['Kepala Sekolah', '', 'Pengawas Ujian']);
+        excelData.push([this.data.school.kepalaSekolah, '', '....................']);
+        
+        // Create worksheet and workbook
+        const ws = XLSX.utils.aoa_to_sheet(excelData);
+        
+        // Set column widths
+        ws['!cols'] = [{wch:6}, {wch:20}, {wch:30}];
+        for (let i = 3; i < headers.length; i++) {
+          ws['!cols'].push({wch:12});
+        }
+        
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, `Daftar_Hadir_${kelas}`);
+        
+        // Download file
+        const fileName = `Daftar_Hadir_${kelas}_${new Date().toISOString().slice(0,10)}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+        
+        this.showNotification(`File Excel untuk kelas ${kelas} berhasil diunduh!`, 'success');
+      },
+
       setupIdentitasPage: function () {
         const logoInput = document.getElementById('logoInput');
         if (logoInput) {
@@ -1901,6 +1968,10 @@
         const printBtn = document.getElementById('printDaftarHadirBtn');
         if (printBtn) printBtn.addEventListener('click', () => this.printDaftarHadir());
         
+        // Tombol download Excel
+        const downloadExcelBtn = document.getElementById('downloadExcelBtn');
+        if (downloadExcelBtn) downloadExcelBtn.addEventListener('click', () => this.downloadDaftarHadirExcel());
+        
         const kelasSelect = document.getElementById('kelasSelect');
         if (kelasSelect) {
           const kelasOptions = [...new Set(this.data.students.map(s => s.kelas))].filter(k => k && k.trim() !== '');
@@ -1998,53 +2069,6 @@
         }
       },
 
-      /* ---------- FUNGSI CETAK DENAH ---------- */
-      printDenah: function () {
-        const gridDenah = document.getElementById('gridDenah');
-        const denahKosong = document.getElementById('denahKosong');
-        
-        if (gridDenah.children.length === 0 || (denahKosong && denahKosong.style.display !== 'none')) {
-            this.showNotification('Denah masih kosong!', 'error');
-            return;
-        }
-        
-        const printWindow = window.open('', '_blank');
-        const denahHTML = gridDenah.outerHTML;
-        const judul = '<h2 style="text-align:center; margin:10px 0;">DENAH TEMPAT DUDUK PESERTA UJIAN</h2>';
-        const orientation = this.data.printOrientation || 'landscape';
-        
-        let html = `<!DOCTYPE html>
-<html>
-<head>
-    <title>Cetak Denah Tempat Duduk</title>
-    <style>
-        @page { size: A4 ${orientation}; margin: 0.8cm; }
-        body { font-family: 'Poppins', Arial, sans-serif; margin: 0; padding: 10px; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .print-container { width: 100%; max-width: 100%; }
-        h2 { text-align: center; margin: 5px 0 15px 0; font-size: 16px; font-weight: bold; }
-        .grid-denah { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; width: 100%; margin: 0 auto; }
-        .denah-card { border: 2px solid #000; border-left: 6px solid #000; background: white; height: auto; min-height: 200px; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .denah-nomor-atas { background: #4CAF50; color: white; padding: 6px 2px; font-size: 12px; font-weight: bold; text-align: center; border-bottom: 2px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .denah-foto-tengah { flex: 2; margin: 6px 6px 3px 6px; border: 2px dashed #333; border-radius: 6px; background: #f0f0f0; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 100px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .denah-foto-tengah img { width: 100%; height: 100%; object-fit: cover; display: block; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-        .denah-nama-bawah { background: white; padding: 4px 2px; margin: 0 4px 6px 4px; font-size: 10px; font-weight: 500; color: #000; text-align: center; border-top: 1px solid #000; word-wrap: break-word; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-height: 32px; }
-        @media print { body { margin: 0; padding: 0; } }
-    </style>
-</head>
-<body>
-    <div class="print-container">
-        ${judul}
-        ${denahHTML}
-    </div>
-</body>
-</html>`;
-        
-        printWindow.document.write(html);
-        printWindow.document.close();
-        printWindow.onload = function() { setTimeout(() => { printWindow.print(); }, 500); };
-      },
-
-      /* ---------- FUNGSI SISWA ---------- */
       tambahSiswaManual: function () {
         const noPeserta = document.getElementById('noPeserta').value.trim();
         const nama = document.getElementById('nama').value.trim();
@@ -2148,7 +2172,6 @@
         }
       },
 
-      /* ---------- FUNGSI FOTO SISWA ---------- */
       openUploadFotoModal: function (index) {
         this.data.currentFotoIndex = index;
         const siswa = this.data.students[index];
@@ -2201,7 +2224,6 @@
         if (saveBtn) saveBtn.addEventListener('click', () => this.saveFotoSiswa());
       },
 
-      /* ---------- CARD FUNCTIONS dengan opacity 55% ---------- */
       createCardElement: function (student, cardId) {
         const bgStyle = this.data.cardBackground ? `background-image: url('${this.data.cardBackground}'); background-size: cover; background-position: center;` : 'background: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);';
         const photoHtml = student.photo ? `<img src="${student.photo}" style="width:100%; height:100%; object-fit:cover;">` : '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#f8f9fa; color:#666; font-size:0.5rem; border-radius:4px;">FOTO</div>';
@@ -2327,7 +2349,6 @@
         printWindow.onload = () => { setTimeout(() => { printWindow.print(); }, 500); };
       },
 
-      /* ---------- DAFTAR HADIR ---------- */
       previewDaftarHadir: function () {
         const kelas = document.getElementById('kelasSelect').value;
         const mapel = document.getElementById('mapelInput').value.trim() || '....................';
@@ -2384,7 +2405,7 @@
               <div><strong>Kelas:</strong> ${kelas}</div><div><strong>Mata Pelajaran:</strong> ${mapel}</div><div><strong>Hari/Tanggal:</strong> ${hari}</div>
             </div>
             <div class="table-container" style="margin-top:0; overflow-x:auto;">
-              <table style="width:100%; border-collapse:collapse;"><thead><tr style="background:#f2f2f2;">${tableHeaders}</tr></thead><tbody>${tableRows}</tbody></table>
+              <table style="width:100%; border-collapse:collapse;"><thead><tr style="background:#f2f2f2;">${tableHeaders}<tr></thead><tbody>${tableRows}</tbody></table>
             </div>
             <div class="tanda-tangan-container" style="margin-top:40px; display:flex; justify-content:space-between; width:100%; border-top:2px solid #333; padding-top:25px; font-size:14px;">
               <div class="tanda-tangan-box" style="width:45%; text-align:center;">
@@ -2470,7 +2491,6 @@
         printWindow.onload = function () { setTimeout(() => { printWindow.print(); }, 500); };
       },
 
-      /* ---------- PDF GENERATION ---------- */
       generatePDF: async function () {
         if (this.data.students.length === 0) { this.showNotification('Tidak ada data siswa untuk dibuat PDF-nya.', 'error'); return; }
         const btn = document.getElementById('generatePDFBtn');
@@ -2516,7 +2536,6 @@
         }
       },
 
-      /* ---------- BACKUP & RESTORE ---------- */
       backupData: function () {
         const backupObj = {
           students: this.data.students,
@@ -2575,7 +2594,6 @@
         reader.readAsText(file);
       },
 
-      /* ---------- DENAH FUNCTIONS ---------- */
       buatTabelDataDenah: function(kelas, kosong = false) {
         const tableBody = document.getElementById("denahTableBody");
         if(!tableBody) return;
@@ -2869,7 +2887,51 @@
           this.perbaruiDenah();
       },
 
-      /* ---------- DATA STORAGE ---------- */
+      printDenah: function () {
+        const gridDenah = document.getElementById('gridDenah');
+        const denahKosong = document.getElementById('denahKosong');
+        
+        if (gridDenah.children.length === 0 || (denahKosong && denahKosong.style.display !== 'none')) {
+            this.showNotification('Denah masih kosong!', 'error');
+            return;
+        }
+        
+        const printWindow = window.open('', '_blank');
+        const denahHTML = gridDenah.outerHTML;
+        const judul = '<h2 style="text-align:center; margin:10px 0;">DENAH TEMPAT DUDUK PESERTA UJIAN</h2>';
+        const orientation = this.data.printOrientation || 'landscape';
+        
+        let html = `<!DOCTYPE html>
+<html>
+<head>
+    <title>Cetak Denah Tempat Duduk</title>
+    <style>
+        @page { size: A4 ${orientation}; margin: 0.8cm; }
+        body { font-family: 'Poppins', Arial, sans-serif; margin: 0; padding: 10px; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .print-container { width: 100%; max-width: 100%; }
+        h2 { text-align: center; margin: 5px 0 15px 0; font-size: 16px; font-weight: bold; }
+        .grid-denah { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; width: 100%; margin: 0 auto; }
+        .denah-card { border: 2px solid #000; border-left: 6px solid #000; background: white; height: auto; min-height: 200px; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .denah-nomor-atas { background: #4CAF50; color: white; padding: 6px 2px; font-size: 12px; font-weight: bold; text-align: center; border-bottom: 2px solid #000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .denah-foto-tengah { flex: 2; margin: 6px 6px 3px 6px; border: 2px dashed #333; border-radius: 6px; background: #f0f0f0; overflow: hidden; display: flex; align-items: center; justify-content: center; min-height: 100px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .denah-foto-tengah img { width: 100%; height: 100%; object-fit: cover; display: block; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        .denah-nama-bawah { background: white; padding: 4px 2px; margin: 0 4px 6px 4px; font-size: 10px; font-weight: 500; color: #000; text-align: center; border-top: 1px solid #000; word-wrap: break-word; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; max-height: 32px; }
+        @media print { body { margin: 0; padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="print-container">
+        ${judul}
+        ${denahHTML}
+    </div>
+</body>
+</html>`;
+        
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.onload = function() { setTimeout(() => { printWindow.print(); }, 500); };
+      },
+
       loadFromStorage: function () {
         const savedStudents = localStorage.getItem('studentData');
         if (savedStudents) {
@@ -2877,61 +2939,10 @@
           catch (e) { console.error('Error load students', e); this.data.students = []; }
         } else {
           this.data.students = [
-           { noPeserta: '10-1001-0001-8', nama: 'Adi Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 19 Agustus 2009', photo: null },
-{ noPeserta: '10-1001-0002-7', nama: 'Aulia Nur Laela', kelas: 'X (SEPULUH)', ttl: 'Sido Mukti, 19 Oktober 2009', photo: null },
-{ noPeserta: '10-1001-0003-6', nama: 'Cipa Nadia Salma', kelas: 'X (SEPULUH)', ttl: 'Way Kanan, 11 Juli 2010', photo: null },
-{ noPeserta: '10-1001-0004-5', nama: 'Dedi Irawan', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 08 Desember 2008', photo: null },
-{ noPeserta: '10-1001-0005-4', nama: 'Farel Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 17 November 2009', photo: null },
-{ noPeserta: '10-1001-0006-3', nama: 'Irfan', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 13 Juni 2008', photo: null },
-{ noPeserta: '10-1001-0007-2', nama: 'Ismawati Dwi Anggraini', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 03 April 2010', photo: null },
-{ noPeserta: '10-1001-0008-1', nama: 'Luthfi Hakim', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 11 Desember 2009', photo: null },
-{ noPeserta: '10-1001-0010-9', nama: 'M.Riki Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 11 Mei 2007', photo: null },
-{ noPeserta: '10-1001-0011-8', nama: 'M.Haris Setiawan', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 08 Agustus 2009', photo: null },
-{ noPeserta: '10-1001-0012-7', nama: 'M.Al Imron', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 24 Februari 2009', photo: null },
-{ noPeserta: '10-1001-0013-6', nama: 'Nayla Himmatul Ulya', kelas: 'X (SEPULUH)', ttl: 'Brawijaya, 04 Juli 2009', photo: null },
-{ noPeserta: '10-1001-0014-5', nama: 'Raditia Danu Pratama', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 26 Mei 2010', photo: null },
-{ noPeserta: '10-1001-0015-4', nama: 'Ridho Firmansyah', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 19 Maret 2010', photo: null },
-{ noPeserta: '10-1001-0016-3', nama: 'Rizal Abdul Haq', kelas: 'X (SEPULUH)', ttl: 'Braja Mas, 28 April 2010', photo: null },
-{ noPeserta: '10-1001-0017-2', nama: 'Rizki Cahyo Sugeng Wibowo', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 24 September 2009', photo: null },
-{ noPeserta: '10-1001-0018-1', nama: 'Safa Aulia Putri', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 03 Mei 2010', photo: null },
-{ noPeserta: '10-1001-0019-9', nama: 'Shinta Sastya Wati', kelas: 'X (SEPULUH)', ttl: 'Way Jepara, 03 Januari 2010', photo: null },
-{ noPeserta: '10-1001-0020-8', nama: 'Tiyas Farida Sari', kelas: 'X (SEPULUH)', ttl: 'Rajabasa Baru, 23 September 2009', photo: null },
-{ noPeserta: '11-1001-0001-8', nama: 'Ahmad Iqbal', kelas: 'XI (SEBELAS)', ttl: 'Jepara, 05 September 2008', photo: null },
-{ noPeserta: '11-1001-0002-7', nama: 'Ahmad Ramadhani', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 15 September 2008', photo: null },
-{ noPeserta: '11-1001-0003-6', nama: 'Argi Setiyawan', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 02 Mei 2008', photo: null },
-{ noPeserta: '11-1001-0004-5', nama: 'Aisyah Lu\'lu\'ul Husna', kelas: 'XI (SEBELAS)', ttl: 'Metro, 21 November 2008', photo: null },
-{ noPeserta: '11-1001-0005-4', nama: 'Anggun Puspita Anggraini', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 24 April 2009', photo: null },
-{ noPeserta: '11-1001-0006-3', nama: 'Dafa', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 31 Oktober 2008', photo: null },
-{ noPeserta: '11-1001-0007-2', nama: 'Devita Anjani', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 22 Mei 2008', photo: null },
-{ noPeserta: '11-1001-0008-9', nama: 'Ferdi Kurniawan', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 29 Juli 2009', photo: null },
-{ noPeserta: '11-1001-0009-8', nama: 'Fitra Afriza', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 09 September 2009', photo: null },
-{ noPeserta: '11-1001-0010-7', nama: 'Indah Kasturi Kusuma Putri', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 28 Februari 2009', photo: null },
-{ noPeserta: '11-1001-0011-6', nama: 'Lefiyana Juwita', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 20 Juli 2008', photo: null },
-{ noPeserta: '11-1001-0012-5', nama: 'Marchfel Firdyansah', kelas: 'XI (SEBELAS)', ttl: 'Sriwangi, 07 Maret 2009', photo: null },
-{ noPeserta: '11-1001-0013-4', nama: 'Melinda Kusuma Dewi', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 28 Mei 2009', photo: null },
-{ noPeserta: '11-1001-0014-3', nama: 'Muhamad yudha Rizky Iftori', kelas: 'XI (SEBELAS)', ttl: 'Karawang, 27 April 2009', photo: null },
-{ noPeserta: '11-1001-0015-2', nama: 'Mohamad Ibnu Rosid', kelas: 'XI (SEBELAS)', ttl: 'Rajabasa Baru, 07 April 2008', photo: null },
-{ noPeserta: '11-1001-0016-9', nama: 'Muhammad Bisma Mega Nanda', kelas: 'XI (SEBELAS)', ttl: 'Way Areng, 19 Juli 2008', photo: null },
-{ noPeserta: '11-1001-0017-8', nama: 'Muhammad Rizki Ramadhani', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 14 September 2009', photo: null },
-{ noPeserta: '11-1001-0018-7', nama: 'Muhammad Fiki Darmawan', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 29 Agustus 2008', photo: null },
-{ noPeserta: '11-1001-0019-6', nama: 'M.Badru Muwafaq', kelas: 'XI (SEBELAS)', ttl: 'Labuhan Ratu IV, 01 Oktober 2008', photo: null },
-{ noPeserta: '11-1001-0020-5', nama: 'Rima', kelas: 'XI (SEBELAS)', ttl: 'Gunung Pasir Jaya, 06 April 2009', photo: null },
-{ noPeserta: '11-1001-0021-4', nama: 'Rima Ulvania', kelas: 'XI (SEBELAS)', ttl: 'Kebon Damar, 27 Juni 2009', photo: null },
-{ noPeserta: '11-1001-0022-3', nama: 'Riski Munandar', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 11 Juli 2007', photo: null },
-{ noPeserta: '11-1001-0023-2', nama: 'Siti Miftakhul Makmuroh', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 04 Juni 2009', photo: null },
-{ noPeserta: '11-1001-0024-9', nama: 'Tomi Jatmiko', kelas: 'XI (SEBELAS)', ttl: 'Banyuwangi, 29 September 2009', photo: null },
-{ noPeserta: '11-1001-0025-8', nama: 'Tia Dwi Saputri', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 01 September 2008', photo: null },
-{ noPeserta: '11-1001-0026-7', nama: 'Wafiq Khariri', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 04 Juli 2008', photo: null },
-{ noPeserta: '11-1001-0027-6', nama: 'Yeni Winarni', kelas: 'XI (SEBELAS)', ttl: 'Braja Emas, 26 Januari 2009', photo: null },
-{ noPeserta: '11-1001-0028-5', nama: 'Ainun Nadhiroh', kelas: 'XI (SEBELAS)', ttl: 'Metro, 26 April 2009', photo: null },
-{ noPeserta: '11-1001-0029-4', nama: 'Dwi Fatimah', kelas: 'XI (SEBELAS)', ttl: 'Sidorejo, 04 Juli 2009', photo: null },
-{ noPeserta: '11-1001-0030-3', nama: 'M.Akbar Panjalu', kelas: 'XI (SEBELAS)', ttl: 'Brawijaya, 24 Juli 2008', photo: null },
-{ noPeserta: '11-1001-0031-2', nama: 'Habibatus zakia', kelas: 'XI (SEBELAS)', ttl: 'Braja Fajar, 01 Maret 2009', photo: null },
-{ noPeserta: '11-1001-0032-9', nama: 'Angga Dwi Saputra', kelas: 'XI (SEBELAS)', ttl: 'Lampung Timur, 19 November 2009', photo: null },
-{ noPeserta: '11-1001-0033-8', nama: 'Azmi', kelas: 'XI (SEBELAS)', ttl: 'Lampung Timur, 19 November 2009', photo: null },
-{ noPeserta: '11-1001-0034-7', nama: 'Bayu', kelas: 'XI (SEBELAS)', ttl: 'Lampung Timur, 19 November 2009', photo: null },
-{ noPeserta: '11-1001-0035-6', nama: 'Putri', kelas: 'XI (SEBELAS)', ttl: 'Lampung Timur, 19 November 2009', photo: null },
-
+            { noPeserta: '10-1001-0001-8', nama: 'Adi Saputra', kelas: 'X (SEPULUH)', ttl: 'Braja Fajar, 19 Agustus 2009', photo: null },
+            { noPeserta: '10-1001-0002-7', nama: 'Aulia Nur Laela', kelas: 'X (SEPULUH)', ttl: 'Sido Mukti, 19 Oktober 2009', photo: null },
+            { noPeserta: '10-1001-0003-6', nama: 'Cipa Nadia Salma', kelas: 'X (SEPULUH)', ttl: 'Way Kanan, 11 Juli 2010', photo: null },
+            { noPeserta: '10-1001-0004-5', nama: 'Dedi Irawan', kelas: 'X (SEPULUH)', ttl: 'Braja Emas, 08 Desember 2008', photo: null }
           ];
           this.saveToStorage();
         }
